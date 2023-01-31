@@ -1,7 +1,10 @@
 spring:
   profiles:
-    active: db
-
+    active: local
+    group:
+      local: local
+      dev: dev
+      prod: prod
 logging:
   level:
     org.hibernate.type.descriptor.sql: trace

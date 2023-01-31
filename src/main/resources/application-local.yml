@@ -1,0 +1,20 @@
+server:
+  port: 80
+  tomcat:
+    uri-encoding: UTF-8
+
+
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true
+
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://localhost:3307/saramaralocal
+    username: guest1
+    password: kakao123
