@@ -1,0 +1,7 @@
+spring:
+  profiles:
+    active: db
+
+logging:
+  level:
+    org.hibernate.type.descriptor.sql: trace
