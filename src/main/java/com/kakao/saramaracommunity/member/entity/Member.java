@@ -13,7 +13,7 @@ import org.hibernate.annotations.Where;
 @Getter
 @NoArgsConstructor
 @Where(clause = "deleted_at is NULL")
-@SQLDelete(sql = "UPDATE member SET deleted_at = CURRENT_TIMESTAMP where id = ?")
+@SQLDelete(sql = "update member set deleted_at = CURRENT_TIMESTAMP where member_id = ?")
 @Entity
 public class Member extends BaseTimeEntity {
     @Id
