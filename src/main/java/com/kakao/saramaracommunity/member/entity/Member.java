@@ -6,13 +6,14 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
 @ToString
 @Getter
 @NoArgsConstructor
 @Where(clause = "deleted_at is NULL")
-
+@SQLDelete(sql = "UPDATE member SET deleted_at = CURRENT_TIMESTAMP where id = ?")
 @Entity
 public class Member extends BaseTimeEntity {
     @Id
