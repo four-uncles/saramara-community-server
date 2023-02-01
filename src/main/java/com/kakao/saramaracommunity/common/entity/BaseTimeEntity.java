@@ -1,5 +1,6 @@
 package com.kakao.saramaracommunity.common.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
 import lombok.Getter;
@@ -15,10 +16,13 @@ import java.time.LocalDateTime;
 public class BaseTimeEntity {
 
     @CreatedDate
+    @Column(name="createdAt", updatable = false)
     private LocalDateTime createdAt;
 
     @LastModifiedDate
+    @Column(name="updatedAt")
     private LocalDateTime updatedAt;
 
+    @Column(name="deletedAt")
     private LocalDateTime deletedAt;
 }
