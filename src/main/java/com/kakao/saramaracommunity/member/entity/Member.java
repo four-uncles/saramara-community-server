@@ -18,7 +18,7 @@ import org.hibernate.annotations.Where;
 public class Member extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long memerId;
+    private Long memberId;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
