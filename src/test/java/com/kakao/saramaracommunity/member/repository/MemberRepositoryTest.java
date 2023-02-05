@@ -3,9 +3,7 @@ package com.kakao.saramaracommunity.member.repository;
 import com.kakao.saramaracommunity.member.entity.Member;
 import com.kakao.saramaracommunity.member.entity.Role;
 import com.kakao.saramaracommunity.member.entity.Type;
-import com.kakao.saramaracommunity.member.repository.MemberRepository;
 import org.junit.jupiter.api.Test;
-import org.mockito.internal.matchers.Null;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -73,5 +71,26 @@ public class MemberRepositoryTest {
 
         // then
         assertThat(allMemberCnt).isEqualTo(0);
+    }
+
+    @Test
+    public void 사용자_조회() {
+        //given
+        Member member = memberRepository.save(Member.builder()
+                .type(Type.LOCAL)
+                .email("lango@kakao.com")
+                .nickname("lango")
+                .password("kakao")
+                .role(Role.BASIC)
+                .build());
+        memberRepository.save(member);
+        //when
+        List<Member> memberList = memberRepository.findAll();
+
+        //then
+        Member lango = memberList.get(0);
+        assertThat(lango.getMemberId()).isEqualTo(member.getMemberId());
+        assertThat(lango.getEmail()).isEqualTo(member.getEmail());
+        assertThat(lango.getNickname()).isEqualTo(member.getNickname());
     }
 }
