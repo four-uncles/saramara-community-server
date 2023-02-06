@@ -32,19 +32,30 @@ public class Comment extends BaseTimeEntity {
 
     @Lob
     @Column(nullable = false)
-    private String text;
+    private String content;
 
     @ColumnDefault("0")
     private Long likes;
 
-    private Integer pick;
+    private Long pick;
 
     @Builder
-    public Comment(Board board, Member member, String text, Long likes, Integer pick) {
+    public Comment(Board board, Member member, String content, Long likes, Long pick) {
         this.board = board;
         this.member = member;
-        this.text = text;
+        this.content = content;
         this.likes = likes;
         this.pick = pick;
+    }
+
+    // 수정을 위한 메서드. 내용과 사진 픽 숫자를 바꿔주게 된다.
+    public void change(String content, Long pick){
+        this.content = content;
+        this.pick = pick;
+    }
+
+    @PrePersist
+    public void prePersist() {
+        this.likes = this.likes == null ? 0 : this.likes;
     }
 }
