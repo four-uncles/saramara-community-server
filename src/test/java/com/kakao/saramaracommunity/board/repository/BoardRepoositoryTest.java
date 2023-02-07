@@ -2,31 +2,122 @@ package com.kakao.saramaracommunity.board.repository;
 
 import com.kakao.saramaracommunity.board.entity.Board;
 import com.kakao.saramaracommunity.board.entity.CategoryBoard;
-import lombok.extern.log4j.Log4j2;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.stream.LongStream;
+import java.util.List;
+import java.util.Optional;
+
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @SpringBootTest
-@Log4j2
 public class BoardRepoositoryTest {
     @Autowired
     private BoardRepository boardRepository;
+
+    @AfterEach
+    public void clean() { boardRepository.deleteAll(); }
+
     @Test
-    public void 게시판등록() {
-        LongStream.rangeClosed(1, 100).forEach(i->{
-            Board board = Board.builder()
-                    .title("Sample 제목[" + i + "]")
-                    .content("Sample 내용[" + i + "]")
-                    .likes((long)(Math.random() * 100) + 1)
-                    .build();
-            board.addCate(CategoryBoard.QUESTION);
-            if (i > 90) {
-                board.addCate(CategoryBoard.NORMAL);
-            }
-            boardRepository.save(board);
-        });
+    public void save(){
+        //given
+        boardRepository.save(Board.builder()
+                        .category(CategoryBoard.NORMAL)
+                        .title("게시판 등록 테스트")
+                        .content("게시판 등록 테스트")
+                        .build());
+        //when
+        List<Board> boardList = boardRepository.findAll();
+        //then
+        Board board = boardList.get(0);
+        assertThat(board.getId()).isEqualTo(board.getId());
+        assertThat(board.getTitle()).isEqualTo(board.getTitle());
+        assertThat(board.getContent()).isEqualTo(board.getContent());
+    }
+
+    @Test
+    public void delete(){
+        //given
+        Board board = boardRepository.save(Board.builder()
+                        .category(CategoryBoard.NORMAL)
+                        .title("삭제된 게시글 입니다.")
+                        .content("삭제된 게시글의 내용입니다.")
+                        .build());
+        Long boardId = board.getId();
+        boardRepository.deleteById(boardId);
+
+        //when
+        //게시글 조회시 목록에서 제외된다.
+        int allBoardCnt = (int) boardRepository.count();
+        System.out.println("all board cnt: " + allBoardCnt);
+
+        //then
+        assertThat(allBoardCnt).isEqualTo(0);
+
+    }
+
+    @Test
+    public void findAll() {
+        //given
+        Board board = boardRepository.save(Board.builder()
+                    .category(CategoryBoard.NORMAL)
+                    .title("게시판 등록 테스트")
+                    .content("게시판 등록 테스트")
+                    .build());
+
+        //when
+        List<Board> boardList = boardRepository.findAll();
+
+        //then
+        Board result = boardList.get(0);
+        assertThat(result.getId()).isEqualTo(board.getId());
+        assertThat(result.getTitle()).isEqualTo(board.getTitle());
+        assertThat(result.getContent()).isEqualTo(board.getContent());
+    }
+
+    @Test
+    public void findById() {
+        //given
+        Board board = boardRepository.save(Board.builder()
+                .category(CategoryBoard.NORMAL)
+                .title("게시판 등록 테스트")
+                .content("게시판 등록 테스트")
+                .build());
+
+        //when
+        Optional<Board> optional = boardRepository.findById(board.getId());
+        Board result = optional.get();
+
+        //then
+        assertThat(result.getId()).isEqualTo(board.getId());
+        assertThat(result.getTitle()).isEqualTo(board.getTitle());
+        assertThat(result.getContent()).isEqualTo(board.getContent());
+    }
+
+    @Test
+    public void update() {
+        //given
+        Board board = boardRepository.save(Board.builder()
+                .category(CategoryBoard.NORMAL)
+                .title("게시판 등록 테스트")
+                .content("게시판 등록 테스트")
+                .build());
+
+        Board updateBoard = Board.builder()
+                .category(CategoryBoard.NORMAL)
+                .title("게시판 수정 테스트")
+                .content("게시판 수정 테스트")
+                .build();
+
+        //when
+        List<Board> boardList = boardRepository.findAll();
+        Board result = boardList.get(0);
+
+        //then
+        assertThat(result.getId()).isEqualTo(board.getId());
+        assertThat(result.getTitle()).isEqualTo(board.getTitle());
+        assertThat(result.getContent()).isEqualTo(board.getContent());
     }
 }
