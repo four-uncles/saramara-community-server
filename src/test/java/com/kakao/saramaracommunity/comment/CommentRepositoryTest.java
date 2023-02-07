@@ -1,4 +1,4 @@
-package com.kakao.saramaracommunity.board.comment;
+package com.kakao.saramaracommunity.comment;
 
 import com.kakao.saramaracommunity.board.entity.Board;
 import com.kakao.saramaracommunity.board.repository.BoardRepository;
@@ -29,7 +29,7 @@ public class CommentRepositoryTest {
     MemberRepository memberRepository;
 
     @Test
-    public void 댓글_등록() {
+    public void insertOne() {
         // given
 
         commentRepository.save(Comment.builder()
@@ -47,7 +47,7 @@ public class CommentRepositoryTest {
     }
 
     @Test
-    public void 댓글_수정() {
+    public void updateOne() {
         // given
         Long cno = 1L;
 
@@ -65,13 +65,13 @@ public class CommentRepositoryTest {
     }
 
     @Test
-    public void 댓글_삭제() {
+    public void deleteOne() {
         Long cno = 1L;
         commentRepository.deleteById(cno);
     }
 
     @Test
-    public void 댓글_찾기() {
+    public void findOne() {
         Long cno = 2L;
 
         Optional<Comment> findingComment = commentRepository.findById(cno);
