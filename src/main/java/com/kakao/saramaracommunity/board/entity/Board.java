@@ -42,7 +42,8 @@ public class Board extends BaseTimeEntity {
     private LocalDateTime deadLine;
 
     @Builder
-    public Board(Member member, CategoryBoard category, String title, String content, Long likes, LocalDateTime deadLine) {
+    public Board(Long id, Member member, CategoryBoard category, String title, String content, Long likes, LocalDateTime deadLine) {
+        this.id = id;
         this.member = member;
         this.category = category;
         this.title = title;
