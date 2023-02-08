@@ -17,7 +17,9 @@ public class CommentDTO {
 
     private Long boardId;
 
-    private Long memberId;
+    private String writerEmail;
+
+    private String writerNickname;
 
     private String content;
 
