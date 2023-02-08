@@ -29,20 +29,53 @@ public class CommentRepositoryTest {
     MemberRepository memberRepository;
 
     @Test
-    public void 댓글_등록() {
+    public void insertOne() {
         // given
-
         commentRepository.save(Comment.builder()
-                        .text("Test Text")
-                        .pick(0)
+                        .content("Test Text")
+                        .pick(0L)
                         .build());
 
         // when
         List<Comment> commentList = commentRepository.findAll();
 
         // then
-        Comment comment = commentList.get(0);
+        Comment comment = commentList.get(1);
         System.out.println(comment);
-        Assertions.assertThat(comment.getCommentId()).isEqualTo(1L);
+        Assertions.assertThat(comment.getCommentId()).isEqualTo(2L);
+    }
+
+    @Test
+    public void updateOne() {
+        // given
+        Long cno = 1L;
+
+        Optional<Comment> result = commentRepository.findById(cno);
+
+        Comment comment = result.orElseThrow();
+
+        // when
+
+        comment.change("Update content", 2L);
+        commentRepository.save(comment);
+        // then
+
+        System.out.println(commentRepository.findById(1L));
+    }
+
+    @Test
+    public void deleteOne() {
+        Long cno = 1L;
+        commentRepository.deleteById(cno);
+    }
+
+    @Test
+    public void findOne() {
+        Long cno = 2L;
+
+        Optional<Comment> findingComment = commentRepository.findById(cno);
+        Comment result = findingComment.orElseThrow();
+
+        System.out.println("result = " + result);
     }
 }
