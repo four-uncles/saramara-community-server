@@ -5,43 +5,49 @@ import com.kakao.saramaracommunity.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
 
 
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
+@DynamicInsert
 @Where(clause = "deleted_at is NULL")
 @SQLDelete(sql = "update board set deleted_at = CURRENT_TIMESTAMP where board_id = ?")
-@ToString(exclude = {"writer", "cateSet"})
+@ToString(exclude = {"member", "category"})
 @Entity
 public class Board extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long boardId;
-    //한명의 Member는 여러개의 게시글을 작성할 수 있다.(Many = Board, One = Member)
-    //관계 적용 필요
+    @Column(name = "boardId")
+    private Long id;
     @ManyToOne(fetch = FetchType.LAZY)
-    private Member writer;
+    @JoinColumn(name="memberId")
+    private Member member;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private CategoryBoard category;
     @Column(length = 100, nullable = false)
     private String title;
-    @Column(length = 100,nullable = false)
+    @Lob
     private String content;
-    @Column(nullable = false)
     @ColumnDefault("0")
     private Long likes;
+    @ColumnDefault("0")
+    private Long cnt;
     private LocalDateTime deadLine;
-    @ElementCollection(fetch = FetchType.LAZY)
-    @Builder.Default
-    @Column(name = "cate", nullable = false)
-    private Set<CategoryBoard> cateSet = new HashSet<>();
-    public void addCate(CategoryBoard categoryBoard) { this.cateSet.add(categoryBoard); }
 
-
+    @Builder
+    public Board(Member member, CategoryBoard category, String title, String content, Long likes, LocalDateTime deadLine) {
+        this.member = member;
+        this.category = category;
+        this.title = title;
+        this.content = content;
+        this.likes = likes;
+        this.deadLine = deadLine;
+    }
 }

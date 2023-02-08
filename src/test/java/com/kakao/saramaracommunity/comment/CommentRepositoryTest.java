@@ -31,7 +31,6 @@ public class CommentRepositoryTest {
     @Test
     public void insertOne() {
         // given
-
         commentRepository.save(Comment.builder()
                         .content("Test Text")
                         .pick(0L)
