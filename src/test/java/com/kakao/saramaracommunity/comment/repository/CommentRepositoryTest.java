@@ -1,4 +1,4 @@
-package com.kakao.saramaracommunity.comment;
+package com.kakao.saramaracommunity.comment.repository;
 
 import com.kakao.saramaracommunity.board.entity.Board;
 import com.kakao.saramaracommunity.board.repository.BoardRepository;

@@ -7,11 +7,24 @@ import com.kakao.saramaracommunity.member.entity.Member;
 
 public interface CommentService {
 
+    Long register(CommentDTO commentDTO);
+
     default Comment dtoToEntity(CommentDTO commentDTO) {
 
+        Member member = Member.builder()
+                .email(commentDTO.getWriterEmail())
+                .nickname(commentDTO.getWriterNickname())
+                .build();
+
+
+        Board board = Board.builder()
+                .id(commentDTO.getBoardId())
+                .build();
+
         Comment comment = Comment.builder()
-                .board(Board.builder().boardId(commentDTO.getBoardId()).build())
-                .member(Member.builder().memberId(commentDTO.getMemberId()).build())
+                .commentId(commentDTO.getCommentId())
+                .board(board)
+                .member(member)
                 .content(commentDTO.getContent())
                 .likes(commentDTO.getLikes())
                 .pick(commentDTO.getPick())
@@ -24,8 +37,9 @@ public interface CommentService {
 
         CommentDTO commentDTO = CommentDTO.builder()
                 .commentId(comment.getCommentId())
-                .boardId(comment.getBoard().getBoardId())
-                .memberId(comment.getMember().getMemberId())
+                .boardId(comment.getBoard().getId())
+                .writerEmail(comment.getMember().getEmail())
+                .writerNickname(comment.getMember().getNickname())
                 .content(comment.getContent())
                 .likes(comment.getLikes())
                 .pick(comment.getPick())

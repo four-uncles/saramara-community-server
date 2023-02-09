@@ -11,7 +11,6 @@ import org.hibernate.annotations.Where;
 
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
 @Where(clause = "deleted_at is NULL")
 @SQLDelete(sql = "update comment set deleted_at = CURRENT_TIMESTAMP where comment_id = ?")
 @ToString(exclude = {"board", "member"})
@@ -39,8 +38,10 @@ public class Comment extends BaseTimeEntity {
 
     private Long pick;
 
-    @Builder
-    public Comment(Board board, Member member, String content, Long likes, Long pick) {
+
+   @Builder
+    public Comment(Long commentId, Board board, Member member, String content, Long likes, Long pick) {
+        this.commentId = commentId;
         this.board = board;
         this.member = member;
         this.content = content;
