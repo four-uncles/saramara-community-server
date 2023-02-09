@@ -9,10 +9,8 @@ import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
-@Builder
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
 @Where(clause = "deleted_at is NULL")
 @SQLDelete(sql = "update comment set deleted_at = CURRENT_TIMESTAMP where comment_id = ?")
 @ToString(exclude = {"board", "member"})
@@ -40,6 +38,16 @@ public class Comment extends BaseTimeEntity {
 
     private Long pick;
 
+
+   @Builder
+    public Comment(Long commentId, Board board, Member member, String content, Long likes, Long pick) {
+        this.commentId = commentId;
+        this.board = board;
+        this.member = member;
+        this.content = content;
+        this.likes = likes;
+        this.pick = pick;
+    }
 
     // 수정을 위한 메서드. 내용과 사진 픽 숫자를 바꿔주게 된다.
     public void change(String content, Long pick){
