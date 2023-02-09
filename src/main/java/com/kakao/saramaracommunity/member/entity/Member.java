@@ -26,7 +26,7 @@ public class Member extends BaseTimeEntity {
     @Column(nullable = false, length = 100)
     private String email;
 
-    @Column(nullable = false, length = 10)
+    @Column(nullable = false, length = 50)
     private String nickname;
 
     @Column(nullable = false)
@@ -36,17 +36,27 @@ public class Member extends BaseTimeEntity {
     @Column(nullable = false)
     private Role role;
 
-    private String profileImage;
+    private String picture;
 
     private String token;
 
     @Builder
-    public Member(Type type, String email, String nickname, String password, Role role, String profileImage) {
+    public Member(Type type, String email, String nickname, String password, Role role, String picture) {
         this.type = type;
         this.email = email;
         this.nickname = nickname;
         this.password = password;
         this.role = role;
-        this.profileImage = profileImage;
+        this.picture = picture;
+    }
+
+    public Member update(String nickname, String picture) {
+        this.nickname = nickname;
+        this.picture = picture;
+        return this;
+    }
+
+    public String getRoleKey() {
+        return this.role.getKey();
     }
 }
