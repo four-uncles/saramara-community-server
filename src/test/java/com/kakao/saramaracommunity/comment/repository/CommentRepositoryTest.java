@@ -79,4 +79,28 @@ public class CommentRepositoryTest {
 
         System.out.println("result = " + result);
     }
+
+    @Test
+    public void saveWithMemberAndBoard() {
+        // given
+
+        // 4번 게시글에 4번 사용자가 댓글을 등록하기 위해 Board 객체 데이터 가져오기
+        // Board 객체를 만들 때 생성자로 만드는 것이 아니라 DB 검색으로 가져온다
+        Optional<Member> member = memberRepository.findById(4L);
+        Optional<Board> board = boardRepository.findById(4L);
+
+        Comment comment = Comment.builder()
+                .member(member.get())
+                .board(board.get())
+                .content("test!")
+                .build();
+        commentRepository.save(comment);
+
+        // when
+        Optional<Comment> result = commentRepository.findById(comment.getCommentId());
+        System.out.println(result);
+
+        // then
+        Assertions.assertThat(result.get().getCommentId()).isEqualTo(comment.getCommentId());
+    }
 }
