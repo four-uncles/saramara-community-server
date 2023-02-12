@@ -21,7 +21,7 @@ public class Member extends BaseTimeEntity {
     private Long memberId;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+//    @Column(nullable = false)
     private Type type;
     @Column(nullable = false, length = 100)
     private String email;
@@ -29,7 +29,7 @@ public class Member extends BaseTimeEntity {
     @Column(nullable = false, length = 50)
     private String nickname;
 
-    @Column(nullable = false)
+//    @Column(nullable = false)
     private String password;
 
     @Enumerated(EnumType.STRING)
@@ -50,7 +50,8 @@ public class Member extends BaseTimeEntity {
         this.picture = picture;
     }
 
-    public Member update(String nickname, String picture) {
+    public Member update(String email, String nickname, String picture) {
+        this.email = email;
         this.nickname = nickname;
         this.picture = picture;
         return this;
