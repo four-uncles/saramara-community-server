@@ -48,7 +48,7 @@ public class OAuthAttributes {
 
     private static OAuthAttributes ofGoogle(String userNameAttributeName, Map<String, Object> attributes) {
         return OAuthAttributes.builder()
-                .type(Type.SOCIAL)
+                .type(Type.GOOGLE)
                 .nickname((String) attributes.get("name"))
                 .email((String) attributes.get("email"))
                 .picture((String) attributes.get("picture"))
@@ -61,7 +61,7 @@ public class OAuthAttributes {
         Map<String, Object> response = (Map<String, Object>) attributes.get("response");
 
         return OAuthAttributes.builder()
-                .type(Type.SOCIAL)
+                .type(Type.NAVER)
                 .nickname((String) response.get("name"))
                 .email((String) response.get("email"))
                 .picture((String) response.get("profile_image"))
@@ -76,7 +76,7 @@ public class OAuthAttributes {
                 .nickname(nickname)
                 .email(email)
                 .picture(picture)
-                .role(Role.GUSET)
+                .role(Role.USER)
                 .build();
     }
 }

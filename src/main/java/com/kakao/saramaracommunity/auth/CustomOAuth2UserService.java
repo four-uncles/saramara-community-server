@@ -2,8 +2,6 @@ package com.kakao.saramaracommunity.auth;
 
 import com.kakao.saramaracommunity.auth.dto.OAuthAttributes;
 import com.kakao.saramaracommunity.member.entity.Member;
-import com.kakao.saramaracommunity.member.entity.Role;
-import com.kakao.saramaracommunity.member.entity.Type;
 import com.kakao.saramaracommunity.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -58,7 +56,6 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         Member member = memberRepository.findByEmail(attributes.getEmail())
                 .map(entity -> entity.update(attributes.getEmail(), attributes.getNickname(), attributes.getPicture()))
                 .orElse(attributes.toEntity());
-        System.out.println(member);
         return memberRepository.save(member);
     }
 }
