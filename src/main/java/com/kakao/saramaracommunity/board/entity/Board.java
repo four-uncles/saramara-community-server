@@ -12,10 +12,8 @@ import org.hibernate.annotations.Where;
 import java.time.LocalDateTime;
 
 
-@AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@DynamicInsert
 @Where(clause = "deleted_at is NULL")
 @SQLDelete(sql = "update board set deleted_at = CURRENT_TIMESTAMP where board_id = ?")
 @ToString(exclude = {"member", "category"})
@@ -49,6 +47,13 @@ public class Board extends BaseTimeEntity {
         this.title = title;
         this.content = content;
         this.likes = likes;
+        this.cnt = cnt;
         this.deadLine = deadLine;
+    }
+
+    @PrePersist
+    public void prePersist() {
+        this.likes = this.likes == null ? 0 : this.likes;
+        this.cnt = this.cnt == null ? 0 : this.cnt;
     }
 }

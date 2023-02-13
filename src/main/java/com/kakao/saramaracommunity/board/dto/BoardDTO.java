@@ -20,4 +20,5 @@ public class BoardDTO {
     private String content;
     private LocalDateTime regDate;
     private LocalDateTime modDate;
+    private Long commentCount;
 }
