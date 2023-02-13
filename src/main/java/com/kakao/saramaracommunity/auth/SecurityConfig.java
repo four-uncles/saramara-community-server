@@ -3,8 +3,6 @@ package com.kakao.saramaracommunity.auth;
 import com.kakao.saramaracommunity.member.entity.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
-import org.springframework.security.config.annotation.SecurityBuilder;
-import org.springframework.security.config.annotation.web.WebSecurityConfigurer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
@@ -26,7 +24,7 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @RequiredArgsConstructor
 @EnableWebSecurity
-public class SecurityConfig implements WebSecurityConfigurer {
+public class SecurityConfig {
     private final CustomOAuth2UserService customOAuth2UserService;
 
     @Bean
@@ -47,15 +45,5 @@ public class SecurityConfig implements WebSecurityConfigurer {
                         .userInfoEndpoint()
                             .userService(customOAuth2UserService);
         return http.build();
-    }
-
-    @Override
-    public void init(SecurityBuilder builder) throws Exception {
-
-    }
-
-    @Override
-    public void configure(SecurityBuilder builder) throws Exception {
-
     }
 }
