@@ -40,6 +40,10 @@ public class OAuthAttributes {
     public static OAuthAttributes of(String registrationId,
                                      String userNameAttributeName,
                                      Map<String, Object> attributes) {
+        System.out.println("registrationId: " + registrationId);
+        System.out.println("userNameAttributeName: " + userNameAttributeName);
+        System.out.println("attributes: " + attributes);
+
         if ("naver".equals(registrationId)) {
             return ofNaver("id", attributes);
         }
