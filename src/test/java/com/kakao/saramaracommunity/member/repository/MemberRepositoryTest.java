@@ -31,8 +31,8 @@ public class MemberRepositoryTest {
                 .email("lango@kakao.com")
                 .nickname("lango")
                 .password("kakao")
-                .role(Role.BASIC)
-                .profileImage("imagePath")
+                .role(Role.USER)
+                .picture("imagePath")
                 .build());
 
         // when
@@ -53,7 +53,7 @@ public class MemberRepositoryTest {
                 .email("del1@kakao.com")
                 .nickname("del1")
                 .password("kakao")
-                .role(Role.BASIC)
+                .role(Role.USER)
                 .build());
 
         Member member2 = memberRepository.save(Member.builder()
@@ -61,7 +61,7 @@ public class MemberRepositoryTest {
                 .email("del2@kakao.com")
                 .nickname("del2")
                 .password("kakao")
-                .role(Role.BASIC)
+                .role(Role.USER)
                 .build());
 
         Long member1Id = member1.getMemberId();
@@ -87,7 +87,7 @@ public class MemberRepositoryTest {
                 .email("lango@kakao.com")
                 .nickname("lango")
                 .password("kakao")
-                .role(Role.BASIC)
+                .role(Role.USER)
                 .build());
         memberRepository.save(member);
 
@@ -109,7 +109,7 @@ public class MemberRepositoryTest {
                 .email("lango@kakao.com")
                 .nickname("lango")
                 .password("kakao")
-                .role(Role.BASIC)
+                .role(Role.USER)
                 .build());
         memberRepository.save(member);
 
@@ -131,7 +131,7 @@ public class MemberRepositoryTest {
                 .email("lango@kakao.com")
                 .nickname("lango")
                 .password("kakao")
-                .role(Role.BASIC)
+                .role(Role.USER)
                 .build());
         memberRepository.save(member);
 
@@ -153,7 +153,7 @@ public class MemberRepositoryTest {
                 .email("lango@kakao.com")
                 .nickname("lango")
                 .password("kakao")
-                .role(Role.BASIC)
+                .role(Role.USER)
                 .build());
         memberRepository.save(member);
 
