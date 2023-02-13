@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<String> login(Authentication authentication) {
+        System.out.println("authentication: " + authentication);
         return ResponseEntity.ok("You are logged in as " + authentication.getName());
     }
 }
