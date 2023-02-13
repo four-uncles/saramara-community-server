@@ -31,7 +31,6 @@ public class CommentRepositoryTest {
     @Test
     public void insertOne() {
         // given
-
         commentRepository.save(Comment.builder()
                         .content("Test Text")
                         .pick(0L)
@@ -79,7 +78,6 @@ public class CommentRepositoryTest {
 
         System.out.println("result = " + result);
     }
-
     @Test
     public void saveWithMemberAndBoard() {
         // given
