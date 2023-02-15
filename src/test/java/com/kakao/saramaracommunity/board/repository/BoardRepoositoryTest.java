@@ -2,11 +2,14 @@ package com.kakao.saramaracommunity.board.repository;
 
 import com.kakao.saramaracommunity.board.entity.Board;
 import com.kakao.saramaracommunity.board.entity.CategoryBoard;
+import com.kakao.saramaracommunity.member.entity.Member;
+import com.kakao.saramaracommunity.member.repository.MemberRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,6 +19,8 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 public class BoardRepoositoryTest {
     @Autowired
     private BoardRepository boardRepository;
+    @Autowired
+    MemberRepository memberRepository;
 
     @AfterEach
     public void clean() { boardRepository.deleteAll(); }
@@ -23,7 +28,9 @@ public class BoardRepoositoryTest {
     @Test
     public void save(){
         //given
+        Member memberId = memberRepository.getReferenceById(1L);
         boardRepository.save(Board.builder()
+                        .member(memberId)
                         .category(CategoryBoard.NORMAL)
                         .title("게시판 등록 테스트")
                         .content("게시판 등록 테스트")
@@ -119,5 +126,16 @@ public class BoardRepoositoryTest {
         assertThat(result.getId()).isEqualTo(board.getId());
         assertThat(result.getTitle()).isEqualTo(board.getTitle());
         assertThat(result.getContent()).isEqualTo(board.getContent());
+    }
+
+    //Board 데이터를 가져올 때 Writer의 데이터도 가져오기
+    @Test
+    public void joinWithMember(){
+        Object result = boardRepository.getBoardWithMember(1L);
+        System.out.println(result);
+        Object[] ar = (Object[]) result;
+        System.out.println(Arrays.toString(ar));
+        Board board = (Board) ar[0];
+        Member member = (Member) ar[1];
     }
 }
