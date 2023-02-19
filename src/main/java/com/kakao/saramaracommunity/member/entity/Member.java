@@ -21,15 +21,14 @@ public class Member extends BaseTimeEntity {
     private Long memberId;
 
     @Enumerated(EnumType.STRING)
-//    @Column(nullable = false)
     private Type type;
+
     @Column(nullable = false, length = 100)
     private String email;
 
     @Column(nullable = false, length = 50)
     private String nickname;
 
-//    @Column(nullable = false)
     private String password;
 
     @Enumerated(EnumType.STRING)
@@ -59,5 +58,12 @@ public class Member extends BaseTimeEntity {
 
     public String getRoleKey() {
         return this.role.getKey();
+    }
+
+    public void changePassword(String password) {
+        this.password = password;
+    }
+    public void changeEmail(String email) {
+        this.email = email;
     }
 }
