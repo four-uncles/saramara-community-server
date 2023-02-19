@@ -40,8 +40,9 @@ public class Member extends BaseTimeEntity {
     private String token;
 
     @Builder
-    public Member(Type type, String email, String nickname, String password, Role role, String picture) {
+    public Member(Type type, Long memberId, String email, String nickname, String password, Role role, String picture) {
         this.type = type;
+        this.memberId = memberId;
         this.email = email;
         this.nickname = nickname;
         this.password = password;
