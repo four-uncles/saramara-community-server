@@ -1,4 +1,4 @@
-package com.kakao.saramaracommunity.exception;
+package com.kakao.saramaracommunity.member.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

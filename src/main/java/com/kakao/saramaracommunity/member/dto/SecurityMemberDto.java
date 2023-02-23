@@ -28,7 +28,6 @@ public class SecurityMemberDto {
 	@NotNull
 	private Long memberId;
 
-	//private Long memberId;
 	@NotNull
 	@Size(max = 50)
 	private String email;

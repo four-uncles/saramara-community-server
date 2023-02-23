@@ -17,13 +17,6 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/auth")
 public class AuthControllerTest {
 
-    /*private final AuthService authService;
-
-    @PostMapping("/refresh")
-    public ResponseEntity refreshToken(HttpServletRequest request, HttpServletResponse response, @RequestBody String accessToken) {
-        return ResponseEntity.ok().body(authService.refreshToken(request, response, accessToken));
-    }*/
-
     @GetMapping(value = "/token")
     public ResponseEntity token(@RequestParam String accessToken,
                                 @RequestParam String refreshToken) {

@@ -38,7 +38,6 @@ public class UserController {
         response.sendRedirect("/api/user");
     }
 
-    // /signup 에 대한 POST 요청시 UserDto 를 매개변수로 받아서 UserService 의 signup() 메서드 호출하는 메서드
     @PostMapping("/signup")
     public ResponseEntity<SecurityMemberDto> signup(
         @Valid @RequestBody SecurityMemberDto securityMemberDto
@@ -46,8 +45,6 @@ public class UserController {
         return ResponseEntity.ok(userService.signup(securityMemberDto));
     }
 
-    // /user 로의 GET 요청에 대해서 @PreAuthorize 로 USER, ADMIN 두 가지 권한을 모두 허용
-    // 사용자 자신의 정보를 확인 하는 메서드
     @GetMapping("/user")
     @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public ResponseEntity<SecurityMemberDto> getMyUserInfo(HttpServletRequest request) {
@@ -55,8 +52,6 @@ public class UserController {
 
     }
 
-    // /user/사용자 이름 에 대한 GET 요청에 대해서는 ADMIN 관리자만 허용
-    // 모든 사용자 이름으로 사용자의 정보를 조회할 수 있는 메서드
     @GetMapping("/user/{nickname}")
     @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<SecurityMemberDto> getUserInfo(@PathVariable String nickname) {
@@ -68,6 +63,5 @@ public class UserController {
     public ResponseEntity<String> index(Authentication authentication) {
         System.out.println("authentication: " + authentication);
         return ResponseEntity.ok().body(String.valueOf(authentication));
-        //        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }

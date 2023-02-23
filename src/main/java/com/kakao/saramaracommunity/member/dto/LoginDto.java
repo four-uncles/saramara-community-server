@@ -15,7 +15,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class LoginDto {
-   // Validation 어노테이션
+
    @NotNull
    @Size(min = 3, max = 50)
    private String email;

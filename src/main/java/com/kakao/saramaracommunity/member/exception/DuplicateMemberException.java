@@ -1,4 +1,4 @@
-package com.kakao.saramaracommunity.exception;
+package com.kakao.saramaracommunity.member.exception;
 
 import lombok.Builder;
 import lombok.Getter;
