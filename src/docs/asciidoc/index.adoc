@@ -1,0 +1,16 @@
+= Saramara REST Docs API 문서
+
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs // 문서에 표기되는 코드들의 하이라이팅을 highlightjs를 사용
+:toc: left // toc (Table Of Contents)를 문서의 좌측에 두기
+:toclevels: 2
+:sectlinks:
+
+[[Member-API]]
+== Member API
+
+[[Member-단일-조회]]
+
+=== Member 회원가입
+include::{snippets}/member/register/http-response.adoc[]

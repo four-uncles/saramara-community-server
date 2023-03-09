@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.0.2'
 	id 'io.spring.dependency-management' version '1.1.0'
+	id "org.asciidoctor.jvm.convert" version "3.3.2" // (1)
 }
 
 group = 'com.kakao'
@@ -12,6 +13,7 @@ configurations {
 	compileOnly {
 		extendsFrom annotationProcessor
 	}
+	asciidoctorExt // (2)
 }
 
 repositories {
@@ -30,8 +32,44 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
+	// spring rest docs
+	asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor' // (3)
+	testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc' // (4)
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+ext { // (5)
+	snippetsDir = file('build/generated-snippets')
+//	outputDir = file('build/docs/asciidoc')
+}
+
+test { // (6)
+	outputs.dir snippetsDir
+}
+
+asciidoctor { // (7)
+	inputs.dir snippetsDir // (8)
+	configurations 'asciidoctorExt' // (9)
+	dependsOn test // (10)
+	baseDirFollowsSourceDir() // (11)
+}
+
+task copyDocument(type: Copy) { // (12)
+	dependsOn asciidoctor
+	from file("build/docs/asciidoc/")
+	into file("src/main/resources/static/docs")
+}
+
+build { // (13)
+	dependsOn copyDocument
+}
+
+bootJar { // (14)
+	dependsOn copyDocument
+	from ("${asciidoctor.outputDir}") {
+		into 'src/main/resources/static/docs'
+	}
 }
