@@ -72,6 +72,12 @@ public class Member extends BaseTimeEntity {
       this.picture = picture;
    }
 
+    /**
+     * 이하 주석 코드는 OAuth2 연동시 개발한 코드입니다.
+     * 현범님 Spring Security + JWT 코드 병합이 우선이라 생각되어 제가 작성한 Member의 메소드들을 주석으로 변경했습니다.
+     * OAuth2 코드를 현범님 작성 코드 위주로 고쳐가야 할 것 같아 제 코드는 임시로 주석 처리하는 것이 맞다고 판단했습니다.
+     *
+     */
 //     @Builder
 //     public Member(Type type, Long memberId, String email, String nickname, String password, Role role, String picture) {
 //         this.type = type;
@@ -83,16 +89,16 @@ public class Member extends BaseTimeEntity {
 //         this.picture = picture;
 //     }
 
-    public Member update(String email, String nickname, String picture) {
-        this.email = email;
-        this.nickname = nickname;
-        this.picture = picture;
-        return this;
-    }
+//    public Member update(String email, String nickname, String picture) {
+//        this.email = email;
+//        this.nickname = nickname;
+//        this.picture = picture;
+//        return this;
+//    }
 
-    public String getRoleKey() {
-        return this.role.getKey();
-    }
+//    public String getRoleKey() {
+//        return this.role.getKey();
+//    }
   
     public void changePassword(String password) {
         this.password = password;
