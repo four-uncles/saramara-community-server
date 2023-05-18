@@ -32,7 +32,6 @@ import lombok.ToString;
 @SQLDelete(sql = "update member set deleted_at = CURRENT_TIMESTAMP where member_id = ?")
 @Entity
 public class Member extends BaseTimeEntity {
-
    @Id
    @GeneratedValue(strategy = GenerationType.IDENTITY)
    private Long memberId;
@@ -49,6 +48,9 @@ public class Member extends BaseTimeEntity {
    @Column(nullable = false)
    private Type type;
 
+//     @Enumerated(EnumType.STRING)
+//     @Column(nullable = false)
+//     private Role role;
    @ElementCollection(fetch = FetchType.LAZY)
    @Builder.Default
    @Enumerated(EnumType.STRING)
@@ -57,6 +59,7 @@ public class Member extends BaseTimeEntity {
 
    private String picture;
 
+//    private String token;
    private String refreshToken;
 
    @Builder
@@ -69,4 +72,33 @@ public class Member extends BaseTimeEntity {
       this.picture = picture;
    }
 
+//     @Builder
+//     public Member(Type type, Long memberId, String email, String nickname, String password, Role role, String picture) {
+//         this.type = type;
+//         this.memberId = memberId;
+//         this.email = email;
+//         this.nickname = nickname;
+//         this.password = password;
+//         this.role = role;
+//         this.picture = picture;
+//     }
+
+    public Member update(String email, String nickname, String picture) {
+        this.email = email;
+        this.nickname = nickname;
+        this.picture = picture;
+        return this;
+    }
+
+    public String getRoleKey() {
+        return this.role.getKey();
+    }
+  
+    public void changePassword(String password) {
+        this.password = password;
+    }
+  
+    public void changeEmail(String email) {
+        this.email = email;
+    }
 }
