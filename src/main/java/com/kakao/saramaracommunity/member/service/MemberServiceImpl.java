@@ -1,7 +1,7 @@
 package com.kakao.saramaracommunity.member.service;
 
 import com.kakao.saramaracommunity.member.dto.MemberSaveRequestDto;
-import com.kakao.saramaracommunity.member.repository.MemberRepository;
+import com.kakao.saramaracommunity.member.persistence.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
