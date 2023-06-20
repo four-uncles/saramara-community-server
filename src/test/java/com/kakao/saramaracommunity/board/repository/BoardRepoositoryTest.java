@@ -3,7 +3,7 @@ package com.kakao.saramaracommunity.board.repository;
 import com.kakao.saramaracommunity.board.entity.Board;
 import com.kakao.saramaracommunity.board.entity.CategoryBoard;
 import com.kakao.saramaracommunity.member.entity.Member;
-import com.kakao.saramaracommunity.member.repository.MemberRepository;
+import com.kakao.saramaracommunity.member.persistence.MemberRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

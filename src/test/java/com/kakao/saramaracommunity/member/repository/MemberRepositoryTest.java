@@ -3,6 +3,7 @@ package com.kakao.saramaracommunity.member.repository;
 import com.kakao.saramaracommunity.member.entity.Member;
 import com.kakao.saramaracommunity.member.entity.Role;
 import com.kakao.saramaracommunity.member.entity.Type;
+import com.kakao.saramaracommunity.member.persistence.MemberRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +32,7 @@ public class MemberRepositoryTest {
                 .email("lango@kakao.com")
                 .nickname("lango")
                 .password("kakao")
-                .role(Role.USER)
+//                .role(Role.USER)
                 .picture("imagePath")
                 .build());
 
@@ -53,7 +54,7 @@ public class MemberRepositoryTest {
                 .email("del1@kakao.com")
                 .nickname("del1")
                 .password("kakao")
-                .role(Role.USER)
+//                .role(Role.USER)
                 .build());
 
         Member member2 = memberRepository.save(Member.builder()
@@ -61,7 +62,7 @@ public class MemberRepositoryTest {
                 .email("del2@kakao.com")
                 .nickname("del2")
                 .password("kakao")
-                .role(Role.USER)
+//                .role(Role.USER)
                 .build());
 
         Long member1Id = member1.getMemberId();
@@ -87,7 +88,7 @@ public class MemberRepositoryTest {
                 .email("lango@kakao.com")
                 .nickname("lango")
                 .password("kakao")
-                .role(Role.USER)
+//                .role(Role.USER)
                 .build());
         memberRepository.save(member);
 
@@ -109,7 +110,7 @@ public class MemberRepositoryTest {
                 .email("lango@kakao.com")
                 .nickname("lango")
                 .password("kakao")
-                .role(Role.USER)
+//                .role(Role.USER)
                 .build());
         memberRepository.save(member);
 
@@ -131,7 +132,7 @@ public class MemberRepositoryTest {
                 .email("lango@kakao.com")
                 .nickname("lango")
                 .password("kakao")
-                .role(Role.USER)
+//                .role(Role.USER)
                 .build());
         memberRepository.save(member);
 
@@ -153,7 +154,7 @@ public class MemberRepositoryTest {
                 .email("lango@kakao.com")
                 .nickname("lango")
                 .password("kakao")
-                .role(Role.USER)
+//                .role(Role.USER)
                 .build());
         memberRepository.save(member);
 

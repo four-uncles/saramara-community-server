@@ -5,7 +5,7 @@ import com.kakao.saramaracommunity.board.repository.BoardRepository;
 import com.kakao.saramaracommunity.comment.entity.Comment;
 import com.kakao.saramaracommunity.comment.repository.CommentRepository;
 import com.kakao.saramaracommunity.member.entity.Member;
-import com.kakao.saramaracommunity.member.repository.MemberRepository;
+import com.kakao.saramaracommunity.member.persistence.MemberRepository;
 import lombok.extern.log4j.Log4j2;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;

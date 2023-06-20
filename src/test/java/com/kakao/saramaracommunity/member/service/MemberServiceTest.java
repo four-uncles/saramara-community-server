@@ -4,7 +4,7 @@ import com.kakao.saramaracommunity.member.dto.MemberSaveRequestDto;
 import com.kakao.saramaracommunity.member.entity.Member;
 import com.kakao.saramaracommunity.member.entity.Role;
 import com.kakao.saramaracommunity.member.entity.Type;
-import com.kakao.saramaracommunity.member.repository.MemberRepository;
+import com.kakao.saramaracommunity.member.persistence.MemberRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
