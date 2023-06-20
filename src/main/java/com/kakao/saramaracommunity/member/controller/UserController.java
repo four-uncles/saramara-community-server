@@ -26,12 +26,8 @@ import lombok.extern.log4j.Log4j2;
 @RestController
 @RequestMapping("/api")
 public class UserController {
-    private final UserService userService;
 
-    @GetMapping("/hello")
-    public ResponseEntity<String> hello() {
-        return ResponseEntity.ok("hello");
-    }
+    private final UserService userService;
 
     @PostMapping("/test-redirect")
     public void testRedirect(HttpServletResponse response) throws IOException {
@@ -39,9 +35,7 @@ public class UserController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<SecurityMemberDto> signup(
-        @Valid @RequestBody SecurityMemberDto securityMemberDto
-    ) {
+    public ResponseEntity<SecurityMemberDto> signup(@Valid @RequestBody SecurityMemberDto securityMemberDto) {
         return ResponseEntity.ok(userService.signup(securityMemberDto));
     }
 
@@ -61,7 +55,7 @@ public class UserController {
 
     @GetMapping("/")
     public ResponseEntity<String> index(Authentication authentication) {
-        System.out.println("authentication: " + authentication);
+        log.info("authentication: " + authentication);
         return ResponseEntity.ok().body(String.valueOf(authentication));
     }
 }
