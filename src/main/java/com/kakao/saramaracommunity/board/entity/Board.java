@@ -19,41 +19,43 @@ import java.time.LocalDateTime;
 @ToString(exclude = {"member", "category"})
 @Entity
 public class Board extends BaseTimeEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "boardId")
-    private Long id;
+    private Long boardId;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="memberId")
     private Member member;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private CategoryBoard category;
+
     @Column(length = 100, nullable = false)
     private String title;
+
     @Lob
     private String content;
-    @ColumnDefault("0")
-    private Long likes;
-    @ColumnDefault("0")
+
+    @Column(columnDefinition = "integer default 0", nullable = false)	// 조회수의 기본 값을 0으로 지정, null 불가 처리
     private Long cnt;
+
     private LocalDateTime deadLine;
 
     @Builder
-    public Board(Long id, Member member, CategoryBoard category, String title, String content, Long likes, LocalDateTime deadLine) {
-        this.id = id;
+    public Board(Long boardId, Member member, CategoryBoard category, String title, String content, Long likes, Long cnt, LocalDateTime deadLine) {
+        this.boardId = boardId;
         this.member = member;
         this.category = category;
         this.title = title;
         this.content = content;
-        this.likes = likes;
         this.cnt = cnt;
         this.deadLine = deadLine;
     }
 
     @PrePersist
     public void prePersist() {
-        this.likes = this.likes == null ? 0 : this.likes;
         this.cnt = this.cnt == null ? 0 : this.cnt;
     }
 }
