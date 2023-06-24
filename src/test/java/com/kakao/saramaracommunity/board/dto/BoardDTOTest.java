@@ -1,7 +1,7 @@
 // package com.kakao.saramaracommunity.board.dto;
 //
 // import com.kakao.saramaracommunity.board.entity.Board;
-// import com.kakao.saramaracommunity.board.entity.CategoryBoard;
+// import com.kakao.saramaracommunity.board.entity.Category;
 // import com.kakao.saramaracommunity.member.entity.Member;
 // import org.junit.jupiter.api.Test;
 // import org.springframework.boot.test.context.SpringBootTest;
@@ -17,7 +17,7 @@
 //         Board board = Board.builder()
 //                 .title("DTO 검증")
 //                 .content("DTO 검증 테스트 중")
-//                 .category(CategoryBoard.NORMAL)
+//                 .category(Category.NORMAL)
 //                 .member(member)
 //                 .build();
 //         BoardDTO boardDTO = BoardDTO.builder()

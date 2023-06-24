@@ -1,7 +1,7 @@
 // package com.kakao.saramaracommunity.board.repository;
 //
 // import com.kakao.saramaracommunity.board.entity.Board;
-// import com.kakao.saramaracommunity.board.entity.CategoryBoard;
+// import com.kakao.saramaracommunity.board.entity.Category;
 // import com.kakao.saramaracommunity.member.entity.Member;
 // import com.kakao.saramaracommunity.member.repository.MemberRepository;
 // import org.junit.jupiter.api.AfterEach;
@@ -31,7 +31,7 @@
 //         Member memberId = memberRepository.getReferenceById(1L);
 //         boardRepository.save(Board.builder()
 //                         .member(memberId)
-//                         .category(CategoryBoard.NORMAL)
+//                         .category(Category.NORMAL)
 //                         .title("게시판 등록 테스트")
 //                         .content("게시판 등록 테스트")
 //                         .build());
@@ -48,7 +48,7 @@
 //     public void delete(){
 //         //given
 //         Board board = boardRepository.save(Board.builder()
-//                         .category(CategoryBoard.NORMAL)
+//                         .category(Category.NORMAL)
 //                         .title("삭제된 게시글 입니다.")
 //                         .content("삭제된 게시글의 내용입니다.")
 //                         .build());
@@ -69,7 +69,7 @@
 //     public void findAll() {
 //         //given
 //         Board board = boardRepository.save(Board.builder()
-//                     .category(CategoryBoard.NORMAL)
+//                     .category(Category.NORMAL)
 //                     .title("게시판 등록 테스트")
 //                     .content("게시판 등록 테스트")
 //                     .build());
@@ -88,7 +88,7 @@
 //     public void findById() {
 //         //given
 //         Board board = boardRepository.save(Board.builder()
-//                 .category(CategoryBoard.NORMAL)
+//                 .category(Category.NORMAL)
 //                 .title("게시판 등록 테스트")
 //                 .content("게시판 등록 테스트")
 //                 .build());
@@ -107,13 +107,13 @@
 //     public void update() {
 //         //given
 //         Board board = boardRepository.save(Board.builder()
-//                 .category(CategoryBoard.NORMAL)
+//                 .category(Category.NORMAL)
 //                 .title("게시판 등록 테스트")
 //                 .content("게시판 등록 테스트")
 //                 .build());
 //
 //         Board updateBoard = Board.builder()
-//                 .category(CategoryBoard.NORMAL)
+//                 .category(Category.NORMAL)
 //                 .title("게시판 수정 테스트")
 //                 .content("게시판 수정 테스트")
 //                 .build();

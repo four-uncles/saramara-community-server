@@ -1,5 +1,5 @@
 package com.kakao.saramaracommunity.board.entity;
 
-public enum CategoryBoard {
+public enum Category {
     NORMAL, QUESTION
 }
