@@ -6,8 +6,6 @@ public interface BoardService {
     //게시글 등록 요청 Method
     Long boardRegister(BoardDTO boardDTO);
 
-    // //게시글 목록 보기
-    // BoardPageResponseDTO<BoardDTO, Object[]> getBoardList(BoardPageRequestDTO boardPageRequestDTO);
     //
     // /* DTO -> Entity */
     // default Board dtoToEntity (BoardDTO boardDTO) {
