@@ -63,6 +63,8 @@ public class Board extends BaseTimeEntity {
 
     @PrePersist
     public void prePersist() {
+
         this.boardCnt = this.boardCnt == null ? 0 : this.boardCnt;
+        this.likeCnt = this.likeCnt == null ? 0 : this.likeCnt;
     }
 }
