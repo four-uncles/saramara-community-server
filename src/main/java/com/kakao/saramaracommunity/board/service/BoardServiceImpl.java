@@ -33,7 +33,7 @@ public class BoardServiceImpl implements BoardService {
         // Board Entity 생성
         Board board = Board.builder()
             .member(member)
-            .category(requestDto.getCategory())
+            .categoryBoard(requestDto.getCategoryBoard())
             .title(requestDto.getTitle())
             .content(requestDto.getContent())
             .deadLine(deadLine)

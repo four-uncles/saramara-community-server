@@ -4,8 +4,7 @@ import com.kakao.saramaracommunity.common.entity.BaseTimeEntity;
 import com.kakao.saramaracommunity.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.DynamicInsert;
+
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
@@ -16,7 +15,7 @@ import java.time.LocalDateTime;
 @Getter
 @Where(clause = "deleted_at is NULL")
 @SQLDelete(sql = "update board set deleted_at = CURRENT_TIMESTAMP where board_id = ?")
-@ToString(exclude = {"member", "category"})
+@ToString(exclude = {"member", "categoryBoard"})
 @Entity
 public class Board extends BaseTimeEntity {
 
@@ -30,7 +29,7 @@ public class Board extends BaseTimeEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Category category; // 카테고리 (NORMAL, QUESTION ... DEFAULT: NORMAL)
+    private CategoryBoard categoryBoard; // 카테고리 (NORMAL, QUESTION ... DEFAULT: NORMAL)
 
     @Column(length = 100, nullable = false)
     private String title; // 게시글 제목
@@ -48,12 +47,12 @@ public class Board extends BaseTimeEntity {
 
     @Builder
     public Board(
-        Long boardId, Member member, Category category, String title,
+        Long boardId, Member member, CategoryBoard categoryBoard, String title,
         String content, Long boardCnt, Long likeCnt, LocalDateTime deadLine) {
 
         this.boardId = boardId;
         this.member = member;
-        this.category = category;
+        this.categoryBoard = categoryBoard;
         this.title = title;
         this.content = content;
         this.boardCnt = boardCnt;

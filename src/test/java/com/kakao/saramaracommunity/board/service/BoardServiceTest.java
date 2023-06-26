@@ -1,7 +1,7 @@
 // package com.kakao.saramaracommunity.board.service;
 //
 // import com.kakao.saramaracommunity.board.dto.BoardDTO;
-// import com.kakao.saramaracommunity.board.entity.Category;
+// import com.kakao.saramaracommunity.board.entity.CategoryBoard;
 //
 // import jakarta.transaction.Transactional;
 // import org.junit.jupiter.api.Test;
@@ -19,7 +19,7 @@
 //     public void 게시물_등록() {
 //         //given
 //         BoardDTO boardDTO = BoardDTO.builder()
-//                 .category(Category.NORMAL)
+//                 .categoryBoard(CategoryBoard.NORMAL)
 //                 .title("게시물 제목을 등록합니다.")
 //                 .content("게시물 내용을 등록합니다.")
 //                 .writerEmail("lango@kakao.com")
