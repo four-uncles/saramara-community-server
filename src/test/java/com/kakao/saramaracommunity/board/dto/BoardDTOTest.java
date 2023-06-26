@@ -17,7 +17,7 @@
 //         Board board = Board.builder()
 //                 .title("DTO 검증")
 //                 .content("DTO 검증 테스트 중")
-//                 .category(CategoryBoard.NORMAL)
+//                 .categoryBoard(CategoryBoard.NORMAL)
 //                 .member(member)
 //                 .build();
 //         BoardDTO boardDTO = BoardDTO.builder()
@@ -25,7 +25,7 @@
 //                 .writerNickName(board.getMember().getNickname())
 //                 .title(board.getTitle())
 //                 .content(board.getContent())
-//                 .category(board.getCategory())
+//                 .categoryBoard(board.getCategoryBoard())
 //                 .build();
 //         System.out.println(boardDTO);
 //     }

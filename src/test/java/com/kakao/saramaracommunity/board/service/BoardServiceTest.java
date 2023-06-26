@@ -19,7 +19,7 @@
 //     public void 게시물_등록() {
 //         //given
 //         BoardDTO boardDTO = BoardDTO.builder()
-//                 .category(CategoryBoard.NORMAL)
+//                 .categoryBoard(CategoryBoard.NORMAL)
 //                 .title("게시물 제목을 등록합니다.")
 //                 .content("게시물 내용을 등록합니다.")
 //                 .writerEmail("lango@kakao.com")
