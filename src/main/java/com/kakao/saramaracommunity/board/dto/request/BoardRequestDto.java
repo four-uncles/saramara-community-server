@@ -2,6 +2,7 @@ package com.kakao.saramaracommunity.board.dto.request;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.kakao.saramaracommunity.board.entity.Category;
 
 import jakarta.validation.constraints.NotBlank;
@@ -31,6 +32,7 @@ public class BoardRequestDto {
         @NotNull(message = "사용자의 고유번호가 존재하지 않습니다.")
         private Long memberId;
 
+        @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
         private LocalDateTime deadLine;
     }
 }
