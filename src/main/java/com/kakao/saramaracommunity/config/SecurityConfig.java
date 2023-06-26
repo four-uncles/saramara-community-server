@@ -69,10 +69,14 @@ public class SecurityConfig {
                 .authenticationEntryPoint(jwtAuthenticationEntryPoint)
                 .accessDeniedHandler(jwtAccessDeniedHandler);
 
+        /**
+         /api/v1/board 로 시작하는 API path의 경우 테스트 진행을 위해 Member의 개발이 완료되고 이후 삭제하여 연관 테스트 진행 예정
+         /api/v1/comment 로 시작하는 API path의 경우 테스트 진행을 위해 Member의 개발이 완료되고 이후 삭제하여 연관 테스트 진행 예정
+         */
         httpSecurity
                 .authorizeHttpRequests()
                 .requestMatchers( "/favicon.ico","/error", "/api/authenticate","/api/signup", "/api/login").permitAll()
-                .requestMatchers("/auth/**", "/oauth2/**").permitAll()
+                .requestMatchers("/auth/**", "/oauth2/**", "/api/v1/board/**", "/api/v1/comment/**").permitAll()
                 .anyRequest().authenticated();
 
         httpSecurity.addFilterBefore(corsFilter, UsernamePasswordAuthenticationFilter.class);
