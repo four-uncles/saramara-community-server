@@ -26,7 +26,7 @@ public class CommentDTO {
     @NotBlank(message = "내용을 입력해주세요.")
     private String content;
 
-    @NotBlank(message = "투표를 선택해주세요.")
+    @NotNull(message = "투표를 선택해주세요.")
     private Long pick;
 
     private LocalDateTime regDate;
