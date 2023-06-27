@@ -5,6 +5,8 @@ import com.kakao.saramaracommunity.comment.entity.Comment;
 import com.kakao.saramaracommunity.comment.repository.CommentRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -14,13 +16,14 @@ public class CommentServiceImpl implements CommentService{
 
     private final CommentRepository commentRepository;
 
+    private final ModelMapper modelMapper;
+
     @Override
-    public Long register(CommentDTO commentDTO) {
+    public Long createComment(CommentDTO commentDTO) {
+        Comment comment = modelMapper.map(commentDTO, Comment.class);
 
-        Comment comment = dtoToEntity(commentDTO);
+        Long cid = commentRepository.save(comment).getCommentId();
 
-        Long cno = commentRepository.save(comment).getCommentId();
-
-        return cno;
+        return cid;
     }
 }
