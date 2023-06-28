@@ -1,3 +1,4 @@
+/*
 package com.kakao.saramaracommunity.handler;
 
 import static org.springframework.http.HttpStatus.*;
@@ -40,4 +41,4 @@ public class MethodArgumentNotValidExceptionHandler {
         }
         return errorDTO;
     }
-}
+}*/

@@ -6,7 +6,7 @@ import com.kakao.saramaracommunity.board.dto.request.BoardRequestDto;
 import com.kakao.saramaracommunity.board.entity.Board;
 import com.kakao.saramaracommunity.board.repository.BoardRepository;
 import com.kakao.saramaracommunity.member.entity.Member;
-import com.kakao.saramaracommunity.member.persistence.MemberRepository;
+import com.kakao.saramaracommunity.member.repository.MemberRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;

@@ -1,3 +1,4 @@
+/*
 package com.kakao.saramaracommunity.member.exception;
 
 import lombok.Builder;
@@ -19,3 +20,4 @@ public class NotFoundMemberException extends RuntimeException {
         super(cause);
     }
 }
+*/

@@ -1,3 +1,4 @@
+/*
 package com.kakao.saramaracommunity.handler;
 
 import static org.springframework.http.HttpStatus.*;
@@ -41,3 +42,4 @@ public class RestResponseExceptionHandler extends ResponseEntityExceptionHandler
         return new ErrorDto(timestamp, FORBIDDEN.value(), ex.getMessage(), request.getRequestURI());
     }
 }
+*/

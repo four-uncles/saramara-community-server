@@ -6,13 +6,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.kakao.saramaracommunity.member.exception.DuplicateMemberException;
-import com.kakao.saramaracommunity.member.exception.NotFoundMemberException;
-import com.kakao.saramaracommunity.member.dto.SecurityMemberDto;
+import com.kakao.saramaracommunity.member.dto.SignUpDto;
 import com.kakao.saramaracommunity.member.entity.Member;
 import com.kakao.saramaracommunity.member.entity.Role;
 import com.kakao.saramaracommunity.member.entity.Type;
-import com.kakao.saramaracommunity.member.persistence.MemberRepository;
+import com.kakao.saramaracommunity.member.repository.MemberRepository;
 import com.kakao.saramaracommunity.util.SecurityUtil;
 
 import lombok.RequiredArgsConstructor;
@@ -27,37 +25,33 @@ public class UserService {
 
 
     @Transactional
-    public SecurityMemberDto signup(SecurityMemberDto securityMemberDto) {
+    public SignUpDto signup(SignUpDto signUpDto) {
 
-        if (memberRepository.getWithRolesEqualLocal(securityMemberDto.getEmail()).orElse(null) != null) {
-            log.warn("시발");
-            throw new DuplicateMemberException("젭잘 불탁할겡");
-        }
 
         Member user = Member.builder()
-            .email(securityMemberDto.getEmail())
-            .password(passwordEncoder.encode(securityMemberDto.getPassword()))
-            .nickname(securityMemberDto.getNickname())
+            .email(signUpDto.getEmail())
+            .password(passwordEncoder.encode(signUpDto.getPassword()))
+            .nickname(signUpDto.getNickname())
             .type(Type.LOCAL)
             .role(Collections.singleton(Role.USER))
-            .picture(securityMemberDto.getPicture())
+            .picture("")
             .build();
 
 
-        return SecurityMemberDto.from(memberRepository.save(user));
+        return SignUpDto.from(memberRepository.save(user));
     }
 
     @Transactional(readOnly = true)
-    public SecurityMemberDto getUserWithAuthorities(String email) {
-        return SecurityMemberDto.from(memberRepository.getWithRolesEqualLocal(email).orElse(null));
+    public SignUpDto getUserWithAuthorities(String email) {
+        return SignUpDto.from(memberRepository.getWithRolesEqualLocal(email).orElse(null));
     }
 
     @Transactional(readOnly = true)
-    public SecurityMemberDto getMyUserWithAuthorities() {
-        SecurityMemberDto member_not_found = SecurityMemberDto.from(
+    public SignUpDto getMyUserWithAuthorities() {
+        SignUpDto member_not_found = SignUpDto.from(
             SecurityUtil.getCurrentUsername()
                 .flatMap(memberRepository::getWithRoles)
-                .orElseThrow(() -> NotFoundMemberException.builder().message("Member not found").build())
+                .orElseThrow()
         );
         return member_not_found;
     }

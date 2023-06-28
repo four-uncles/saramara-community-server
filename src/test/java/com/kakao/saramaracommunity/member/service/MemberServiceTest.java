@@ -1,10 +1,9 @@
 package com.kakao.saramaracommunity.member.service;
 
-import com.kakao.saramaracommunity.member.dto.MemberSaveRequestDto;
 import com.kakao.saramaracommunity.member.entity.Member;
 import com.kakao.saramaracommunity.member.entity.Role;
 import com.kakao.saramaracommunity.member.entity.Type;
-import com.kakao.saramaracommunity.member.persistence.MemberRepository;
+import com.kakao.saramaracommunity.member.repository.MemberRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -25,7 +24,7 @@ public class MemberServiceTest {
     @Test
     public void 사용자_회원가입() throws Exception {
         // given
-        MemberSaveRequestDto memberRegisterDTO = MemberSaveRequestDto.builder()
+        SignUpResDto memberRegisterDTO = SignUpResDto.builder()
                 .type(Type.LOCAL)
                 .nickname("lango")
                 .email("lango@kakao.com")

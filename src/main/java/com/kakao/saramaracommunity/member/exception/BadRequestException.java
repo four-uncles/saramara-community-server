@@ -1,3 +1,4 @@
+/*
 package com.kakao.saramaracommunity.member.exception;
 
 import org.springframework.http.HttpStatus;
@@ -13,3 +14,4 @@ public class BadRequestException extends RuntimeException {
         super(message, cause);
     }
 }
+*/
