@@ -5,6 +5,7 @@ spring:
       local: local
       dev: dev
       prod: prod
+      test: test
 logging:
   level:
     org.hibernate.type.descriptor.sql: trace
