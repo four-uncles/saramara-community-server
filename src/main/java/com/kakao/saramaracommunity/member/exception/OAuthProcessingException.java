@@ -1,3 +1,4 @@
+/*
 package com.kakao.saramaracommunity.member.exception;
 
 public class OAuthProcessingException extends RuntimeException {
@@ -6,3 +7,4 @@ public class OAuthProcessingException extends RuntimeException {
         super(message);
     }
 }
+*/

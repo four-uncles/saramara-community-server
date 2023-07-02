@@ -9,11 +9,11 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
-import com.kakao.saramaracommunity.member.exception.OAuthProcessingException;
+//import com.kakao.saramaracommunity.member.exception.OAuthProcessingException;
 import com.kakao.saramaracommunity.member.entity.Member;
 import com.kakao.saramaracommunity.member.entity.Role;
 import com.kakao.saramaracommunity.member.entity.Type;
-import com.kakao.saramaracommunity.member.persistence.MemberRepository;
+import com.kakao.saramaracommunity.member.repository.MemberRepository;
 import com.kakao.saramaracommunity.security.oauth.userinfo.OAuth2UserInfo;
 import com.kakao.saramaracommunity.security.oauth.userinfo.OAuth2UserInfoFactory;
 
@@ -40,9 +40,9 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         Type authType = Type.valueOf(oAuth2UserRequest.getClientRegistration().getRegistrationId().toUpperCase());
         OAuth2UserInfo userInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(authType, oAuth2User.getAttributes());
 
-        if (userInfo.getEmail().isEmpty()) {
+        /*if (userInfo.getEmail().isEmpty()) {
             throw new OAuthProcessingException("Email not found from OAuth2 provider");
-        }
+        }*/
 
         Optional<Member> existMember = memberRepository.getWithRolesEqualOAuth(userInfo.getEmail(), authType);
         Member authMember;

@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.kakao.saramaracommunity.member.entity.Member;
-import com.kakao.saramaracommunity.member.persistence.MemberRepository;
+import com.kakao.saramaracommunity.member.repository.MemberRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -41,9 +41,7 @@ public class CustomUserDetailsService implements UserDetailsService {
       List<GrantedAuthority> authorities = authMember.getRole().stream().map(userRole ->
           new SimpleGrantedAuthority("ROLE_" + userRole.name())
       ).collect(Collectors.toList());
-
       return new User(authMember.getEmail(), authMember.getPassword(),  authorities);
-
    }
 
 }

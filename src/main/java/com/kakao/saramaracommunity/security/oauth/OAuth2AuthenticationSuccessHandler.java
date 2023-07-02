@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.kakao.saramaracommunity.common.dto.TokenDto;
-import com.kakao.saramaracommunity.member.exception.BadRequestException;
+//import com.kakao.saramaracommunity.member.exception.BadRequestException;
 import com.kakao.saramaracommunity.security.jwt.TokenProvider;
 import com.kakao.saramaracommunity.util.CookieUtil;
 
@@ -51,9 +51,9 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     Optional<String> redirectUri = CookieUtil.getCookie(request, REDIRECT_URI_PARAM_COOKIE_NAME)
                 .map(Cookie::getValue);
 
-        if (redirectUri.isPresent() && !isAuthorizedRedirectUri(redirectUri.get())) {
+        /*if (redirectUri.isPresent() && !isAuthorizedRedirectUri(redirectUri.get())) {
             throw new BadRequestException("redirect URIs are not matched");
-        }
+        }*/
 
         String targetUrl = redirectUri.orElse(getDefaultTargetUrl());
 

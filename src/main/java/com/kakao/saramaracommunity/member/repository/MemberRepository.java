@@ -1,4 +1,4 @@
-package com.kakao.saramaracommunity.member.persistence;
+package com.kakao.saramaracommunity.member.repository;
 
 import java.util.Optional;
 
@@ -10,6 +10,10 @@ import com.kakao.saramaracommunity.member.entity.Member;
 import com.kakao.saramaracommunity.member.entity.Type;
 
 public interface MemberRepository extends JpaRepository<Member, Long> {
+   // Email 중복 확인
+   long countByEmail(String email);
+   // NickName 중복 확인
+   long countByNickname(String nickname);
 
    // Local 에서 로그인 시 Member 테이블에 해당되는 email 과 Local 에서 가입한 회원이 맞는지 여부를 가릴 때도 사용
    @EntityGraph(attributePaths = "role") // 아래의 쿼리 메서드 실행시 role 테이블 을 지연로딩 하지 않고 같이 가져오도록 지정

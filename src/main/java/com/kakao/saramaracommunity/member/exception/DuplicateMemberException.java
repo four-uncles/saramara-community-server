@@ -1,3 +1,4 @@
+/*
 package com.kakao.saramaracommunity.member.exception;
 
 import lombok.Builder;
@@ -23,3 +24,4 @@ public class DuplicateMemberException extends RuntimeException {
         super(cause);
     }
 }
+*/
