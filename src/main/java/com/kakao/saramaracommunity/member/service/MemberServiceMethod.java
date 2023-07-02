@@ -61,11 +61,4 @@ public class MemberServiceMethod {
 			return HttpStatus.OK;
 		}
 	}
-
-	/*private final MessageSource messageSource;
-
-	public String resolveErrorMessage(String errorCode) {
-		Locale locale = LocaleContextHolder.getLocale();
-		return messageSource.getMessage(errorCode, null, errorCode, locale);
-	}*/
 }
