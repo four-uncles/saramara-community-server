@@ -31,8 +31,12 @@ public class MemberServiceImpl implements MemberSerivce {
 
     public MemberResDto signUp(SignUpDto signUpDto){
 
-        boolean duplicatedEmail = memberServiceMethod.emailDuplicated(signUpDto.getEmail());
-        boolean duplicatedNickName = memberServiceMethod.nickNameDuplicated(signUpDto.getNickname());
+        boolean duplicatedEmail = memberServiceMethod.emailDuplicated(
+            memberRepository.countByEmail(signUpDto.getEmail())
+        );
+        boolean duplicatedNickName = memberServiceMethod.nickNameDuplicated(
+            memberRepository.countByNickname(signUpDto.getNickname())
+        );
 
         if(duplicatedEmail){
            MemberResDto response = MemberResDto.builder()

@@ -18,12 +18,11 @@ import lombok.extern.log4j.Log4j2;
 @RequiredArgsConstructor
 @Service
 public class MemberServiceMethod {
-	private final MemberRepository memberRepository;
 
 	// 회원가입 - Email 중복확인, 로그인 - 잘못된 Email
-	public boolean emailDuplicated(String email){
+	public boolean emailDuplicated(long emailCount){
 		try{
-			if(memberRepository.countByEmail(email) == 1l){
+			if(emailCount == 1l){
 				return true;
 			} else {
 				return false;
@@ -35,10 +34,9 @@ public class MemberServiceMethod {
 	}
 
 	// NickName 중복 확인
-	public boolean nickNameDuplicated(String nickname){
-		log.error(memberRepository.countByNickname(nickname) );
+	public boolean nickNameDuplicated(long nicknameCount){
 		try{
-			if(memberRepository.countByNickname(nickname) == 1l){
+			if(nicknameCount == 1l){
 				return true;
 			} else {
 				return false;
