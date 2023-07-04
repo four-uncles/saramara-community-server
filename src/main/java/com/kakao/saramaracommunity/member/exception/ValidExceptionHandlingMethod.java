@@ -1,8 +1,6 @@
 package com.kakao.saramaracommunity.member.exception;
 
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 
 import com.kakao.saramaracommunity.member.dto.ErrorCode;
@@ -79,6 +77,30 @@ public class ValidExceptionHandlingMethod {
 		}
 		// 그외 알 수 없는 경우의 Exception 처리
 		 else {
+			errorMessage = ErrorCode.INTERNAL_SERVER_ERROR.getDescription();
+		}
+		MemberResDto response = MemberResDto.builder()
+			.success(false)
+			.data(errorMessage)
+			.status(errorCode)
+			.build();
+		return response;
+	}
+
+	// Nickname @Valid 유효성 검사 실패한 경우에 발생할 수 있는 Exception 을 다루는 메서드
+	public MemberResDto nicknameValidExceptionHandling(String fieldErrorCode){
+		errorCode = ErrorCode.INVALID_INPUT_NICKNAME;
+
+		// @NotNull, @NotBlank 에 대한 Exception
+		if (fieldErrorCode.equals("NotNull") || fieldErrorCode.equals("NotBlank")) {
+			errorMessage = ErrorCode.INVALID_INPUT_NICKNAME.getDescription();
+		}
+		// 올바른 닉네임 형식 @Pattern(regexp = "^[ㄱ-ㅎ가-힣A-Za-z0-9-_]{2,10}$")
+		else if (fieldErrorCode.equals("Pattern")) {
+			errorMessage = ErrorCode.INVALID_INPUT_NICKNAME.getDescription();
+		}
+		// 그외 알 수 없는 경우의 Exception 처리
+		else {
 			errorMessage = ErrorCode.INTERNAL_SERVER_ERROR.getDescription();
 		}
 		MemberResDto response = MemberResDto.builder()

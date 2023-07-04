@@ -43,6 +43,7 @@ public class GlobalExceptionHandler {
 		HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
 
 		// MethodArgumentNotValidException 에 대한 Exception 이 감지된 경우를 의미
+		// 아래의 경우에 해당되는 Exception이 아닌 경우에 해당 handleMethodArgumentNotValidException 메서드가 불러졌다면, INTERNAL_SERVER_ERROR로 처리
 		if (!fieldErrors.isEmpty()) {
 			FieldError fieldError = fieldErrors.get(0);
 			String fieldErrorCode = fieldError.getCode();
@@ -63,6 +64,17 @@ public class GlobalExceptionHandler {
 				status = response.getStatus().getHttpStatus();
 
 				return new ResponseEntity<>(response, status);
+			}
+			// @Valid Exception 의 필드가 닉네임인 경우
+			else if (fieldError.getField().equals("nickname")) {
+				response = validExceptionHandlingMethod.nicknameValidExceptionHandling(fieldErrorCode);
+				status = response.getStatus().getHttpStatus();
+
+				return new ResponseEntity<>(response, status);
+			}
+			// 위의 경우의 에러가 벗어난 handleMethodArgumentNotValidException 처리
+			else {
+				log.error(fieldError.getRejectedValue());
 			}
 		}
 
