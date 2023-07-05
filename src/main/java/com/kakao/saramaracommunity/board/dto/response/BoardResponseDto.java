@@ -29,6 +29,10 @@ public class BoardResponseDto {
 
         private String memberEmail;
 
+        private Long boardCnt;
+
+        private Long likeCnt;
+
         private LocalDateTime deadLine;
     }
 }

@@ -63,6 +63,8 @@ public class BoardServiceImpl implements BoardService {
                 .categoryBoard(board.getCategoryBoard())
                 .memberNickname(memberNickname)
                 .memberEmail(memberEmail)
+                .boardCnt(board.getBoardCnt())
+                .likeCnt(board.getBoardCnt())
                 .deadLine(board.getDeadLine())
                 .build();
 
