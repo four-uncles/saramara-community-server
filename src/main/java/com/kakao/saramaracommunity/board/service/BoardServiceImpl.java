@@ -3,11 +3,13 @@ package com.kakao.saramaracommunity.board.service;
 import java.time.LocalDateTime;
 
 import com.kakao.saramaracommunity.board.dto.request.BoardRequestDto;
+import com.kakao.saramaracommunity.board.dto.response.BoardResponseDto;
 import com.kakao.saramaracommunity.board.entity.Board;
 import com.kakao.saramaracommunity.board.repository.BoardRepository;
 import com.kakao.saramaracommunity.member.entity.Member;
 import com.kakao.saramaracommunity.member.repository.MemberRepository;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
@@ -40,5 +42,32 @@ public class BoardServiceImpl implements BoardService {
             .build();
 
         return boardRepository.save(board);
+    }
+
+    @Override
+    public BoardResponseDto.ReadOneBoardResponseDto readOneBoard(Long boardId) {
+
+        Board board = boardRepository.findByBoardIdAndDeletedAtIsNull(boardId)
+            .orElseThrow(() -> new EntityNotFoundException("게시글을 찾을 수 없습니다."));
+
+        // Member information
+        String memberNickname = board.getMember().getNickname();
+        String memberEmail = board.getMember().getEmail();
+
+        // 게시글 정보와 멤버 정보를 매핑해서 응답
+        BoardResponseDto.ReadOneBoardResponseDto responseDto =
+            BoardResponseDto.ReadOneBoardResponseDto.builder()
+                .boardId(board.getBoardId())
+                .title(board.getTitle())
+                .content(board.getContent())
+                .categoryBoard(board.getCategoryBoard())
+                .memberNickname(memberNickname)
+                .memberEmail(memberEmail)
+                .boardCnt(board.getBoardCnt())
+                .likeCnt(board.getBoardCnt())
+                .deadLine(board.getDeadLine())
+                .build();
+
+        return responseDto;
     }
 }
