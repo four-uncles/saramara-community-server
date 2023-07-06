@@ -41,7 +41,7 @@ public class BoardController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/boardInfo:{boardId}")
+    @GetMapping("/{boardId}")
     public ResponseEntity<Object> readOneBoard(@PathVariable Long boardId) {
         BoardResponseDto.ReadOneBoardResponseDto boardResponseDto = boardService.readOneBoard(boardId);
 
