@@ -28,6 +28,7 @@ public enum ErrorCode {
 	private String code;
 	private String description;
 
+	// ErrorCode에 지정된 status 필드에 상응하는 HttpStatus 를 반환하는 메서드
 	public HttpStatus getHttpStatus(){
 		return HttpStatus.valueOf(status);
 	}

@@ -10,12 +10,9 @@ import com.kakao.saramaracommunity.member.entity.Role;
 import com.kakao.saramaracommunity.member.entity.Type;
 import com.kakao.saramaracommunity.member.repository.MemberRepository;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -27,13 +24,18 @@ public class MemberServiceImpl implements MemberSerivce {
     private final MemberServiceMethod memberServiceMethod;
     private final PasswordEncoder passwordEncoder;
 
+    // 회원가입
     @Override
-
     public MemberResDto signUp(SignUpDto signUpDto){
 
-        boolean duplicatedEmail = memberServiceMethod.emailDuplicated(signUpDto.getEmail());
-        boolean duplicatedNickName = memberServiceMethod.nickNameDuplicated(signUpDto.getNickname());
+        boolean duplicatedEmail = memberServiceMethod.emailDuplicated(
+            memberRepository.countByEmail(signUpDto.getEmail())
+        );
+        boolean duplicatedNickName = memberServiceMethod.nickNameDuplicated(
+            memberRepository.countByNickname(signUpDto.getNickname())
+        );
 
+        // 중복된 이메일에 대한 예외처리
         if(duplicatedEmail){
            MemberResDto response = MemberResDto.builder()
                 .success(false)
@@ -42,6 +44,7 @@ public class MemberServiceImpl implements MemberSerivce {
             return response;
         }
 
+        // 중복된 닉네임에 대한 예외처리
         if(duplicatedNickName){
             MemberResDto response = MemberResDto.builder()
                 .success(false)
