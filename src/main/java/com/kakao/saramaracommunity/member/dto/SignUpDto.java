@@ -1,12 +1,9 @@
 package com.kakao.saramaracommunity.member.dto;
 
-import java.util.Set;
-import java.util.stream.Collectors;
+
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.kakao.saramaracommunity.member.entity.Member;
-import com.kakao.saramaracommunity.member.entity.Role;
-import com.kakao.saramaracommunity.member.entity.Type;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -19,7 +16,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-@Setter
 @Getter
 @Builder
 @ToString

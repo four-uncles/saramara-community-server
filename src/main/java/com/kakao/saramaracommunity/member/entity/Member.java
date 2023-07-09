@@ -23,9 +23,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-@ToString
 @AllArgsConstructor
-@Builder
 @Getter
 @NoArgsConstructor
 @Where(clause = "deleted_at is NULL")
@@ -33,39 +31,35 @@ import lombok.ToString;
 @Entity
 public class Member extends BaseTimeEntity {
    @Id
+   @Column(nullable = false)
    @GeneratedValue(strategy = GenerationType.IDENTITY)
    private Long memberId;
 
-   @Column(nullable = false, length = 50, unique = true)
+   @Column(nullable = false, length = 100, unique = true)
    private String email;
 
    @Column(length = 100)
    private String password;
-   @Column(length = 50, unique = true)
+   @Column(length = 10, unique = true)
    private String nickname;
 
    @Enumerated(EnumType.STRING)
    @Column(nullable = false)
    private Type type;
+    @ElementCollection(fetch = FetchType.LAZY)
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Set<Role> role;
 
-//     @Enumerated(EnumType.STRING)
-//     @Column(nullable = false)
-//     private Role role;
-   @ElementCollection(fetch = FetchType.LAZY)
-   @Builder.Default
-   @Enumerated(EnumType.STRING)
-   @Column(nullable = false)
-   private Set<Role> role = new HashSet<>();
+    private String picture;
 
-   private String picture;
-
-//    private String token;
-   private String refreshToken;
+   //private String token;
+   //private String refreshToken;
 
    @Builder
-   public Member(Type type, String nickname, String password, Set<Role> role, String picture) {
+   public Member(String email,Type type, String nickname, String password, Set<Role> role, String picture) {
       this.type = type;
-      //this.email = email;
+      this.email = email;
       this.nickname = nickname;
       this.password = password;
       this.role = role;

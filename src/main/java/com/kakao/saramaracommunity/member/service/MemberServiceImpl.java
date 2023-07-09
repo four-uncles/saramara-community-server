@@ -2,6 +2,7 @@ package com.kakao.saramaracommunity.member.service;
 
 import java.util.Collections;
 
+import com.kakao.saramaracommunity.member.dto.MemberInfoResDto;
 import com.kakao.saramaracommunity.member.dto.MemberResDto;
 import com.kakao.saramaracommunity.member.dto.SignUpDto;
 import com.kakao.saramaracommunity.member.dto.ErrorCode;
@@ -68,5 +69,37 @@ public class MemberServiceImpl implements MemberSerivce {
             .success(true)
             .build();
         return response;
+    }
+
+    // 회원정보 조회
+    @Override
+    public MemberResDto memberInfoChecking(String email){
+        try {
+            Member member = memberRepository.findByEmail(email);
+
+            MemberInfoResDto currentMemberInfo = MemberInfoResDto.builder()
+                    .email(member.getEmail())
+                    .nickname(member.getNickname())
+                    .type(member.getType())
+                    .role(member.getRole())
+                    .build();
+
+           MemberResDto response = MemberResDto.builder()
+                    .success(true)
+                    .data(currentMemberInfo)
+                    .build();
+
+           return response;
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            log.error(e.getStackTrace());
+
+            MemberResDto response = MemberResDto.builder()
+                .success(false)
+                .status(ErrorCode.NOT_EXIST_EMAIL)
+                .build();
+
+            return response;
+        }
     }
 }

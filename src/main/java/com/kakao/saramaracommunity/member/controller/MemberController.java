@@ -28,7 +28,7 @@ import lombok.extern.log4j.Log4j2;
 @RequiredArgsConstructor
 @Log4j2
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/v1")
 public class MemberController {
 
     private final UserService userService;
@@ -40,9 +40,16 @@ public class MemberController {
         response.sendRedirect("/api/user");
     }
 
-    @PostMapping("/signup")
+    @PostMapping("/member/signup")
     public ResponseEntity<MemberResDto> signup(@Valid @RequestBody SignUpDto signUpDto) {
         MemberResDto response = memberSerivce.signUp(signUpDto);
+        HttpStatus status = memberServiceMethod.changeStatus(response);
+        return new ResponseEntity<>(response, status);
+    }
+
+    @GetMapping("/member")
+    public ResponseEntity<MemberResDto> memberInfoChecking(@Valid @PathVariable String email) {
+        MemberResDto response = memberSerivce.memberInfoChecking(email);
         HttpStatus status = memberServiceMethod.changeStatus(response);
         return new ResponseEntity<>(response, status);
     }

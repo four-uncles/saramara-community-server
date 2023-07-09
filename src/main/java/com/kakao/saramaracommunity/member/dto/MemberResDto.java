@@ -10,9 +10,10 @@ import lombok.Setter;
 @NoArgsConstructor
 @Builder
 @Setter
-@Getter
 public class MemberResDto<T> {
+	@Getter
 	boolean success;
 	T data;
+	@Getter
 	ErrorCode status;
 }

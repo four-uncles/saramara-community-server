@@ -48,6 +48,9 @@ public class GlobalExceptionHandler {
 			FieldError fieldError = fieldErrors.get(0);
 			String fieldErrorCode = fieldError.getCode();
 
+			log.error(fieldError);
+			log.error(fieldError.getCode());
+
 			// @Valid Exception 의 필드가 이메일인 경우
 			if (fieldError.getField().equals("email")) {
 				response = validExceptionHandlingMethod.emailValidExceptionHandling(fieldError, fieldErrorCode);
@@ -56,6 +59,8 @@ public class GlobalExceptionHandler {
 				// ErrorCode에 정의된 getHttpStatus() 메서드로 response(현재 Exception에 상응하는 HttpStatus를 가져온다.
 				status = response.getStatus().getHttpStatus();
 
+				log.error(fieldError.getField());
+
 				return new ResponseEntity<>(response, status);
 			}
 			// @Valid Exception 의 필드가 비밀번호인 경우
@@ -63,12 +68,16 @@ public class GlobalExceptionHandler {
 				response = validExceptionHandlingMethod.passwordValidExceptionHandling(fieldErrorCode);
 				status = response.getStatus().getHttpStatus();
 
+				log.error(fieldError.getField());
+
 				return new ResponseEntity<>(response, status);
 			}
 			// @Valid Exception 의 필드가 닉네임인 경우
 			else if (fieldError.getField().equals("nickname")) {
 				response = validExceptionHandlingMethod.nicknameValidExceptionHandling(fieldErrorCode);
 				status = response.getStatus().getHttpStatus();
+
+				log.error(fieldError.getField());
 
 				return new ResponseEntity<>(response, status);
 			}
