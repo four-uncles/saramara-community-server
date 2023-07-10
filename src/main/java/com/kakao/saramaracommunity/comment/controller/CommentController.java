@@ -1,13 +1,12 @@
 package com.kakao.saramaracommunity.comment.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import com.kakao.saramaracommunity.comment.dto.CommentListDTO;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.kakao.saramaracommunity.comment.dto.CommentDTO;
 import com.kakao.saramaracommunity.comment.entity.Comment;
@@ -32,6 +31,17 @@ public class CommentController {
 		Map<String, Object> result = new HashMap<>();
 
 		result.put("result", comment);
+
+		return ResponseEntity.ok(result);
+	}
+
+	@GetMapping("/comments/{boardId}")
+	public ResponseEntity<Map<String, Object>> getBoardComments(@Valid @PathVariable("boardId") Long boardId) {
+		List<CommentListDTO> boardComments = commentService.getBoardComments(boardId);
+
+		Map<String, Object> result = new HashMap<>();
+
+		result.put("result", boardComments);
 
 		return ResponseEntity.ok(result);
 	}
