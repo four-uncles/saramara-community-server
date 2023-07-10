@@ -37,7 +37,7 @@ public class GlobalExceptionHandler {
 
 		MemberResDto response = MemberResDto.builder()
 			.success(false)
-			.status(ErrorCode.INTERNAL_SERVER_ERROR)
+			.errorCode(ErrorCode.INTERNAL_SERVER_ERROR)
 			.build();
 
 		HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
@@ -57,7 +57,7 @@ public class GlobalExceptionHandler {
 
 				// response 는 MemberResDto로 해당 클래스의 status는 ErrorCode 클래스의 정의된 status를 의미하며 이를 Getter 로 가져와서
 				// ErrorCode에 정의된 getHttpStatus() 메서드로 response(현재 Exception에 상응하는 HttpStatus를 가져온다.
-				status = response.getStatus().getHttpStatus();
+				status = response.getErrorCode().getHttpStatus();
 
 				log.error(fieldError.getField());
 
@@ -66,7 +66,7 @@ public class GlobalExceptionHandler {
 			// @Valid Exception 의 필드가 비밀번호인 경우
 			else if (fieldError.getField().equals("password")) {
 				response = validExceptionHandlingMethod.passwordValidExceptionHandling(fieldErrorCode);
-				status = response.getStatus().getHttpStatus();
+				status = response.getErrorCode().getHttpStatus();
 
 				log.error(fieldError.getField());
 
@@ -75,7 +75,7 @@ public class GlobalExceptionHandler {
 			// @Valid Exception 의 필드가 닉네임인 경우
 			else if (fieldError.getField().equals("nickname")) {
 				response = validExceptionHandlingMethod.nicknameValidExceptionHandling(fieldErrorCode);
-				status = response.getStatus().getHttpStatus();
+				status = response.getErrorCode().getHttpStatus();
 
 				log.error(fieldError.getField());
 

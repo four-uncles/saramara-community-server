@@ -40,7 +40,7 @@ public class MemberServiceImpl implements MemberSerivce {
         if(duplicatedEmail){
            MemberResDto response = MemberResDto.builder()
                 .success(false)
-                .status(ErrorCode.DUPLICATE_EMAIL)
+                .errorCode(ErrorCode.DUPLICATE_EMAIL)
                 .build();
             return response;
         }
@@ -49,7 +49,7 @@ public class MemberServiceImpl implements MemberSerivce {
         if(duplicatedNickName){
             MemberResDto response = MemberResDto.builder()
                 .success(false)
-                .status(ErrorCode.DUPLICATE_NICKNAME)
+                .errorCode(ErrorCode.DUPLICATE_NICKNAME)
                 .build();
             return response;
         }
@@ -96,7 +96,7 @@ public class MemberServiceImpl implements MemberSerivce {
 
             MemberResDto response = MemberResDto.builder()
                 .success(false)
-                .status(ErrorCode.NOT_EXIST_EMAIL)
+                .errorCode(ErrorCode.NOT_EXIST_EMAIL)
                 .build();
 
             return response;

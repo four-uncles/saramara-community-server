@@ -51,7 +51,7 @@ public class MemberServiceMethod {
 	public HttpStatus changeStatus(MemberResDto memberResDto) {
 		try {
 			if (!memberResDto.isSuccess()){
-				return memberResDto.getStatus().getHttpStatus();
+				return memberResDto.getErrorCode().getHttpStatus();
 			}
 			return HttpStatus.OK;
 		} catch (Exception e){

@@ -53,7 +53,7 @@ public class ValidExceptionHandlingMethod {
 			MemberResDto response = MemberResDto.builder()
 				.success(false)
 				.data(errorMessage)
-				.status(errorCode)
+				.errorCode(errorCode)
 				.build();
 			return response;
 	}
@@ -82,7 +82,7 @@ public class ValidExceptionHandlingMethod {
 		MemberResDto response = MemberResDto.builder()
 			.success(false)
 			.data(errorMessage)
-			.status(errorCode)
+			.errorCode(errorCode)
 			.build();
 		return response;
 	}
@@ -106,7 +106,7 @@ public class ValidExceptionHandlingMethod {
 		MemberResDto response = MemberResDto.builder()
 			.success(false)
 			.data(errorMessage)
-			.status(errorCode)
+			.errorCode(errorCode)
 			.build();
 		return response;
 	}

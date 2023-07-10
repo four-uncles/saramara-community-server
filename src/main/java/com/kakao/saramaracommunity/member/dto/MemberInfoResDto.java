@@ -6,9 +6,11 @@ import com.kakao.saramaracommunity.member.entity.Role;
 import com.kakao.saramaracommunity.member.entity.Type;
 
 import lombok.Builder;
+import lombok.Getter;
 import lombok.Setter;
 
 @Setter
+@Getter
 public class MemberInfoResDto {
 	private String email;
 	private String nickname;

@@ -47,7 +47,7 @@ public class MemberController {
         return new ResponseEntity<>(response, status);
     }
 
-    @GetMapping("/member")
+    @GetMapping("/member/{email}")
     public ResponseEntity<MemberResDto> memberInfoChecking(@Valid @PathVariable String email) {
         MemberResDto response = memberSerivce.memberInfoChecking(email);
         HttpStatus status = memberServiceMethod.changeStatus(response);
