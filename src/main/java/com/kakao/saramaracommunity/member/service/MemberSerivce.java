@@ -12,4 +12,5 @@ public interface MemberSerivce {
     MemberResDto signUp(SignUpDto requestDto);
 
     MemberResDto memberInfoChecking(String email);
+    MemberResDto nickNameChange(String email, String currentNickname,String changeNickname);
 }

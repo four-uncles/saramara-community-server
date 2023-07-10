@@ -29,10 +29,10 @@ public class MemberServiceImpl implements MemberSerivce {
     @Override
     public MemberResDto signUp(SignUpDto signUpDto){
 
-        boolean duplicatedEmail = memberServiceMethod.emailDuplicated(
+        boolean duplicatedEmail = memberServiceMethod.isDuplicatedEmail(
             memberRepository.countByEmail(signUpDto.getEmail())
         );
-        boolean duplicatedNickName = memberServiceMethod.nickNameDuplicated(
+        boolean duplicatedNickName = memberServiceMethod.isDuplicatedNickname(
             memberRepository.countByNickname(signUpDto.getNickname())
         );
 
@@ -102,4 +102,45 @@ public class MemberServiceImpl implements MemberSerivce {
             return response;
         }
     }
+
+    // 닉네임 수정
+    @Override
+    public MemberResDto nickNameChange(String email, String currentNickname, String changeNickname) {
+        try {
+            // 변경할 닉네임에 대한 DB 내 중복 여부
+            // 중복확인 자체를 count로 하여 자기 자신도 중복으로 하기 때문에 이경우에 대한 처리 필요
+            boolean existNickname = memberServiceMethod.isDuplicatedNickname(memberRepository.countByNickname(changeNickname));
+
+            // 닉네임 수정 시 중복확인
+            if(memberServiceMethod.isChangeNickNameDuplicated(currentNickname, changeNickname, existNickname)){
+                MemberResDto response = MemberResDto.builder()
+                    .success(false)
+                    .errorCode(ErrorCode.DUPLICATE_NICKNAME)
+                    .build();
+                return response;
+            }
+
+            // 더티체킹 방식의 Update
+            Member member = memberRepository.findByEmail(email);
+            member.changeNickname(changeNickname);
+            memberRepository.save(member);
+
+            MemberResDto response = MemberResDto.builder()
+                .success(true)
+                .build();
+            return response;
+
+        }catch (Exception e){
+            log.error(e.getMessage());
+            log.error(e.getStackTrace());
+            MemberResDto response = MemberResDto.builder()
+                .success(false)
+                .errorCode(ErrorCode.INTERNAL_SERVER_ERROR)
+                .build();
+            return response;
+        }
+    }
+
+
+    // 비밀번호 수정
 }
