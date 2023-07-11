@@ -19,6 +19,7 @@ import com.kakao.saramaracommunity.member.dto.MemberResDto;
 import com.kakao.saramaracommunity.member.dto.SignUpDto;
 import com.kakao.saramaracommunity.member.service.MemberSerivce;
 import com.kakao.saramaracommunity.member.service.MemberServiceMethod;
+import com.kakao.saramaracommunity.member.service.SignUpCheckingServiceImpl;
 import com.kakao.saramaracommunity.member.service.UserService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -36,12 +37,33 @@ public class MemberController {
 
     private final UserService userService;
     private final MemberSerivce memberSerivce;
+    private final SignUpCheckingServiceImpl signUpCheckingService;
     private final MemberServiceMethod memberServiceMethod;
 
     // 회원가입
     @PostMapping("/member/signup")
     public ResponseEntity<MemberResDto> signup(@Valid @RequestBody SignUpDto signUpDto) {
-        MemberResDto response = memberSerivce.signUp(signUpDto);
+        MemberResDto response = memberSerivce.register(signUpDto);
+        HttpStatus status = memberServiceMethod.changeStatus(response);
+        return new ResponseEntity<>(response, status);
+    }
+
+    // 회원가입 - 이메일 중복확인
+    @GetMapping("/member/email/{email}")
+    public ResponseEntity<MemberResDto> isDuplicateEmail(
+        @Valid @PathVariable String email
+    ){
+        MemberResDto response = signUpCheckingService.checkingDuplicateEmail(email);
+        HttpStatus status = memberServiceMethod.changeStatus(response);
+        return new ResponseEntity<>(response, status);
+    }
+
+    // 회원가입 - 닉네임 중복확인
+    @GetMapping("/member/nickname/{nickname")
+    public ResponseEntity<MemberResDto> isDuplicatedNickname(
+        @Valid @PathVariable String nickname
+    ){
+        MemberResDto response = signUpCheckingService.checkingDuplicatedNickName(nickname);
         HttpStatus status = memberServiceMethod.changeStatus(response);
         return new ResponseEntity<>(response, status);
     }

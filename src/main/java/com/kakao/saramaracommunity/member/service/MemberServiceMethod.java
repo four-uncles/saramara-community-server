@@ -29,6 +29,16 @@ public class MemberServiceMethod {
 		}
 	}
 
+	// 중복된 Email에 대한 결과를 만드는 메서드
+	public MemberResDto makeDuplicateEmailResult(){
+
+		MemberResDto result = MemberResDto.builder()
+			.success(false)
+			.errorCode(ErrorCode.DUPLICATE_EMAIL)
+			.build();
+		return result;
+	}
+
 	// NickName 중복 확인
 	public boolean isDuplicatedNickname(long nicknameCount){
 		try{
@@ -57,6 +67,14 @@ public class MemberServiceMethod {
 		return result;
 	}
 
+	// 중복된 NickName에 대한 결과를 만드는 메서드
+	public MemberResDto makeDuplicatedNicknameResult(){
+		MemberResDto result = MemberResDto.builder()
+			.success(false)
+			.errorCode(ErrorCode.DUPLICATE_NICKNAME)
+			.build();
+		return result;
+	}
 	// Password 변경 시 사용자가 입력한 현재 비밀번호와 저장된 현재 비밀번호 일치 여부
 	private final PasswordEncoder encoder;
 	public boolean checkCurrentPw(String inputCurrentPw, String storedCurrentPw){
@@ -102,5 +120,13 @@ public class MemberServiceMethod {
 			.build();
 
 		return internalServerResult;
+	}
+
+	// MemberResDto 의 성공결과를 반환하나 data 필드에 반환할 값이 없는 결과를 만드는 메서드
+	public MemberResDto makeSuccessResultNoData(){
+		MemberResDto result = MemberResDto.builder()
+			.success(true)
+			.build();
+		return result;
 	}
 }

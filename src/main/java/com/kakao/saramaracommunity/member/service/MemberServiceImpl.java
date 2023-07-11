@@ -28,7 +28,7 @@ public class MemberServiceImpl implements MemberSerivce {
 
     // 회원가입
     @Override
-    public MemberResDto signUp(SignUpDto signUpDto) {
+    public MemberResDto register(SignUpDto signUpDto) {
 
         boolean duplicatedEmail = memberServiceMethod.isDuplicatedEmail(
             memberRepository.countByEmail(signUpDto.getEmail())
@@ -39,19 +39,13 @@ public class MemberServiceImpl implements MemberSerivce {
 
         // 중복된 이메일에 대한 예외처리
         if (duplicatedEmail) {
-            MemberResDto response = MemberResDto.builder()
-                .success(false)
-                .errorCode(ErrorCode.DUPLICATE_EMAIL)
-                .build();
+            MemberResDto response = memberServiceMethod.makeDuplicateEmailResult();
             return response;
         }
 
         // 중복된 닉네임에 대한 예외처리
         if (duplicatedNickName) {
-            MemberResDto response = MemberResDto.builder()
-                .success(false)
-                .errorCode(ErrorCode.DUPLICATE_NICKNAME)
-                .build();
+            MemberResDto response = memberServiceMethod.makeDuplicatedNicknameResult();
             return response;
         }
 
@@ -66,9 +60,7 @@ public class MemberServiceImpl implements MemberSerivce {
 
         memberRepository.save(member);
 
-        MemberResDto response = MemberResDto.builder()
-            .success(true)
-            .build();
+        MemberResDto response = memberServiceMethod.makeSuccessResultNoData();
         return response;
     }
 
@@ -120,9 +112,7 @@ public class MemberServiceImpl implements MemberSerivce {
             member.changeNickname(changeNickname);
             memberRepository.save(member);
 
-            MemberResDto response = MemberResDto.builder()
-                .success(true)
-                .build();
+            MemberResDto response = memberServiceMethod.makeSuccessResultNoData();
             return response;
 
         } catch (Exception e) {
@@ -168,14 +158,18 @@ public class MemberServiceImpl implements MemberSerivce {
                 )
             );
             memberRepository.save(member);
-            MemberResDto response = MemberResDto.builder()
-                .success(true)
-                .build();
+            MemberResDto response = memberServiceMethod.makeSuccessResultNoData();
             return response;
 
         } catch (Exception e){
             MemberResDto response = memberServiceMethod.internalServerErrorResult(e);
             return response;
         }
+    }
+
+    // 회원탈퇴
+    @Override
+    public MemberResDto unregister(String email) {
+        return null;
     }
 }
