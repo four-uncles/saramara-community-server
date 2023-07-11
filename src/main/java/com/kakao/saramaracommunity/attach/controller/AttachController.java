@@ -50,6 +50,13 @@ public class AttachController {
         return ResponseEntity.ok().body(response);
     }
 
+    /**
+     * getAllBoardImages: 모든 게시글의 등록된 이미지 조회 API
+     * URL: /api/v1/attach/boards
+     * 모든 게시글의 등록된 S3 이미지 주소(URL)를 게시글: 이미지목록(Map) 형태로 응답한다.
+     *
+     * @return AttachResponse.GetAllImageResponse
+     */
     @GetMapping("/boards")
     public ResponseEntity<AttachResponse.GetAllImageResponse> getAllBoardImages() {
         AttachResponse.GetAllImageResponse response = attachService.getAllBoardImages();
