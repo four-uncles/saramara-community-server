@@ -1,6 +1,8 @@
 package com.kakao.saramaracommunity.board.service;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import com.kakao.saramaracommunity.board.dto.request.BoardRequestDto;
 import com.kakao.saramaracommunity.board.dto.response.BoardResponseDto;
@@ -69,5 +71,44 @@ public class BoardServiceImpl implements BoardService {
                 .build();
 
         return responseDto;
+    }
+
+    @Override
+    public List<BoardResponseDto.ReadAllBoardResponseDto> readAllBoardsByLatest() {
+        List<Board> boards = boardRepository.findAllByDeletedAtIsNullOrderByCreatedAtDesc();
+
+        log.info("최신순으로 게시글을 조회합니다.(Reading all boards by latest)");
+
+        return mapBoardListToResponseDtoList(boards);
+    }
+
+    @Override
+    public List<BoardResponseDto.ReadAllBoardResponseDto> readAllBoardsByPopularity() {
+        List<Board> boards = boardRepository.findAllByDeletedAtIsNullOrderByLikeCntDesc();
+
+        log.info("인기순으로 게시글을 조회합니다.(Reading all boards by popularity)");
+
+        return mapBoardListToResponseDtoList(boards);
+    }
+
+    private List<BoardResponseDto.ReadAllBoardResponseDto> mapBoardListToResponseDtoList(List<Board> boards) {
+
+        log.info("게시글 목록을 응답 DTO 목록에 Mapping 합니다.: "
+            + "(Mapping board list to response DTO list)");
+
+        return boards.stream().map(board -> {
+            String memberNickname = board.getMember().getNickname();
+            Long boardCnt = board.getBoardCnt();
+            Long likeCnt = board.getLikeCnt();
+            LocalDateTime deadLine = board.getDeadLine();
+
+            return BoardResponseDto.ReadAllBoardResponseDto.builder()
+                .title(board.getTitle())
+                .memberNickname(memberNickname)
+                .boardCnt(boardCnt)
+                .likeCnt(likeCnt)
+                .deadLine(deadLine)
+                .build();
+        }).collect(Collectors.toList());
     }
 }
