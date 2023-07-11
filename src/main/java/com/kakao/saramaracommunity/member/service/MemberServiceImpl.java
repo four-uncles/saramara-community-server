@@ -100,10 +100,7 @@ public class MemberServiceImpl implements MemberSerivce {
 
             // 닉네임 수정 시 중복확인
             if (memberServiceMethod.isChangeNickNameDuplicated(currentNickname, changeNickname, existNickname)) {
-                MemberResDto response = MemberResDto.builder()
-                    .success(false)
-                    .errorCode(ErrorCode.DUPLICATE_NICKNAME)
-                    .build();
+                MemberResDto response = memberServiceMethod.makeDuplicatedNicknameResult();
                 return response;
             }
 
