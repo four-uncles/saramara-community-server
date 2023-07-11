@@ -59,7 +59,7 @@ public class MemberController {
     }
 
     // 회원가입 - 닉네임 중복확인
-    @GetMapping("/member/nickname/{nickname")
+    @GetMapping("/member/nickname/{nickname}")
     public ResponseEntity<MemberResDto> isDuplicatedNickname(
         @Valid @PathVariable String nickname
     ){
