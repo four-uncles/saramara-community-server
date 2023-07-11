@@ -2,6 +2,7 @@ package com.kakao.saramaracommunity.member.service;
 
 import java.util.Collections;
 
+import com.kakao.saramaracommunity.member.dto.ChangePWDto;
 import com.kakao.saramaracommunity.member.dto.MemberInfoResDto;
 import com.kakao.saramaracommunity.member.dto.MemberResDto;
 import com.kakao.saramaracommunity.member.dto.SignUpDto;
@@ -27,7 +28,7 @@ public class MemberServiceImpl implements MemberSerivce {
 
     // 회원가입
     @Override
-    public MemberResDto signUp(SignUpDto signUpDto){
+    public MemberResDto signUp(SignUpDto signUpDto) {
 
         boolean duplicatedEmail = memberServiceMethod.isDuplicatedEmail(
             memberRepository.countByEmail(signUpDto.getEmail())
@@ -37,8 +38,8 @@ public class MemberServiceImpl implements MemberSerivce {
         );
 
         // 중복된 이메일에 대한 예외처리
-        if(duplicatedEmail){
-           MemberResDto response = MemberResDto.builder()
+        if (duplicatedEmail) {
+            MemberResDto response = MemberResDto.builder()
                 .success(false)
                 .errorCode(ErrorCode.DUPLICATE_EMAIL)
                 .build();
@@ -46,7 +47,7 @@ public class MemberServiceImpl implements MemberSerivce {
         }
 
         // 중복된 닉네임에 대한 예외처리
-        if(duplicatedNickName){
+        if (duplicatedNickName) {
             MemberResDto response = MemberResDto.builder()
                 .success(false)
                 .errorCode(ErrorCode.DUPLICATE_NICKNAME)
@@ -73,32 +74,25 @@ public class MemberServiceImpl implements MemberSerivce {
 
     // 회원정보 조회
     @Override
-    public MemberResDto memberInfoChecking(String email){
+    public MemberResDto memberInfoChecking(String email) {
         try {
             Member member = memberRepository.findByEmail(email);
 
             MemberInfoResDto currentMemberInfo = MemberInfoResDto.builder()
-                    .email(member.getEmail())
-                    .nickname(member.getNickname())
-                    .type(member.getType())
-                    .role(member.getRole())
-                    .build();
-
-           MemberResDto response = MemberResDto.builder()
-                    .success(true)
-                    .data(currentMemberInfo)
-                    .build();
-
-           return response;
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            log.error(e.getStackTrace());
-
-            MemberResDto response = MemberResDto.builder()
-                .success(false)
-                .errorCode(ErrorCode.NOT_EXIST_EMAIL)
+                .email(member.getEmail())
+                .nickname(member.getNickname())
+                .type(member.getType())
+                .role(member.getRole())
                 .build();
 
+            MemberResDto response = MemberResDto.builder()
+                .success(true)
+                .data(currentMemberInfo)
+                .build();
+
+            return response;
+        } catch (Exception e) {
+            MemberResDto response = memberServiceMethod.internalServerErrorResult(e);
             return response;
         }
     }
@@ -107,12 +101,13 @@ public class MemberServiceImpl implements MemberSerivce {
     @Override
     public MemberResDto nickNameChange(String email, String currentNickname, String changeNickname) {
         try {
-            // 변경할 닉네임에 대한 DB 내 중복 여부
+            // 변경할 닉네임에 대한 DB 내 중복 여부에 대한 예외처리
             // 중복확인 자체를 count로 하여 자기 자신도 중복으로 하기 때문에 이경우에 대한 처리 필요
-            boolean existNickname = memberServiceMethod.isDuplicatedNickname(memberRepository.countByNickname(changeNickname));
+            boolean existNickname = memberServiceMethod.isDuplicatedNickname(
+                memberRepository.countByNickname(changeNickname));
 
             // 닉네임 수정 시 중복확인
-            if(memberServiceMethod.isChangeNickNameDuplicated(currentNickname, changeNickname, existNickname)){
+            if (memberServiceMethod.isChangeNickNameDuplicated(currentNickname, changeNickname, existNickname)) {
                 MemberResDto response = MemberResDto.builder()
                     .success(false)
                     .errorCode(ErrorCode.DUPLICATE_NICKNAME)
@@ -130,17 +125,57 @@ public class MemberServiceImpl implements MemberSerivce {
                 .build();
             return response;
 
-        }catch (Exception e){
-            log.error(e.getMessage());
-            log.error(e.getStackTrace());
-            MemberResDto response = MemberResDto.builder()
-                .success(false)
-                .errorCode(ErrorCode.INTERNAL_SERVER_ERROR)
-                .build();
+        } catch (Exception e) {
+            MemberResDto response = memberServiceMethod.internalServerErrorResult(e);
             return response;
         }
     }
 
-
     // 비밀번호 수정
+    @Override
+    public MemberResDto passwordChange(String email, ChangePWDto changePWDto) {
+        try {
+            // 현재 입력한 비밀번호가 저장된 비밀번호와 일치하지 않는 경우에 대한 예외 처리
+            String storedCurrentPw = memberRepository.findByEmail(email).getPassword();
+            boolean checkedCurrentPw = memberServiceMethod.checkCurrentPw(
+                changePWDto.getCurrentPassword(), storedCurrentPw
+            );
+            if(!checkedCurrentPw){
+                MemberResDto response = MemberResDto.builder()
+                    .success(false)
+                    .errorCode(ErrorCode.NOT_EQUALS_INPUT_CURRENT_PW)
+                    .build();
+                return response;
+            }
+
+            // 변경할 비밀번호와 그 비밀번호에 대한 확인 값이 일치하지 않는 경우에 대한 예외 처리
+            boolean checkedChangedPw = memberServiceMethod.checkChangedPw(
+                changePWDto.getChangedPassword(), changePWDto.getChangedPasswordCheck()
+            );
+            if(!checkedChangedPw){
+                MemberResDto response = MemberResDto.builder()
+                    .success(false)
+                    .errorCode(ErrorCode.NOT_EQUALS_INPUT_CHANGED_PW)
+                    .build();
+                return response;
+            }
+
+            // 더티체킹 방식의 Update
+            Member member = memberRepository.findByEmail(email);
+            member.changePassword(
+                passwordEncoder.encode(
+                    changePWDto.getChangedPassword()
+                )
+            );
+            memberRepository.save(member);
+            MemberResDto response = MemberResDto.builder()
+                .success(true)
+                .build();
+            return response;
+
+        } catch (Exception e){
+            MemberResDto response = memberServiceMethod.internalServerErrorResult(e);
+            return response;
+        }
+    }
 }

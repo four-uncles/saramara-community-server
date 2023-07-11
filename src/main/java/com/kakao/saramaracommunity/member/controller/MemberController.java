@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.kakao.saramaracommunity.member.dto.ChangePWDto;
 import com.kakao.saramaracommunity.member.dto.MemberResDto;
 import com.kakao.saramaracommunity.member.dto.SignUpDto;
 import com.kakao.saramaracommunity.member.service.MemberSerivce;
@@ -68,7 +69,15 @@ public class MemberController {
     }
 
     // 비밀번호 수정
-    @PutMapping
+    @PutMapping("/member/password/{email}")
+    public ResponseEntity<MemberResDto> passwordChange(
+        @Valid @PathVariable String email,
+        @Valid @RequestBody ChangePWDto changePWDto
+    ){
+        MemberResDto response = memberSerivce.passwordChange(email, changePWDto);
+        HttpStatus status = memberServiceMethod.changeStatus(response);
+        return new ResponseEntity<>(response, status);
+    }
 
     @PostMapping("/test-redirect")
     public void testRedirect(HttpServletResponse response) throws IOException {
