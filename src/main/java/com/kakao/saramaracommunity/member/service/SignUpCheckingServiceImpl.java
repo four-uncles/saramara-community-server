@@ -42,6 +42,7 @@ public class SignUpCheckingServiceImpl implements SignUpCheckingService{
 		// 중복된 닉네임에 대한 예외처리
 		if(duplicatedNickname){
 			MemberResDto response = memberServiceMethod.makeDuplicatedNicknameResult();
+			return response;
 		}
 
 		// 사용자가 사용하고자 하는 닉네임이 중복되지 않는 경우
