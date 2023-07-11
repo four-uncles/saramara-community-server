@@ -12,6 +12,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -56,6 +57,28 @@ public class CommentServiceImpl implements CommentService{
                 .map(comment -> modelMapper.map(comment, CommentListDTO.class))
                 .collect(Collectors.toList());
 
+
+        return result;
+    }
+
+    /**
+     * 댓글 수정에 관련된 메서드입니다.
+     * 수정을 위해 VO 클래스에 작성한 changeComment 메서드를 이용하여 부분 수정을 일으킵니다.
+     * Optional 객체를 이용해 안전한 예외처리를 일으킵니다.
+     *
+     * @param commentId 수정할 댓글의 고유 id 입니다.
+     * @param commentDTO 수정할 댓글의 정보입니다.
+     * @return 수정완료되었다는 boolean 값을 던집니다.
+     */
+    @Override
+    public Boolean updateComment(Long commentId, CommentDTO commentDTO) {
+        Optional<Comment> findComment = commentRepository.findById(commentId);
+
+        Comment comment = findComment.orElseThrow();
+
+        comment.changeComment(commentDTO.getContent(), commentDTO.getPick());
+
+        Boolean result = commentRepository.save(comment) != null;
 
         return result;
     }

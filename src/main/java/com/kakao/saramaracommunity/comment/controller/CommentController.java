@@ -35,13 +35,26 @@ public class CommentController {
 		return ResponseEntity.ok(result);
 	}
 
-	@GetMapping("/comments/{boardId}")
+	@GetMapping("/{boardId}/comments")
 	public ResponseEntity<Map<String, Object>> getBoardComments(@Valid @PathVariable("boardId") Long boardId) {
 		List<CommentListDTO> boardComments = commentService.getBoardComments(boardId);
 
 		Map<String, Object> result = new HashMap<>();
 
 		result.put("result", boardComments);
+
+		return ResponseEntity.ok(result);
+	}
+
+	@PutMapping("/{commentId}")
+	public ResponseEntity<Map<String, Object>> updateComment(@Valid @PathVariable("commentId") Long commentId,
+															 @Valid @RequestBody CommentDTO commentDTO){
+
+		Boolean updatedComment = commentService.updateComment(commentId, commentDTO);
+
+		Map<String, Object> result = new HashMap<>();
+
+		result.put("result", updatedComment);
 
 		return ResponseEntity.ok(result);
 	}

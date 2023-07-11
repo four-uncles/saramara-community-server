@@ -10,4 +10,6 @@ public interface CommentService {
 	public Long createComment(CommentDTO commentDTO);
 
 	public List<CommentListDTO> getBoardComments(Long BoardId);
+
+	public Boolean updateComment(Long commentId, CommentDTO commentDTO);
 }
