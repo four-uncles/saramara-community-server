@@ -1,6 +1,7 @@
 package com.kakao.saramaracommunity.board.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
@@ -56,4 +57,33 @@ public class BoardController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/")
+    public ResponseEntity<Object> readAllBoardsByLatest() {
+        List<BoardResponseDto.ReadAllBoardResponseDto> boards = boardService.readAllBoardsByLatest();
+
+        // 응답 데이터 생성
+        Map<String, Object> response = new HashMap<>();
+        response.put("code", 200);
+        response.put("msg", "success");
+
+        // 게시글 목록
+        response.put("data", boards);
+
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/popular")
+    public ResponseEntity<Object> readAllBoardsByPopularity() {
+        List<BoardResponseDto.ReadAllBoardResponseDto> boards = boardService.readAllBoardsByPopularity();
+
+        // 응답 데이터 생성
+        Map<String, Object> response = new HashMap<>();
+        response.put("code", 200);
+        response.put("msg", "success");
+
+        // 게시글 목록
+        response.put("data", boards);
+
+        return ResponseEntity.ok(response);
+    }
 }

@@ -29,7 +29,7 @@ public class Board extends BaseTimeEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private CategoryBoard categoryBoard; // 카테고리 (NORMAL, QUESTION ... DEFAULT: NORMAL)
+    private CategoryBoard categoryBoard; // 카테고리 (VOTE, CHOICE ... DEFAULT: VOTE)
 
     @Column(length = 100, nullable = false)
     private String title; // 게시글 제목

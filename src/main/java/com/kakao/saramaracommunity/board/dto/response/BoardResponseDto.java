@@ -35,4 +35,21 @@ public class BoardResponseDto {
 
         private LocalDateTime deadLine;
     }
+
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class ReadAllBoardResponseDto {
+
+        private String title;
+
+        private String memberNickname;
+
+        private Long boardCnt;
+
+        private Long likeCnt;
+
+        private LocalDateTime deadLine;
+    }
 }
