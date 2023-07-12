@@ -49,7 +49,7 @@ public class BoardServiceImpl implements BoardService {
     @Override
     public BoardResponseDto.ReadOneBoardResponseDto readOneBoard(Long boardId) {
 
-        Board board = boardRepository.findByBoardIdAndDeletedAtIsNull(boardId)
+        Board board = boardRepository.findByBoardId(boardId)
             .orElseThrow(() -> new EntityNotFoundException("게시글을 찾을 수 없습니다."));
 
         // Member information
@@ -75,7 +75,7 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     public List<BoardResponseDto.ReadAllBoardResponseDto> readAllBoardsByLatest() {
-        List<Board> boards = boardRepository.findAllByDeletedAtIsNullOrderByCreatedAtDesc();
+        List<Board> boards = boardRepository.findAllOrderByCreatedAtDesc();
 
         log.info("최신순으로 게시글을 조회합니다.(Reading all boards by latest)");
 
@@ -84,7 +84,7 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     public List<BoardResponseDto.ReadAllBoardResponseDto> readAllBoardsByPopularity() {
-        List<Board> boards = boardRepository.findAllByDeletedAtIsNullOrderByLikeCntDesc();
+        List<Board> boards = boardRepository.findAllOrderByLikeCntDesc();
 
         log.info("인기순으로 게시글을 조회합니다.(Reading all boards by popularity)");
 

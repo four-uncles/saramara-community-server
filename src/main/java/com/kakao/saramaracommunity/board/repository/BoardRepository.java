@@ -9,11 +9,11 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface BoardRepository extends JpaRepository<Board, Long> {
 
-    Optional<Board> findByBoardIdAndDeletedAtIsNull(Long boardId);
+    Optional<Board> findByBoardId(Long boardId);
 
-    @Query("SELECT b FROM Board b WHERE b.deletedAt IS NULL ORDER BY b.createdAt DESC")
-    List<Board> findAllByDeletedAtIsNullOrderByCreatedAtDesc();
+    @Query("SELECT b FROM Board b ORDER BY b.createdAt DESC")
+    List<Board> findAllOrderByCreatedAtDesc();
 
-    @Query("SELECT b FROM Board b WHERE b.deletedAt IS NULL ORDER BY b.likeCnt DESC")
-    List<Board> findAllByDeletedAtIsNullOrderByLikeCntDesc();
+    @Query("SELECT b FROM Board b ORDER BY b.likeCnt DESC")
+    List<Board> findAllOrderByLikeCntDesc();
 }
