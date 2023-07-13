@@ -1,12 +1,9 @@
 package com.kakao.saramaracommunity.member.dto;
 
-import java.util.Set;
-import java.util.stream.Collectors;
+
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.kakao.saramaracommunity.member.entity.Member;
-import com.kakao.saramaracommunity.member.entity.Role;
-import com.kakao.saramaracommunity.member.entity.Type;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -19,8 +16,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-@Setter
 @Getter
+@Setter
 @Builder
 @ToString
 @AllArgsConstructor
@@ -30,19 +27,16 @@ public class SignUpDto {
 	@Size(max = 100, message = "이메일은 최대 100자까지 입력 가능합니다.")
 	@Pattern(regexp = "^(?:\\w+\\.?)*\\w+@(?:\\w+\\.)+\\w+$")
 	@NotBlank(message = "이메일은 필수 입력 값입니다.")
-	@Setter
 	private String email;
 
 	@NotNull(message = "닉네임은 필수 입력 값입니다.")
 	@NotBlank(message = "닉네임은 필수 입력 값입니다.")
 	@Pattern(regexp = "^[ㄱ-ㅎ가-힣A-Za-z0-9-_]{2,10}$")
-	@Setter
 	private String nickname;
 	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	@NotNull(message = "비밀번호는 필수 입력 값입니다.")
 	@NotBlank(message = "비밀번호는 필수 입력 값입니다.")
 	@Pattern(regexp = "(?=.*[0-9])(?=.*[a-zA-Z])(?=.*\\W)(?=\\S+$).{8,16}")
-	@Setter
 	private String password;
 
 

@@ -37,9 +37,8 @@ public class GlobalExceptionHandler {
 
 		MemberResDto response = MemberResDto.builder()
 			.success(false)
-			.status(ErrorCode.INTERNAL_SERVER_ERROR)
+			.errorCode(ErrorCode.INTERNAL_SERVER_ERROR)
 			.build();
-
 		HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
 
 		// MethodArgumentNotValidException 에 대한 Exception 이 감지된 경우를 의미
@@ -48,36 +47,49 @@ public class GlobalExceptionHandler {
 			FieldError fieldError = fieldErrors.get(0);
 			String fieldErrorCode = fieldError.getCode();
 
+			log.error(fieldError);
+			log.error(fieldError.getCode());
+
 			// @Valid Exception 의 필드가 이메일인 경우
 			if (fieldError.getField().equals("email")) {
 				response = validExceptionHandlingMethod.emailValidExceptionHandling(fieldError, fieldErrorCode);
 
 				// response 는 MemberResDto로 해당 클래스의 status는 ErrorCode 클래스의 정의된 status를 의미하며 이를 Getter 로 가져와서
 				// ErrorCode에 정의된 getHttpStatus() 메서드로 response(현재 Exception에 상응하는 HttpStatus를 가져온다.
-				status = response.getStatus().getHttpStatus();
+				status = response.getErrorCode().getHttpStatus();
+
+				// 결과에 에러 필드 알려주기~
+				response.setData(fieldError.getField());
+				log.error(fieldError.getField());
 
 				return new ResponseEntity<>(response, status);
 			}
 			// @Valid Exception 의 필드가 비밀번호인 경우
-			else if (fieldError.getField().equals("password")) {
+			else if (fieldError.getField().equals("password") || fieldError.getField().equals("currentPassword")
+				|| fieldError.getField().equals("changedPassword") || fieldError.getField().equals("changedPasswordCheck")) {
+
 				response = validExceptionHandlingMethod.passwordValidExceptionHandling(fieldErrorCode);
-				status = response.getStatus().getHttpStatus();
+				status = response.getErrorCode().getHttpStatus();
+				response.setData(fieldError.getField());
+				log.error(fieldError.getField());
 
 				return new ResponseEntity<>(response, status);
 			}
 			// @Valid Exception 의 필드가 닉네임인 경우
 			else if (fieldError.getField().equals("nickname")) {
 				response = validExceptionHandlingMethod.nicknameValidExceptionHandling(fieldErrorCode);
-				status = response.getStatus().getHttpStatus();
+				status = response.getErrorCode().getHttpStatus();
+				response.setData(fieldError.getField());
+				log.error(fieldError.getField());
 
 				return new ResponseEntity<>(response, status);
 			}
 			// 위의 경우의 에러가 벗어난 handleMethodArgumentNotValidException 처리
 			else {
+				response.setData(fieldError.getField());
 				log.error(fieldError.getRejectedValue());
 			}
 		}
-
 
 		return new ResponseEntity<>(response, status);
 	}

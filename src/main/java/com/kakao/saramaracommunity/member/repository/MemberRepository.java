@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import com.kakao.saramaracommunity.member.dto.MemberInfoResDto;
 import com.kakao.saramaracommunity.member.entity.Member;
 import com.kakao.saramaracommunity.member.entity.Type;
 
@@ -14,6 +15,9 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
    long countByEmail(String email);
    // NickName 중복 확인
    long countByNickname(String nickname);
+
+   // 회원정보 조회
+   Member findByEmail(String email);
 
    // Local 에서 로그인 시 Member 테이블에 해당되는 email 과 Local 에서 가입한 회원이 맞는지 여부를 가릴 때도 사용
    @EntityGraph(attributePaths = "role") // 아래의 쿼리 메서드 실행시 role 테이블 을 지연로딩 하지 않고 같이 가져오도록 지정
@@ -30,7 +34,5 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
    @EntityGraph(attributePaths = "role")
    @Query("select m from Member m where m.email = :email and (m.type = 'LOCAL' or m.type = 'KAKAO' or m.type = 'NAVER' or m.type = 'GOOGLE') ")
    Optional<Member> getWithRoles(String email);
-
-   Optional<Member>findByEmail(String email);
 
 }
