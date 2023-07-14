@@ -1,11 +1,15 @@
 package com.kakao.saramaracommunity.comment.service;
 
-import com.kakao.saramaracommunity.board.entity.Board;
 import com.kakao.saramaracommunity.comment.dto.CommentDTO;
-import com.kakao.saramaracommunity.comment.entity.Comment;
-import com.kakao.saramaracommunity.member.entity.Member;
+import com.kakao.saramaracommunity.comment.dto.CommentListDTO;
+
+import java.util.List;
 
 public interface CommentService {
 
 	public Long createComment(CommentDTO commentDTO);
+
+	public List<CommentListDTO> getBoardComments(Long BoardId);
+
+	public Boolean updateComment(Long commentId, CommentDTO commentDTO);
 }

@@ -37,4 +37,16 @@ public class Comment extends BaseTimeEntity {
 
     private Long pick;
 
+
+    /**
+     * 댓글 수정을 위한 메서드입니다.
+     * 전체 수정이 아닌 부분 수정을 위해 내용과 픽만 변경시킬 수 있게 잡아놓았습니다.
+     *
+     * @param content
+     * @param pick
+     */
+    public void changeComment(String content, Long pick) {
+        this.content = content;
+        this.pick = pick;
+    }
 }
