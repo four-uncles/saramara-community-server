@@ -12,6 +12,9 @@ import com.kakao.saramaracommunity.attach.dto.response.AttachResponse;
  */
 public interface AttachService {
 
-    AttachResponse uploadImage(AttachRequest.UploadRequest request);
+    AttachResponse.UploadResponse uploadImage(AttachRequest.UploadRequest request);
 
+    AttachResponse.GetImageResponse getBoardImages(AttachRequest.GetBoardImageRequest request);
+
+    AttachResponse.GetAllImageResponse getAllBoardImages();
 }

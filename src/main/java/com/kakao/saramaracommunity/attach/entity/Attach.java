@@ -34,7 +34,7 @@ public class Attach extends BaseTimeEntity {
     private AttachType type;
 
     @Column(nullable = false)
-    private Long id;
+    private Long ids;
 
     @Column(nullable = false)
     private Long seq;
@@ -43,9 +43,9 @@ public class Attach extends BaseTimeEntity {
     private String imgPath;
 
     @Builder
-    public Attach(AttachType type, Long id, Long seq, String imgPath) {
+    public Attach(AttachType type, Long ids, Long seq, String imgPath) {
         this.type = type;
-        this.id = id;
+        this.ids = ids;
         this.seq = seq;
         this.imgPath = imgPath;
     }

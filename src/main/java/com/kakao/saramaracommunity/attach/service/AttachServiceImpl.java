@@ -13,8 +13,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * AttachServiceImpl: 이미지 첨부파일 관련 비즈니스 로직을 수행할 AttachService 서비스 인터페이스의 구현체 클래스
@@ -38,21 +40,22 @@ public class AttachServiceImpl implements AttachService {
      * request의 이미지 순서와 파일이 담긴 Map을 파싱하여 List에 담은 후 ATTACH 테이블에 삽입
      *
      * @param request type, id, imgList
-     * @return AttachResponse
+     * @return AttachResponse.UploadResponse
      */
     @Override
-    public AttachResponse uploadImage(AttachRequest.UploadRequest request) {
+    public AttachResponse.UploadResponse uploadImage(AttachRequest.UploadRequest request) {
+
         try {
 
-            AttachType type = request.getType();
-            Long id = request.getId();
+            AttachType type = request.getAttachType();
+            Long id = request.getIds();
             Map<Long, MultipartFile> imgList = request.getImgList();
             List<Attach> attachs = new ArrayList<>();
 
             if(imgList.size() < 1 || imgList.size() > 5) {
                 log.error("이미지는 1장 이상, 최대 5장까지 등록할 수 있습니다.");
-                return AttachResponse.builder()
-                        .code(String.valueOf(HttpStatus.OK))
+                return AttachResponse.UploadResponse.builder()
+                        .code(String.valueOf(HttpStatus.BAD_REQUEST))
                         .msg("이미지는 1장 이상, 최대 5장까지 등록할 수 있습니다.")
                         .data(false)
                         .build();
@@ -64,7 +67,7 @@ public class AttachServiceImpl implements AttachService {
                 if (imgPath != null) {
                     Attach attach = Attach.builder()
                             .type(type)
-                            .id(id)
+                            .ids(id)
                             .seq(key)
                             .imgPath(imgPath)
                             .build();
@@ -75,21 +78,98 @@ public class AttachServiceImpl implements AttachService {
             log.info("[AttachServiceImpl] S3 버킷 업로드 완료 후, DB에 URL을 저장합니다.");
             attachRepository.saveAll(attachs);
 
-            return AttachResponse.builder()
+            return AttachResponse.UploadResponse.builder()
                     .code(String.valueOf(HttpStatus.OK))
                     .msg("정상적으로 이미지 업로드를 완료했습니다.")
                     .data(true)
                     .build();
 
         } catch (Exception e) {
+
             log.error("error: ", e);
-            return AttachResponse.builder()
-                    .code(String.valueOf(HttpStatus.OK))
+            return AttachResponse.UploadResponse.builder()
+                    .code(String.valueOf(HttpStatus.INTERNAL_SERVER_ERROR))
                     .msg("이미지를 업로드하던 중 문제가 발생했습니다.")
                     .data(false)
                     .build();
+
         }
 
+    }
+
+    /**
+     * getBoardImages: 하나의 게시글에 등록된 이미지 목록(순서: 이미지URL)을 ATTACH 테이블에서 조회하는 메서드
+     *
+     * @param request type, id
+     * @return AttachResponse.GetImageResponse
+     */
+    @Override
+    public AttachResponse.GetImageResponse getBoardImages(AttachRequest.GetBoardImageRequest request) {
+
+        try {
+
+            AttachType type = request.getAttachType();
+            Long id = request.getIds();
+
+            List<Attach> attachList = attachRepository.findAllByIds(id);
+
+            Map<Long, String> boardImageList = attachList.stream()
+                    .collect(Collectors.toMap(Attach::getSeq, Attach::getImgPath));
+
+            log.info("[AttachServiceImpl] 조회할 게시글의 이미지 목록: {}", boardImageList);
+
+            return AttachResponse.GetImageResponse.builder()
+                    .code(String.valueOf(HttpStatus.OK))
+                    .msg("정상적으로 해당 게시글의 등록된 이미지 목록을 조회하였습니다.")
+                    .data(boardImageList)
+                    .build();
+
+        } catch (Exception e) {
+
+            log.error("error: ", e);
+            return AttachResponse.GetImageResponse.builder()
+                    .code(String.valueOf(HttpStatus.INTERNAL_SERVER_ERROR))
+                    .msg("이미지를 가져오는 중 문제가 발생했습니다.")
+                    .data(null)
+                    .build();
+
+        }
+
+    }
+
+    /**
+     * getAllBoardImages: 모든 게시글에 등록된 이미지 목록(게시글번호: (순서: 이미지URL))을 ATTACH 테이블에서 조회하는 메서드
+     *
+     * @return AttachResponse.GetAllImageResponse
+     */
+    @Override
+    public AttachResponse.GetAllImageResponse getAllBoardImages() {
+
+        try {
+
+            List<Attach> allAttachList = attachRepository.findAll();
+
+            Map<Long, Map<Long, String>> allboardImageList = allAttachList.stream()
+                    .collect(Collectors.groupingBy(Attach::getIds, Collectors.toMap(Attach::getSeq, Attach::getImgPath)));
+
+            log.info("[AttachServiceImpl] getAllBoardImages 모든 게시글의 이미지 목록: {}", allboardImageList);
+
+            return AttachResponse.GetAllImageResponse.builder()
+                    .code(String.valueOf(HttpStatus.OK))
+                    .msg("정상적으로 모든 게시글의 등록된 이미지 목록을 조회하였습니다.")
+                    .data(allboardImageList)
+                    .build();
+
+        } catch (Exception e) {
+
+            log.error("error: ", e);
+            return AttachResponse.GetAllImageResponse.builder()
+                    .code(String.valueOf(HttpStatus.INTERNAL_SERVER_ERROR))
+                    .msg("모든 게시글의 이미지를 가져오는 중 문제가 발생했습니다.")
+                    .data(null)
+                    .build();
+
+        }
     }
 
 }
