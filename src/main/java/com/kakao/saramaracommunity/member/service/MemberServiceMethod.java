@@ -1,5 +1,6 @@
 package com.kakao.saramaracommunity.member.service;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -130,5 +131,11 @@ public class MemberServiceMethod {
 		return result;
 	}
 
+	// 회원탈퇴 시 삭제를 요청한 회원의 nickname을 @Pattern에 부합하는 Random한 문자열로 만드는 메서드 -> ^[ㄱ-ㅎ가-힣A-Za-z0-9-_]{2,10}$
+	public String createRandomNickName(){
+		return RandomStringUtils.randomAlphanumeric(10)
+			.replaceAll("[^ㄱ-ㅎ가-힣A-Za-z0-9-_]", "")
+			.substring(0, 10);
+	}
 
 }

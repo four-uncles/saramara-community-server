@@ -173,10 +173,43 @@ public class MemberServiceImpl implements MemberSerivce {
         try{
             LocalDateTime now = LocalDateTime.now();
             Member member = memberRepository.findByEmail(email);
+            // deleted_at 에 현재 날짜 삽입
             member.checkingDeletedAt(now);
+
+            /*
+              1. 랜덤 문자열로 닉네임 교체(@Pattern 에 위배되지 않도록)
+              2. 랜덤으로 교체한 닉네임이 DB에 존재하는지 Count
+              3. Count 가 1이상인지 0인지 판별 후 중복 여부 판단
+              4. 중복된 닉네임이라면 중복되지 않을 때 까지 반복.
+              5. 이 때 너무 많은 중복 방지를 위해서 반복 횟수 제한
+            */
+            String deletedMemberRandomNickName = memberServiceMethod.createRandomNickName();
+            long nicknameCount =  memberRepository.countByNickname(deletedMemberRandomNickName);
+            boolean changeNicknameForDeleted = memberServiceMethod.isDuplicatedNickname(nicknameCount);
+
+            while(changeNicknameForDeleted){
+                int maxCnt = 0;
+
+                deletedMemberRandomNickName = memberServiceMethod.createRandomNickName();
+                nicknameCount =  memberRepository.countByNickname(deletedMemberRandomNickName);
+                changeNicknameForDeleted = memberServiceMethod.isDuplicatedNickname(nicknameCount);
+                maxCnt += 1;
+
+                if(maxCnt == 10){
+                    MemberResDto response = MemberResDto.builder()
+                        .success(false)
+                        .errorCode(ErrorCode.INTERNAL_SERVER_ERROR)
+                        .build();
+
+                    return response;
+                }
+            }
+
+            member.changeNickname(deletedMemberRandomNickName);
 
             MemberResDto response = memberServiceMethod.makeSuccessResultNoData();
             return response;
+
         }catch(Exception e){
             MemberResDto response = memberServiceMethod.internalServerErrorResult(e);
             return response;
