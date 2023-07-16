@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -41,7 +42,7 @@ public class MemberController {
     private final MemberServiceMethod memberServiceMethod;
 
     // 회원가입
-    @PostMapping("/member/signup")
+    @PostMapping("/member")
     public ResponseEntity<MemberResDto> signup(@Valid @RequestBody SignUpDto signUpDto) {
         MemberResDto response = memberSerivce.register(signUpDto);
         HttpStatus status = memberServiceMethod.changeStatus(response);
@@ -79,7 +80,7 @@ public class MemberController {
     }
 
     // 닉네임 수정
-    @PutMapping("/member/{email}/{currentNickname}/{changeNickname}")
+    @PutMapping("/member/nickname/{email}/{currentNickname}/{changeNickname}")
     public ResponseEntity<MemberResDto> nicknameChanging(
         @Valid @PathVariable @Pattern(regexp = "(?=.*[0-9])(?=.*[a-zA-Z])(?=.*\\W)(?=\\S+$).{8,16}")String email,
         @Valid @PathVariable @Pattern(regexp = "^[ㄱ-ㅎ가-힣A-Za-z0-9-_]{2,10}$")String currentNickname,
@@ -97,6 +98,15 @@ public class MemberController {
         @Valid @RequestBody ChangePWDto changePWDto
     ){
         MemberResDto response = memberSerivce.passwordChange(email, changePWDto);
+        HttpStatus status = memberServiceMethod.changeStatus(response);
+        return new ResponseEntity<>(response, status);
+    }
+
+    @DeleteMapping("/member/{email}")
+    public ResponseEntity<MemberResDto> unregisterMember(
+        @Valid @PathVariable String email
+    ){
+        MemberResDto response = memberSerivce.unregister(email);
         HttpStatus status = memberServiceMethod.changeStatus(response);
         return new ResponseEntity<>(response, status);
     }

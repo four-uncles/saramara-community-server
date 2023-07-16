@@ -129,4 +129,6 @@ public class MemberServiceMethod {
 			.build();
 		return result;
 	}
+
+
 }

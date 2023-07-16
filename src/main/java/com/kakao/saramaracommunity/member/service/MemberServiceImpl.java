@@ -1,5 +1,6 @@
 package com.kakao.saramaracommunity.member.service;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 
 import com.kakao.saramaracommunity.member.dto.ChangePWDto;
@@ -12,6 +13,7 @@ import com.kakao.saramaracommunity.member.entity.Role;
 import com.kakao.saramaracommunity.member.entity.Type;
 import com.kakao.saramaracommunity.member.repository.MemberRepository;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
@@ -91,6 +93,7 @@ public class MemberServiceImpl implements MemberSerivce {
 
     // 닉네임 수정
     @Override
+    @Transactional
     public MemberResDto nickNameChange(String email, String currentNickname, String changeNickname) {
         try {
             // 변경할 닉네임에 대한 DB 내 중복 여부에 대한 예외처리
@@ -107,7 +110,6 @@ public class MemberServiceImpl implements MemberSerivce {
             // 더티체킹 방식의 Update
             Member member = memberRepository.findByEmail(email);
             member.changeNickname(changeNickname);
-            memberRepository.save(member);
 
             MemberResDto response = memberServiceMethod.makeSuccessResultNoData();
             return response;
@@ -166,7 +168,18 @@ public class MemberServiceImpl implements MemberSerivce {
 
     // 회원탈퇴
     @Override
+    @Transactional
     public MemberResDto unregister(String email) {
-        return null;
+        try{
+            LocalDateTime now = LocalDateTime.now();
+            Member member = memberRepository.findByEmail(email);
+            member.checkingDeletedAt(now);
+
+            MemberResDto response = memberServiceMethod.makeSuccessResultNoData();
+            return response;
+        }catch(Exception e){
+            MemberResDto response = memberServiceMethod.internalServerErrorResult(e);
+            return response;
+        }
     }
 }

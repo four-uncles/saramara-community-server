@@ -52,6 +52,9 @@ dependencies {
 	// amazon s3 test
 	testImplementation 'io.findify:s3mock_2.12:0.2.4'
 
+	// spring batch
+	implementation 'org.springframework.boot:spring-boot-starter-batch'
+
 }
 
 tasks.named('test') {
