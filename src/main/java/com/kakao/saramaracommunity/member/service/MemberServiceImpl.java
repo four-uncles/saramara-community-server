@@ -4,11 +4,13 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 
 import com.kakao.saramaracommunity.member.dto.ChangePWDto;
+import com.kakao.saramaracommunity.member.dto.MemberImageDto;
 import com.kakao.saramaracommunity.member.dto.MemberInfoResDto;
 import com.kakao.saramaracommunity.member.dto.MemberResDto;
 import com.kakao.saramaracommunity.member.dto.SignUpDto;
 import com.kakao.saramaracommunity.member.dto.ErrorCode;
 import com.kakao.saramaracommunity.member.entity.Member;
+import com.kakao.saramaracommunity.member.entity.MemberImage;
 import com.kakao.saramaracommunity.member.entity.Role;
 import com.kakao.saramaracommunity.member.entity.Type;
 import com.kakao.saramaracommunity.member.repository.MemberRepository;
@@ -57,7 +59,13 @@ public class MemberServiceImpl implements MemberSerivce {
             .nickname(signUpDto.getNickname())
             .type(Type.LOCAL)
             .role(Collections.singleton(Role.USER))
-            .picture("폴킴이 부릅니다 비~")
+            .memberImage(
+                MemberImage.builder().
+                    uuid("default").
+                    image_name("default").
+                    path("default").
+                    build()
+            )
             .build();
 
         memberRepository.save(member);
@@ -77,6 +85,9 @@ public class MemberServiceImpl implements MemberSerivce {
                 .nickname(member.getNickname())
                 .type(member.getType())
                 .role(member.getRole())
+                .memberImageDto(
+                    MemberImageDto.from(member.getMemberImage())
+                )
                 .build();
 
             MemberResDto response = MemberResDto.builder()
@@ -86,7 +97,7 @@ public class MemberServiceImpl implements MemberSerivce {
 
             return response;
         } catch (Exception e) {
-            MemberResDto response = memberServiceMethod.internalServerErrorResult(e);
+            MemberResDto response = memberServiceMethod.makeInternalServerErrorResult(e);
             return response;
         }
     }
@@ -115,7 +126,7 @@ public class MemberServiceImpl implements MemberSerivce {
             return response;
 
         } catch (Exception e) {
-            MemberResDto response = memberServiceMethod.internalServerErrorResult(e);
+            MemberResDto response = memberServiceMethod.makeInternalServerErrorResult(e);
             return response;
         }
     }
@@ -161,7 +172,7 @@ public class MemberServiceImpl implements MemberSerivce {
             return response;
 
         } catch (Exception e){
-            MemberResDto response = memberServiceMethod.internalServerErrorResult(e);
+            MemberResDto response = memberServiceMethod.makeInternalServerErrorResult(e);
             return response;
         }
     }
@@ -211,7 +222,7 @@ public class MemberServiceImpl implements MemberSerivce {
             return response;
 
         }catch(Exception e){
-            MemberResDto response = memberServiceMethod.internalServerErrorResult(e);
+            MemberResDto response = memberServiceMethod.makeInternalServerErrorResult(e);
             return response;
         }
     }

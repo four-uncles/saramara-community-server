@@ -19,7 +19,6 @@ import lombok.ToString;
 @Getter
 @Setter
 @Builder
-@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 public class SignUpDto {

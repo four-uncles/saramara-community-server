@@ -111,7 +111,7 @@ public class MemberServiceMethod {
 	}
 
 	// Try-Catch 중 Catch 절에서 500 에러에 대한 결과를 응답하는 메서드
-	public MemberResDto internalServerErrorResult(Exception e){
+	public MemberResDto makeInternalServerErrorResult(Exception e){
 		log.error(e.getMessage());
 		log.error(e.getStackTrace());
 

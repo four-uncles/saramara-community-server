@@ -8,6 +8,7 @@ import org.hibernate.annotations.Where;
 
 import com.kakao.saramaracommunity.common.entity.BaseTimeEntity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
@@ -17,14 +18,16 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-@AllArgsConstructor
+@ToString(exclude = {"type", "role", "memberImage"})
 @Getter
+@AllArgsConstructor
 @NoArgsConstructor
 @Where(clause = "deleted_at is NULL")
 @SQLDelete(sql = "update member set deleted_at = CURRENT_TIMESTAMP where member_id = ?")
@@ -51,19 +54,24 @@ public class Member extends BaseTimeEntity {
     @Column(nullable = false)
     private Set<Role> role;
 
-    private String picture;
+    //cascade = CascadeType.ALL
+    // 회원가입 시 Member 를 저장하기 연관 테이블에 해당되는 Entity를 필드로 가지고 있으며, JPA를 이용하기 때문에
+    // MemberImage를 먼저 저장하고 Member를 저장하지 않으면, hibernate.TransientPropertyValueException 가 발생한다.
+    // 해결 방법은 전자가 있고 cascade = CascadeType.ALL 를 선언해 연관 엔티티를 바로 저장하도록 하는 방법이 있다.
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private MemberImage memberImage;
 
    //private String token;
    //private String refreshToken;
 
    @Builder
-   public Member(String email,Type type, String nickname, String password, Set<Role> role, String picture) {
+   public Member(String email,Type type, String nickname, String password, Set<Role> role, MemberImage memberImage) {
       this.type = type;
       this.email = email;
       this.nickname = nickname;
       this.password = password;
       this.role = role;
-      this.picture = picture;
+      this.memberImage = memberImage;
    }
 
     /**

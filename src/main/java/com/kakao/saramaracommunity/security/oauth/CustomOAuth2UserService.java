@@ -59,7 +59,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     private Member createUser(OAuth2UserInfo userInfo, Type authType) {
         Member member = Member.builder()
                 .email(userInfo.getEmail())
-                .picture(userInfo.getImageUrl())
                 .role(Collections.singleton(Role.USER))
                 .type(authType)
                 .build();
