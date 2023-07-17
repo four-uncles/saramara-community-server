@@ -1,2 +1,0 @@
-ALTER TABLE member_role ADD CONSTRAINT fk_member_id FOREIGN KEY (member_member_id) REFERENCES (id) ON DELETE CASCADE;
-ALTER TABLE member_image ADD CONSTRAINT fk_member_id FOREIGN KEY (member_image_member_image_id) REFERENCES (id) ON DELETE CASCADE;
