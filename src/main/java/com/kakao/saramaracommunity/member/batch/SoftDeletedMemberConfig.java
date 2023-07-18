@@ -28,7 +28,9 @@ import com.kakao.saramaracommunity.member.entity.Member;
 import com.kakao.saramaracommunity.member.repository.MemberRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 
+@Log4j2
 @Configuration
 @EnableBatchProcessing
 @RequiredArgsConstructor
@@ -72,7 +74,8 @@ public class SoftDeletedMemberConfig {
 
 
 	// 매일 2시에 실행
-	@Scheduled(cron = "0 2 * * *")
+	//@Scheduled(cron = "0 2 * * *")
+	@Scheduled(cron = "30 1 * * *")
 	public void runSoftDeleteJob() throws
 		JobParametersInvalidException, JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException {
 		JobParameters jobParameters = new JobParametersBuilder()
@@ -85,5 +88,6 @@ public class SoftDeletedMemberConfig {
 				)
 			), jobParameters);
 		// 추가 작업 또는 로깅 등이 필요한 경우 처리 가능
+		log.info(jobExecution);
 	}
 }
