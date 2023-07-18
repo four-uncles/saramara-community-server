@@ -1,5 +1,7 @@
 package com.kakao.saramaracommunity.member.repository;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -18,6 +20,9 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
    // 회원정보 조회
    Member findByEmail(String email);
+
+   // Batch SoftDelete 를 실제로 삭제하기 위한 Job 의 Step 의 실제 작업을 구성하는 Tasklet 에서 사용하는 회원정보 삭제
+   List<Member> findByDeletedAtBefore(LocalDateTime threshold);
 
    // Local 에서 로그인 시 Member 테이블에 해당되는 email 과 Local 에서 가입한 회원이 맞는지 여부를 가릴 때도 사용
    @EntityGraph(attributePaths = "role") // 아래의 쿼리 메서드 실행시 role 테이블 을 지연로딩 하지 않고 같이 가져오도록 지정
