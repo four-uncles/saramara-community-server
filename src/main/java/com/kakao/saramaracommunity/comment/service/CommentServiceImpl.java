@@ -82,4 +82,24 @@ public class CommentServiceImpl implements CommentService{
 
         return result;
     }
+
+    /**
+     * 단일 댓글을 삭제하는 메서드입니다.
+     *
+     * 댓글이 존재하는지 먼저 확인 이후,
+     * 존재한다면 delete를 실행하고 true를, 존재하지 않다면 false를 return 해줍니다.
+     * @param commentId
+     * @return
+     */
+    @Override
+    public Boolean deleteComment(Long commentId) {
+
+        if (commentRepository.findById(commentId)
+            .isPresent()) {
+            commentRepository.deleteById(commentId);
+            return true;
+        }
+            log.error("이미 지워진 댓글 = {}", commentRepository.findById(commentId));
+            return false;
+    }
 }
