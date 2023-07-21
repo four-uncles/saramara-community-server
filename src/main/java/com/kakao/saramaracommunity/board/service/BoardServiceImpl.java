@@ -111,4 +111,25 @@ public class BoardServiceImpl implements BoardService {
                 .build();
         }).collect(Collectors.toList());
     }
+
+    @Override
+    public Boolean updateBoard(Long boardId,
+        BoardRequestDto.UpdateRequestDto requestDto) {
+
+        Board board = boardRepository.findByBoardId(boardId)
+            .orElseThrow(() -> new EntityNotFoundException("게시글을 찾을 수 없습니다."));
+
+        log.info("요청에 따라 게시글을 수정합니다.(Update the post as requested.)");
+
+        // 요청된 데이터로 수정할 내용 업데이트
+        board.setTitle(requestDto.getTitle());
+        board.setContent(requestDto.getContent());
+        board.setCategoryBoard(requestDto.getCategoryBoard());
+        board.setDeadLine(requestDto.getDeadLine());
+
+        // 수정된 게시글을 저장
+        boardRepository.save(board);
+
+        return true;
+    }
 }
