@@ -4,6 +4,8 @@ import com.kakao.saramaracommunity.board.repository.BoardRepository;
 import com.kakao.saramaracommunity.comment.dto.CommentDTO;
 import com.kakao.saramaracommunity.comment.dto.CommentListDTO;
 import com.kakao.saramaracommunity.comment.entity.Comment;
+import com.kakao.saramaracommunity.comment.exception.CommentErrorCode;
+import com.kakao.saramaracommunity.comment.exception.CommentNotFoundException;
 import com.kakao.saramaracommunity.comment.repository.CommentRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -74,7 +76,7 @@ public class CommentServiceImpl implements CommentService{
     public Boolean updateComment(Long commentId, CommentDTO commentDTO) {
         Optional<Comment> findComment = commentRepository.findById(commentId);
 
-        Comment comment = findComment.orElseThrow();
+        Comment comment = findComment.orElseThrow(()-> new CommentNotFoundException(CommentErrorCode.COMMENT_NOT_FOUND));
 
         comment.changeComment(commentDTO.getContent(), commentDTO.getPick());
 
