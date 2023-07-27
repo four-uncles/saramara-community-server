@@ -132,4 +132,15 @@ public class BoardServiceImpl implements BoardService {
 
         return true;
     }
+
+    @Override
+    public Boolean deleteBoard(Long boardId) {
+
+        if (boardRepository.findByBoardId(boardId).isPresent()) {
+            boardRepository.deleteById(boardId);
+            log.info("요청에 따라 게시글을 삭제합니다. (Delete the post as requested)");
+            return true;
+        }
+        return false;
+    }
 }
