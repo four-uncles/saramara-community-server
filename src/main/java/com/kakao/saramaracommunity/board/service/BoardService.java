@@ -22,4 +22,7 @@ public interface BoardService {
 
     // 게시글 수정 요청 Method
     Boolean updateBoard(Long boardId, BoardRequestDto.UpdateRequestDto requestDto);
+
+    // 게시글 삭제 요청 Method
+    Boolean deleteBoard(Long boardId);
 }

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -101,5 +102,17 @@ public class BoardController {
         response.put("result", result);
 
         return ResponseEntity.status((int)response.get("code")).body(response);
+    }
+
+    @DeleteMapping("/{boardId}")
+    public ResponseEntity<Map<String, Object>> deleteBoard(@PathVariable ("boardId") Long boardId) {
+
+        Boolean deletedBoard = boardService.deleteBoard(boardId);
+
+        Map<String, Object> result = new HashMap<>();
+
+        result.put("result", deletedBoard);
+
+        return ResponseEntity.ok(result);
     }
 }
