@@ -12,4 +12,6 @@ public interface CommentService {
 	public List<CommentListDTO> getBoardComments(Long BoardId);
 
 	public Boolean updateComment(Long commentId, CommentDTO commentDTO);
+
+	public Boolean deleteComment(Long commentId);
 }

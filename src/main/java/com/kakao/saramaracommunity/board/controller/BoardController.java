@@ -5,7 +5,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -85,5 +87,32 @@ public class BoardController {
         response.put("data", boards);
 
         return ResponseEntity.ok(response);
+    }
+
+    @PatchMapping("/{boardId}")
+    public ResponseEntity<Object> updateBoard(@PathVariable ("boardId") Long boardId,
+        @RequestBody @Valid BoardRequestDto.UpdateRequestDto requestDto) {
+
+        Boolean result = boardService.updateBoard(boardId, requestDto);
+
+        // 응답 데이터 생성
+        Map<String, Object> response = new HashMap<>();
+        response.put("code", 200);
+        response.put("msg", "success");
+        response.put("result", result);
+
+        return ResponseEntity.status((int)response.get("code")).body(response);
+    }
+
+    @DeleteMapping("/{boardId}")
+    public ResponseEntity<Map<String, Object>> deleteBoard(@PathVariable ("boardId") Long boardId) {
+
+        Boolean deletedBoard = boardService.deleteBoard(boardId);
+
+        Map<String, Object> result = new HashMap<>();
+
+        result.put("result", deletedBoard);
+
+        return ResponseEntity.ok(result);
     }
 }

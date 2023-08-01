@@ -58,4 +58,16 @@ public class CommentController {
 
 		return ResponseEntity.ok(result);
 	}
+
+	@DeleteMapping("/{commentId}")
+	public ResponseEntity<Map<String, Object>> deleteComment(@Valid @PathVariable("commentId") Long commentId) {
+
+		Boolean deletedComment = commentService.deleteComment(commentId);
+
+		Map<String, Object> result = new HashMap<>();
+
+		result.put("result", deletedComment);
+
+		return ResponseEntity.ok(result);
+	}
 }

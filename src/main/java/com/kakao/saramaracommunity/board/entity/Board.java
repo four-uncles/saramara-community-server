@@ -66,4 +66,20 @@ public class Board extends BaseTimeEntity {
         this.boardCnt = this.boardCnt == null ? 0 : this.boardCnt;
         this.likeCnt = this.likeCnt == null ? 0 : this.likeCnt;
     }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public void setCategoryBoard(CategoryBoard categoryBoard) {
+        this.categoryBoard = categoryBoard;
+    }
+
+    public void setDeadLine(LocalDateTime deadLine) {
+        this.deadLine = deadLine;
+    }
 }

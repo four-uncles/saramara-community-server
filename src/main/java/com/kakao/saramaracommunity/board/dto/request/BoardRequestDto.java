@@ -35,4 +35,23 @@ public class BoardRequestDto {
         @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
         private LocalDateTime deadLine;
     }
+
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Getter
+    @Builder
+    public static class UpdateRequestDto {
+
+        @NotBlank(message = "제목을 입력해주세요.")
+        private String title;
+
+        @NotBlank(message = "내용을 입력해주세요.")
+        private String content;
+
+        @NotNull(message = "카테고리를 선택해주세요.")
+        private CategoryBoard categoryBoard;
+
+        @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+        private LocalDateTime deadLine;
+    }
 }
