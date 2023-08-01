@@ -1,3 +1,4 @@
+/*
 package com.kakao.saramaracommunity.member.batch;
 
 import java.time.LocalDateTime;
@@ -87,3 +88,4 @@ public class SoftDeletedMemberConfig {
 		// 추가 작업 또는 로깅 등이 필요한 경우 처리 가능
 	}
 }
+*/
