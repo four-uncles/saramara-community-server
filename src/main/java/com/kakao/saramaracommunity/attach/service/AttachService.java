@@ -12,9 +12,18 @@ import com.kakao.saramaracommunity.attach.dto.response.AttachResponse;
  */
 public interface AttachService {
 
-    AttachResponse.UploadResponse uploadImage(AttachRequest.UploadRequest request);
+    AttachResponse.UploadResponse uploadImageDeprecated(AttachRequest.UploadRequestDeprecated request);
+
+    AttachResponse.UploadBucketResponse uploadS3BucketImages(AttachRequest.UploadBucketRequest request);
+
+    AttachResponse.UploadResponse uploadImages(AttachRequest.UploadRequest request);
 
     AttachResponse.GetImageResponse getBoardImages(AttachRequest.GetBoardImageRequest request);
 
     AttachResponse.GetAllImageResponse getAllBoardImages();
+
+    AttachResponse.UpdateResponse updateImage(AttachRequest.UpdateRequest request);
+
+    AttachResponse.DeleteResponse deleteImage(Long attachId);
+
 }
