@@ -32,7 +32,7 @@ public class MemberRepositoryTest {
                 .nickname("lango")
                 .password("kakao")
 //                .role(Role.USER)
-                .picture("imagePath")
+//                .picture("imagePath")
                 .build());
 
         // when

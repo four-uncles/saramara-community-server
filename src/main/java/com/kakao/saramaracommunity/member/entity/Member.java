@@ -9,6 +9,7 @@ import org.hibernate.annotations.Where;
 import com.kakao.saramaracommunity.common.entity.BaseTimeEntity;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
@@ -18,6 +19,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -67,7 +69,8 @@ public class Member extends BaseTimeEntity {
     //@ElementCollection(fetch = FetchType.LAZY) 은 DB에 Enrity가 아닌 값, 타입에 해당되는 Collection, List, Set, Map 등을 저장하기 위해 사용되며, 새로운 테이블로 매핑된다.
     @ElementCollection(fetch = FetchType.LAZY)
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @CollectionTable(name = "member_roles", joinColumns = @JoinColumn(name = "member_id"))
+    @Column(name = "role")
     private Set<Role> role;
 
     //cascade = CascadeType.ALL
