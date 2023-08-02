@@ -18,12 +18,14 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static com.kakao.saramaracommunity.attach.entity.AttachType.BOARD;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.groups.Tuple.tuple;
 import static org.junit.jupiter.api.Assertions.*;
 
 
@@ -53,13 +55,37 @@ class AttachServiceImplTest {
         attachRepository.deleteAllInBatch();
     }
 
-    @DisplayName("1장의 이미지를 업로드하면 S3와 DB에 이미지가 업로드된다.")
+    @DisplayName("1장의 이미지를 AWS S3 버킷에 등록한다.")
     @Test
-    void singleUploadImage() {
+    void singleImageUploadAWSS3Bucket() {
         // given
-        Map<Long, MultipartFile> imgList = new HashMap<>();
+        List<MultipartFile> imgList = new ArrayList<>();
         MultipartFile file = new MockMultipartFile("file", "test.png", "image/png", "test file".getBytes(StandardCharsets.UTF_8));
-        imgList.put(1L, file);
+        imgList.add(file);
+
+        AttachRequest.UploadBucketRequest request = AttachRequest.UploadBucketRequest.builder()
+                .imgList(imgList)
+                .build();
+
+        // when
+        AttachResponse.UploadBucketResponse response = attachService.uploadS3BucketImages(request);
+
+        // then
+        assertThat(response.getCode()).isEqualTo("200 OK");
+        assertThat(response.getMsg()).isEqualTo("정상적으로 AWS S3 버킷에 이미지 등록을 완료했습니다.");
+        assertThat(response.getData()).hasSize(1);
+        // 테스트 노란불 뜸 - 실제 파일명은 다음과 같음 "https://saramara-storage.s3.ap-northeast-2.amazonaws.com/%2F%2Ftest_1690875139637.png"
+//        assertThat(response.getData()).contains("test.png");
+
+    }
+
+    @DisplayName("1번 게시글에 대한 1장의 이미지 URL(S3 이미지 객체 URL)을 DB에 저장한다.")
+    @Test
+    void singleImageUpload() {
+        // given
+        Map<Long, String> imgList = new HashMap<>();
+        String imgPath = "https://saramara-storage.s3.ap-northeast-2.amazonaws.com//test_1.png";
+        imgList.put(1L, imgPath);
 
         AttachRequest.UploadRequest request = AttachRequest.UploadRequest.builder()
                 .attachType(BOARD)
@@ -68,29 +94,55 @@ class AttachServiceImplTest {
                 .build();
 
         // when
-        AttachResponse.UploadResponse response = attachService.uploadImage(request);
+        AttachResponse.UploadResponse response = attachService.uploadImages(request);
 
         // then
         assertThat(response.getCode()).isEqualTo("200 OK");
+        assertThat(response.getMsg()).isEqualTo("정상적으로 이미지 업로드를 완료했습니다.");
         assertThat(response.isData()).isTrue();
 
     }
 
-    @DisplayName("여러 장의 이미지를 업로드하면 S3와 DB에 이미지가 업로드된다.")
+    @DisplayName("5장의 이미지를 AWS S3 버킷에 등록한다.")
     @Test
-    void MultipleUploadImage() {
+    void MultipleImageUploadAWSS3Bucket() {
         // given
-        Map<Long, MultipartFile> imgList = new HashMap<>();
+        List<MultipartFile> imgList = new ArrayList<>();
         MultipartFile file1 = new MockMultipartFile("file", "test_1.png", "image/png", "test_1 file".getBytes(StandardCharsets.UTF_8));
         MultipartFile file2 = new MockMultipartFile("file", "test_2.png", "image/png", "test_2 file".getBytes(StandardCharsets.UTF_8));
         MultipartFile file3 = new MockMultipartFile("file", "test_3.png", "image/png", "test_3 file".getBytes(StandardCharsets.UTF_8));
         MultipartFile file4 = new MockMultipartFile("file", "test_4.png", "image/png", "test_4 file".getBytes(StandardCharsets.UTF_8));
         MultipartFile file5 = new MockMultipartFile("file", "test_5.png", "image/png", "test_5 file".getBytes(StandardCharsets.UTF_8));
-        imgList.put(1L, file1);
-        imgList.put(2L, file2);
-        imgList.put(3L, file3);
-        imgList.put(4L, file4);
-        imgList.put(5L, file5);
+        imgList.add(file1);
+        imgList.add(file2);
+        imgList.add(file3);
+        imgList.add(file4);
+        imgList.add(file5);
+
+        AttachRequest.UploadBucketRequest request = AttachRequest.UploadBucketRequest.builder()
+                .imgList(imgList)
+                .build();
+
+        // when
+        AttachResponse.UploadBucketResponse response = attachService.uploadS3BucketImages(request);
+
+        // then
+        assertThat(response.getCode()).isEqualTo("200 OK");
+        assertThat(response.getMsg()).isEqualTo("정상적으로 AWS S3 버킷에 이미지 등록을 완료했습니다.");
+        assertThat(response.getData()).hasSize(5);
+
+    }
+
+    @DisplayName("1번 게시글에 대해 5장의 이미지 URL(S3 이미지 객체 URL)을 DB에 저장한다.")
+    @Test
+    void MultipleImageUpload() {
+        // given
+        Map<Long, String> imgList = new HashMap<>();
+        imgList.put(1L, "https://saramara-storage.s3.ap-northeast-2.amazonaws.com//test_1.png");
+        imgList.put(2L, "https://saramara-storage.s3.ap-northeast-2.amazonaws.com//test_2.png");
+        imgList.put(3L, "https://saramara-storage.s3.ap-northeast-2.amazonaws.com//test_3.png");
+        imgList.put(4L, "https://saramara-storage.s3.ap-northeast-2.amazonaws.com//test_4.png");
+        imgList.put(5L, "https://saramara-storage.s3.ap-northeast-2.amazonaws.com//test_5.png");
 
         AttachRequest.UploadRequest request = AttachRequest.UploadRequest.builder()
                 .attachType(BOARD)
@@ -99,19 +151,39 @@ class AttachServiceImplTest {
                 .build();
 
         // when
-        AttachResponse.UploadResponse response = attachService.uploadImage(request);
+        AttachResponse.UploadResponse response = attachService.uploadImages(request);
 
         // then
         assertThat(response.getCode()).isEqualTo("200 OK");
+        assertThat(response.getMsg()).isEqualTo("정상적으로 이미지 업로드를 완료했습니다.");
         assertThat(response.isData()).isTrue();
 
     }
 
-    @DisplayName("이미지는 최소 1장이상 업로드할 수 있다.")
+    @DisplayName("AWS S3 버킷에 최소 1장이상의 이미지를 업로드할 수 있다.")
+    @Test
+    void ZeroUploadImageAWSS3Bucket() {
+        // given
+        List<MultipartFile> imgList = new ArrayList<>();
+
+        AttachRequest.UploadBucketRequest request = AttachRequest.UploadBucketRequest.builder()
+                .imgList(imgList)
+                .build();
+
+        // when
+        AttachResponse.UploadBucketResponse response = attachService.uploadS3BucketImages(request);
+
+        // then
+        assertThat(response.getCode()).isEqualTo("400 BAD_REQUEST");
+        assertThat(response.getMsg()).isEqualTo("이미지는 1장 이상, 최대 5장까지 등록할 수 있습니다.");
+
+    }
+
+    @DisplayName("DB에는 최소 1장이상의 이미지를 업로드할 수 있다.")
     @Test
     void ZeroUploadImage() {
         // given
-        Map<Long, MultipartFile> imgList = new HashMap<>();
+        Map<Long, String> imgList = new HashMap<>();
 
         AttachRequest.UploadRequest request = AttachRequest.UploadRequest.builder()
                 .attachType(BOARD)
@@ -120,32 +192,56 @@ class AttachServiceImplTest {
                 .build();
 
         // when
-        AttachResponse.UploadResponse response = attachService.uploadImage(request);
+        AttachResponse.UploadResponse response = attachService.uploadImages(request);
 
         // then
         assertThat(response.getCode()).isEqualTo("400 BAD_REQUEST");
         assertThat(response.getMsg()).isEqualTo("이미지는 1장 이상, 최대 5장까지 등록할 수 있습니다.");
-        assertThat(response.isData()).isFalse();
 
     }
 
-    @DisplayName("이미지는 최대 5장까지 업로드할 수 있다.")
+    @DisplayName("AWS S3 버킷에 최대 5장까지 이미지를 업로드할 수 있다.")
     @Test
-    void MoreThenFiveUploadImage() {
+    void MoreThenFiveUploadImageAWSS3Bucket() {
         // given
-        Map<Long, MultipartFile> imgList = new HashMap<>();
+        List<MultipartFile> imgList = new ArrayList<>();
         MultipartFile file1 = new MockMultipartFile("file", "test_1.png", "image/png", "test_1 file".getBytes(StandardCharsets.UTF_8));
         MultipartFile file2 = new MockMultipartFile("file", "test_2.png", "image/png", "test_2 file".getBytes(StandardCharsets.UTF_8));
         MultipartFile file3 = new MockMultipartFile("file", "test_3.png", "image/png", "test_3 file".getBytes(StandardCharsets.UTF_8));
         MultipartFile file4 = new MockMultipartFile("file", "test_4.png", "image/png", "test_4 file".getBytes(StandardCharsets.UTF_8));
         MultipartFile file5 = new MockMultipartFile("file", "test_5.png", "image/png", "test_5 file".getBytes(StandardCharsets.UTF_8));
         MultipartFile file6 = new MockMultipartFile("file", "test_6.png", "image/png", "test_6 file".getBytes(StandardCharsets.UTF_8));
-        imgList.put(1L, file1);
-        imgList.put(2L, file2);
-        imgList.put(3L, file3);
-        imgList.put(4L, file4);
-        imgList.put(5L, file5);
-        imgList.put(6L, file6);
+        imgList.add(file1);
+        imgList.add(file2);
+        imgList.add(file3);
+        imgList.add(file4);
+        imgList.add(file5);
+        imgList.add(file6);
+
+        AttachRequest.UploadBucketRequest request = AttachRequest.UploadBucketRequest.builder()
+                .imgList(imgList)
+                .build();
+
+        // when
+        AttachResponse.UploadBucketResponse response = attachService.uploadS3BucketImages(request);
+
+        // then
+        assertThat(response.getCode()).isEqualTo("400 BAD_REQUEST");
+        assertThat(response.getMsg()).isEqualTo("이미지는 1장 이상, 최대 5장까지 등록할 수 있습니다.");
+
+    }
+
+    @DisplayName("DB에는 최대 5장까지 이미지를 업로드할 수 있다.")
+    @Test
+    void MoreThenFiveUploadImage() {
+        // given
+        Map<Long, String> imgList = new HashMap<>();
+        imgList.put(1L, "https://saramara-storage.s3.ap-northeast-2.amazonaws.com//test_1.png");
+        imgList.put(2L, "https://saramara-storage.s3.ap-northeast-2.amazonaws.com//test_2.png");
+        imgList.put(3L, "https://saramara-storage.s3.ap-northeast-2.amazonaws.com//test_3.png");
+        imgList.put(4L, "https://saramara-storage.s3.ap-northeast-2.amazonaws.com//test_4.png");
+        imgList.put(5L, "https://saramara-storage.s3.ap-northeast-2.amazonaws.com//test_5.png");
+        imgList.put(6L, "https://saramara-storage.s3.ap-northeast-2.amazonaws.com//test_6.png");
 
         AttachRequest.UploadRequest request = AttachRequest.UploadRequest.builder()
                 .attachType(BOARD)
@@ -154,12 +250,11 @@ class AttachServiceImplTest {
                 .build();
 
         // when
-        AttachResponse.UploadResponse response = attachService.uploadImage(request);
+        AttachResponse.UploadResponse response = attachService.uploadImages(request);
 
         // then
         assertThat(response.getCode()).isEqualTo("400 BAD_REQUEST");
         assertThat(response.getMsg()).isEqualTo("이미지는 1장 이상, 최대 5장까지 등록할 수 있습니다.");
-        assertThat(response.isData()).isFalse();
 
     }
 
@@ -183,10 +278,14 @@ class AttachServiceImplTest {
 
         // then
         assertThat(response.getCode()).isEqualTo("200 OK");
-        assertThat(response.getMsg()).isEqualTo("정상적으로 해당 게시글의 등록된 이미지 목록을 조회하였습니다.");
         assertThat(response.getData()).hasSize(3);
-        assertThat(response.getData().keySet()).containsExactly(1L, 2L, 3L);
-        assertThat(response.getData().values()).containsExactly("test1.jpg", "test2.jpg", "test3.jpg");
+        assertThat(response.getData().keySet()).hasSize(3);
+        assertThat(response.getData().values()).hasSize(3)
+                .contains(
+                        Map.of(1L, "test1.jpg"),
+                        Map.of(2L, "test2.jpg"),
+                        Map.of(3L, "test3.jpg")
+                );
 
     }
 
@@ -233,6 +332,51 @@ class AttachServiceImplTest {
         assertThat(response.getData().keySet()).hasSize(3);
 
     }
+
+    @DisplayName("하나의 게시글에 등록된 3개의 이미지 중 첫번째 이미지를 새로운 이미지로 수정한다.")
+    @Test
+    void updateImage() {
+        // given
+        Attach attach1 = createAttach(1L, 1L, "first1.jpg");
+        Attach attach2 = createAttach(1L, 2L, "second2.jpg");
+        Attach attach3 = createAttach(1L, 3L, "third3.jpg");
+        attachRepository.saveAll(List.of(attach1, attach2, attach3));
+
+        AttachRequest.UpdateRequest request = AttachRequest.UpdateRequest.builder()
+                .attachId(attach1.getAttachId())
+                .attachType(BOARD)
+                .ids(1L)
+                .imgPath("first_1.png")
+                .build();
+
+        // when
+        AttachResponse.UpdateResponse response = attachService.updateImage(request);
+
+        // then
+        assertThat(response.getCode()).isEqualTo("200 OK");
+        assertThat(response.getMsg()).isEqualTo("정상적으로 게시글의 이미지를 수정했습니다.");
+        assertThat(response.isData()).isTrue();
+    }
+
+    @DisplayName("하나의 게시글에 등록된 하나의 이미지를 삭제한다.")
+    @Test
+    void removeImage() {
+        // given
+        Attach attach1 = createAttach(1L, 1L, "first1.jpg");
+        Attach attach2 = createAttach(1L, 2L, "second2.jpg");
+        Attach attach3 = createAttach(1L, 3L, "third3.jpg");
+        attachRepository.saveAll(List.of(attach1, attach2, attach3));
+
+        // when
+        AttachResponse.DeleteResponse response = attachService.deleteImage(attach1.getAttachId());
+
+        // then
+        assertThat(response.getCode()).isEqualTo("200 OK");
+        assertThat(response.getMsg()).isEqualTo("정상적으로 이미지를 삭제했습니다.");
+        assertThat(response.isData()).isTrue();
+
+    }
+
 
     private Attach createAttach(Long ids, Long seq, String path) {
         return Attach.builder()

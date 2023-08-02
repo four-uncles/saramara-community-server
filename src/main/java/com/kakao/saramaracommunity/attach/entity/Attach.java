@@ -50,4 +50,13 @@ public class Attach extends BaseTimeEntity {
         this.imgPath = imgPath;
     }
 
+    /**
+     * changeImgPath: 이미지 URL 수정 메서드
+     *
+     * @param imgPath
+     */
+    public void changeImgPath(String imgPath) {
+        this.imgPath = imgPath;
+    }
+
 }
