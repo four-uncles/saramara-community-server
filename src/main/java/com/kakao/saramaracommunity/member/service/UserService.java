@@ -34,7 +34,6 @@ public class UserService {
             .nickname(signUpDto.getNickname())
             .type(Type.LOCAL)
             .role(Collections.singleton(Role.USER))
-            .picture("")
             .build();
 
 

@@ -52,6 +52,16 @@ dependencies {
 	// amazon s3 test
 	testImplementation 'io.findify:s3mock_2.12:0.2.4'
 
+	// spring batch
+	implementation 'org.springframework.boot:spring-boot-starter-batch'
+	// spring batch test
+	testImplementation 'org.springframework.batch:spring-batch-test'
+	testImplementation 'com.h2database:h2:1.4.200'
+
+	// RandomStringUtils(Random 문자열 생성)에 사용
+	implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.12.0'
+
+
 }
 
 tasks.named('test') {

@@ -58,11 +58,6 @@ public class ValidExceptionHandlingMethod {
 			return response;
 	}
 
-	// Nickname @Valid 유효성 검사 실패한 경우에 발생할 수 있는 Exception 을 다루는 메서드
-	/*public MemberResDto nicknameValidExceptionHandling(FieldError fieldError, String fieldErrorCode){
-
-	}*/
-
 	// Password @Valid 유효성 검사 실패한 경우에 발생할 수 있는 Exception 을 다루는 메서드
 	public MemberResDto passwordValidExceptionHandling(String fieldErrorCode){
 		errorCode = ErrorCode.INVALID_INPUT_PW;

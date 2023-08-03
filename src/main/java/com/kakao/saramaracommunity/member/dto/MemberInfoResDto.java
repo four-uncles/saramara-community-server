@@ -16,12 +16,14 @@ public class MemberInfoResDto {
 	private String nickname;
 	private Type type;
 	private Set<Role> role;
+	private MemberImageDto memberImage;
 
 	@Builder
-	public MemberInfoResDto(String email, String nickname, Type type, Set<Role> role){
+	public MemberInfoResDto(String email, String nickname, Type type, Set<Role> role, MemberImageDto memberImageDto){
 		this.email = email;
 		this.nickname = nickname;
 		this.type = type;
 		this.role = role;
+		this.memberImage = memberImageDto;
 	}
 }
