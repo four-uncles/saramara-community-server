@@ -66,3 +66,9 @@ API 명세서의 경우 [노션 링크](https://www.notion.so/API-bbd684c73e4d41
 |공통|상태 코드 관리|💬|
 |공통|응답 객체 일반화|💬|
 |공통|테스트 코드 작성|💬|
+
+<br><hr><br>
+
+## DB ERD
+
+![saramara](https://github.com/four-uncles/saramara-community-server/assets/59594946/ef6b3879-1149-44e1-a5ad-7194a8c2a486)
