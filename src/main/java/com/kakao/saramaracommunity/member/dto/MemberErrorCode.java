@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public enum ErrorCode {
+public enum MemberErrorCode {
 	INVALID_INPUT_VALUE(400, "COMMON-001", "유효성 검증에 실패한 경우(Client 의 잘못된 요청)."),
 	INTERNAL_SERVER_ERROR(500, "COMMON-002", "서버에서 처리할 수 없는 경우."),
 

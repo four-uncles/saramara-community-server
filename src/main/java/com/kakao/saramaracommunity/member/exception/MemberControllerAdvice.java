@@ -10,7 +10,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import com.kakao.saramaracommunity.member.dto.MemberResDto;
-import com.kakao.saramaracommunity.member.dto.ErrorCode;
+import com.kakao.saramaracommunity.member.dto.MemberErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 /*
@@ -37,7 +37,7 @@ public class MemberControllerAdvice {
 
 		MemberResDto response = MemberResDto.builder()
 			.success(false)
-			.errorCode(ErrorCode.INTERNAL_SERVER_ERROR)
+			.memberErrorCode(MemberErrorCode.INTERNAL_SERVER_ERROR)
 			.build();
 		HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
 
@@ -56,7 +56,7 @@ public class MemberControllerAdvice {
 
 				// response 는 MemberResDto로 해당 클래스의 status는 ErrorCode 클래스의 정의된 status를 의미하며 이를 Getter 로 가져와서
 				// ErrorCode에 정의된 getHttpStatus() 메서드로 response(현재 Exception에 상응하는 HttpStatus를 가져온다.
-				status = response.getErrorCode().getHttpStatus();
+				status = response.getMemberErrorCode().getHttpStatus();
 
 				// 결과에 에러 필드 알려주기~
 				response.setData(fieldError.getField());
@@ -69,7 +69,7 @@ public class MemberControllerAdvice {
 				|| fieldError.getField().equals("changedPassword") || fieldError.getField().equals("changedPasswordCheck")) {
 
 				response = validExceptionHandlingMethod.passwordValidExceptionHandling(fieldErrorCode);
-				status = response.getErrorCode().getHttpStatus();
+				status = response.getMemberErrorCode().getHttpStatus();
 				response.setData(fieldError.getField());
 				log.error(fieldError.getField());
 
@@ -78,7 +78,7 @@ public class MemberControllerAdvice {
 			// @Valid Exception 의 필드가 닉네임인 경우
 			else if (fieldError.getField().equals("nickname")) {
 				response = validExceptionHandlingMethod.nicknameValidExceptionHandling(fieldErrorCode);
-				status = response.getErrorCode().getHttpStatus();
+				status = response.getMemberErrorCode().getHttpStatus();
 				response.setData(fieldError.getField());
 				log.error(fieldError.getField());
 
