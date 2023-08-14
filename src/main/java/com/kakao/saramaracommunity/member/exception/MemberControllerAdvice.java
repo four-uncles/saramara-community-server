@@ -21,7 +21,7 @@ Exception에 대한 결과를 ErrorCode 클래스를 이용해서 MemberResDto�
 @Log4j2
 @RequiredArgsConstructor
 @RestControllerAdvice
-public class GlobalExceptionHandler {
+public class MemberControllerAdvice {
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	public ResponseEntity<MemberResDto> handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
 
