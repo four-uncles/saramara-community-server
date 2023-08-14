@@ -5,6 +5,7 @@ import com.kakao.saramaracommunity.attach.dto.response.AttachResponse;
 import com.kakao.saramaracommunity.attach.service.AttachService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,20 +22,6 @@ import org.springframework.web.bind.annotation.*;
 public class AttachController {
 
     private final AttachService attachService;
-
-    /**
-     * uploadImageDeprecated: 이미지 업로드 API
-     * URL: POST /api/v1/attach/upload
-     * 1장 이상, 최대 5장까지의 이미지를 S3와 MariaDB에 업로드한다.
-     *
-     * @param request type, id, imgList
-     * @return AttachResponse.UploadResponse
-     */
-    @PostMapping("/upload/deprecated")
-    public ResponseEntity<AttachResponse.UploadResponse> uploadImageDeprecated(@RequestBody @Valid AttachRequest.UploadRequestDeprecated request) {
-        AttachResponse.UploadResponse response = attachService.uploadImageDeprecated(request);
-        return ResponseEntity.ok().body(response);
-    }
 
     /**
      * uploadS3BucketImages: AWS S3 Bucket 이미지 파일 등록 API
@@ -111,7 +98,7 @@ public class AttachController {
     @DeleteMapping("/board")
     public ResponseEntity<AttachResponse.DeleteResponse> deleteImage(@Valid @PathVariable Long attachId) {
         AttachResponse.DeleteResponse response = attachService.deleteImage(attachId);
-        return ResponseEntity.ok().body(response);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(response);
     }
 
 

@@ -29,8 +29,10 @@ public class AwsS3Uploader {
     @Value("${cloud.aws.s3.bucket}")
     private String bucketName;
 
-    public String upload(MultipartFile file) throws IOException {
+    public String upload(MultipartFile file) {
+
         boolean result = validateFileExists(file);
+
         if(!result) {
             log.info("[AwsS3Uploader] 업로드할 파일이 존재하지 않습니다.");
             return null;

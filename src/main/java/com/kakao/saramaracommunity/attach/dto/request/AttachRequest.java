@@ -36,6 +36,7 @@ public class AttachRequest {
         @NotNull(message = "게시글이나 댓글의 번호값을 알 수 없습니다.")
         private Long ids;
 
+        @NotNull(message = "이미지 목록이 비어있습니다.")
         private Map<Long, MultipartFile> imgList;
 
         @Builder
@@ -63,6 +64,7 @@ public class AttachRequest {
         @NotNull(message = "게시글이나 댓글의 번호값을 알 수 없습니다.")
         private Long ids;
 
+        @NotNull(message = "이미지 목록이 비어있습니다.")
         private Map<Long, String> imgList;
 
         @Builder
@@ -81,6 +83,7 @@ public class AttachRequest {
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     @Getter
     public static class UploadBucketRequest {
+        @NotNull(message = "이미지 목록이 비어있습니다.")
         private List<MultipartFile> imgList;
 
         @Builder
