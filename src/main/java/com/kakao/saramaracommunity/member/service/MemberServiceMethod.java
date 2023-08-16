@@ -5,7 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.kakao.saramaracommunity.member.dto.ErrorCode;
+import com.kakao.saramaracommunity.member.dto.MemberErrorCode;
 import com.kakao.saramaracommunity.member.dto.MemberResDto;
 
 import lombok.RequiredArgsConstructor;
@@ -35,7 +35,7 @@ public class MemberServiceMethod {
 
 		MemberResDto result = MemberResDto.builder()
 			.success(false)
-			.errorCode(ErrorCode.DUPLICATE_EMAIL)
+			.memberErrorCode(MemberErrorCode.DUPLICATE_EMAIL)
 			.build();
 		return result;
 	}
@@ -72,7 +72,7 @@ public class MemberServiceMethod {
 	public MemberResDto makeDuplicatedNicknameResult(){
 		MemberResDto result = MemberResDto.builder()
 			.success(false)
-			.errorCode(ErrorCode.DUPLICATE_NICKNAME)
+			.memberErrorCode(MemberErrorCode.DUPLICATE_NICKNAME)
 			.build();
 		return result;
 	}
@@ -101,7 +101,7 @@ public class MemberServiceMethod {
 	public HttpStatus changeStatus(MemberResDto memberResDto) {
 		try {
 			if (!memberResDto.isSuccess()){
-				return memberResDto.getErrorCode().getHttpStatus();
+				return memberResDto.getMemberErrorCode().getHttpStatus();
 			}
 			return HttpStatus.OK;
 		} catch (Exception e){
@@ -117,7 +117,7 @@ public class MemberServiceMethod {
 
 		MemberResDto internalServerResult = MemberResDto.builder()
 			.success(false)
-			.errorCode(ErrorCode.INTERNAL_SERVER_ERROR)
+			.memberErrorCode(MemberErrorCode.INTERNAL_SERVER_ERROR)
 			.build();
 
 		return internalServerResult;

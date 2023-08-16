@@ -14,5 +14,5 @@ import lombok.Setter;
 public class MemberResDto<T> {
 	boolean success;
 	T data;
-	ErrorCode errorCode;
+	MemberErrorCode memberErrorCode;
 }

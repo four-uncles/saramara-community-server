@@ -8,7 +8,7 @@ import com.kakao.saramaracommunity.member.dto.MemberImageDto;
 import com.kakao.saramaracommunity.member.dto.MemberInfoResDto;
 import com.kakao.saramaracommunity.member.dto.MemberResDto;
 import com.kakao.saramaracommunity.member.dto.SignUpDto;
-import com.kakao.saramaracommunity.member.dto.ErrorCode;
+import com.kakao.saramaracommunity.member.dto.MemberErrorCode;
 import com.kakao.saramaracommunity.member.entity.Member;
 import com.kakao.saramaracommunity.member.entity.MemberImage;
 import com.kakao.saramaracommunity.member.entity.Role;
@@ -143,7 +143,7 @@ public class MemberServiceImpl implements MemberSerivce {
             if(!checkedCurrentPw){
                 MemberResDto response = MemberResDto.builder()
                     .success(false)
-                    .errorCode(ErrorCode.NOT_EQUALS_INPUT_CURRENT_PW)
+                    .memberErrorCode(MemberErrorCode.NOT_EQUALS_INPUT_CURRENT_PW)
                     .build();
                 return response;
             }
@@ -155,7 +155,7 @@ public class MemberServiceImpl implements MemberSerivce {
             if(!checkedChangedPw){
                 MemberResDto response = MemberResDto.builder()
                     .success(false)
-                    .errorCode(ErrorCode.NOT_EQUALS_INPUT_CHANGED_PW)
+                    .memberErrorCode(MemberErrorCode.NOT_EQUALS_INPUT_CHANGED_PW)
                     .build();
                 return response;
             }
@@ -209,7 +209,7 @@ public class MemberServiceImpl implements MemberSerivce {
                 if(maxCnt == 10){
                     MemberResDto response = MemberResDto.builder()
                         .success(false)
-                        .errorCode(ErrorCode.INTERNAL_SERVER_ERROR)
+                        .memberErrorCode(MemberErrorCode.INTERNAL_SERVER_ERROR)
                         .build();
 
                     return response;

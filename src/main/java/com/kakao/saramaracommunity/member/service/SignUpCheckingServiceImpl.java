@@ -2,7 +2,6 @@ package com.kakao.saramaracommunity.member.service;
 
 import org.springframework.stereotype.Service;
 
-import com.kakao.saramaracommunity.member.dto.ErrorCode;
 import com.kakao.saramaracommunity.member.dto.MemberResDto;
 import com.kakao.saramaracommunity.member.repository.MemberRepository;
 

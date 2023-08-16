@@ -4,7 +4,9 @@ import com.kakao.saramaracommunity.attach.dto.request.AttachRequest;
 import com.kakao.saramaracommunity.attach.dto.response.AttachResponse;
 import com.kakao.saramaracommunity.attach.entity.Attach;
 import com.kakao.saramaracommunity.attach.entity.AttachType;
+import com.kakao.saramaracommunity.attach.exception.ImageUploadOutOfRangeException;
 import com.kakao.saramaracommunity.attach.repository.AttachRepository;
+import com.kakao.saramaracommunity.common.dto.Payload;
 import com.kakao.saramaracommunity.config.AwsS3MockConfig;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,6 +27,7 @@ import java.util.Map;
 
 import static com.kakao.saramaracommunity.attach.entity.AttachType.BOARD;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.groups.Tuple.tuple;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -70,12 +73,15 @@ class AttachServiceImplTest {
         // when
         AttachResponse.UploadBucketResponse response = attachService.uploadS3BucketImages(request);
 
+        System.out.println(response);
+
         // then
-        assertThat(response.getCode()).isEqualTo("200 OK");
+        assertThat(response.getCode()).isEqualTo(200);
         assertThat(response.getMsg()).isEqualTo("정상적으로 AWS S3 버킷에 이미지 등록을 완료했습니다.");
         assertThat(response.getData()).hasSize(1);
+
         // 테스트 노란불 뜸 - 실제 파일명은 다음과 같음 "https://saramara-storage.s3.ap-northeast-2.amazonaws.com/%2F%2Ftest_1690875139637.png"
-//        assertThat(response.getData()).contains("test.png");
+        // assertThat(response.getData()).contains("test.png");
 
     }
 
@@ -97,8 +103,8 @@ class AttachServiceImplTest {
         AttachResponse.UploadResponse response = attachService.uploadImages(request);
 
         // then
-        assertThat(response.getCode()).isEqualTo("200 OK");
-        assertThat(response.getMsg()).isEqualTo("정상적으로 이미지 업로드를 완료했습니다.");
+        assertThat(response.getCode()).isEqualTo(200);
+        assertThat(response.getMsg()).isEqualTo("정상적으로 DB에 이미지 업로드를 완료했습니다.");
         assertThat(response.isData()).isTrue();
 
     }
@@ -127,7 +133,7 @@ class AttachServiceImplTest {
         AttachResponse.UploadBucketResponse response = attachService.uploadS3BucketImages(request);
 
         // then
-        assertThat(response.getCode()).isEqualTo("200 OK");
+        assertThat(response.getCode()).isEqualTo(200);
         assertThat(response.getMsg()).isEqualTo("정상적으로 AWS S3 버킷에 이미지 등록을 완료했습니다.");
         assertThat(response.getData()).hasSize(5);
 
@@ -154,13 +160,13 @@ class AttachServiceImplTest {
         AttachResponse.UploadResponse response = attachService.uploadImages(request);
 
         // then
-        assertThat(response.getCode()).isEqualTo("200 OK");
-        assertThat(response.getMsg()).isEqualTo("정상적으로 이미지 업로드를 완료했습니다.");
+        assertThat(response.getCode()).isEqualTo(200);
+        assertThat(response.getMsg()).isEqualTo("정상적으로 DB에 이미지 업로드를 완료했습니다.");
         assertThat(response.isData()).isTrue();
 
     }
 
-    @DisplayName("AWS S3 버킷에 최소 1장이상의 이미지를 업로드할 수 있다.")
+    @DisplayName("AWS S3 버킷에 1장 미만의 이미지를 업로드할 경우 예외가 발생한다.")
     @Test
     void ZeroUploadImageAWSS3Bucket() {
         // given
@@ -170,16 +176,14 @@ class AttachServiceImplTest {
                 .imgList(imgList)
                 .build();
 
-        // when
-        AttachResponse.UploadBucketResponse response = attachService.uploadS3BucketImages(request);
-
-        // then
-        assertThat(response.getCode()).isEqualTo("400 BAD_REQUEST");
-        assertThat(response.getMsg()).isEqualTo("이미지는 1장 이상, 최대 5장까지 등록할 수 있습니다.");
+        // when & then
+        assertThatThrownBy(() -> attachService.uploadS3BucketImages(request))
+                .isInstanceOf(ImageUploadOutOfRangeException.class)
+                .hasMessage("이미지는 최소 1장 이상, 최대 5장까지 등록할 수 있습니다.");
 
     }
 
-    @DisplayName("DB에는 최소 1장이상의 이미지를 업로드할 수 있다.")
+    @DisplayName("DB에 이미지 객체 URL이 빈 이미지 업로드 요청을 할 경우 예외가 발생한다.")
     @Test
     void ZeroUploadImage() {
         // given
@@ -191,16 +195,14 @@ class AttachServiceImplTest {
                 .imgList(imgList)
                 .build();
 
-        // when
-        AttachResponse.UploadResponse response = attachService.uploadImages(request);
-
-        // then
-        assertThat(response.getCode()).isEqualTo("400 BAD_REQUEST");
-        assertThat(response.getMsg()).isEqualTo("이미지는 1장 이상, 최대 5장까지 등록할 수 있습니다.");
+        // when & then
+        assertThatThrownBy(() -> attachService.uploadImages(request))
+                .isInstanceOf(ImageUploadOutOfRangeException.class)
+                .hasMessage("이미지는 최소 1장 이상, 최대 5장까지 등록할 수 있습니다.");
 
     }
 
-    @DisplayName("AWS S3 버킷에 최대 5장까지 이미지를 업로드할 수 있다.")
+    @DisplayName("AWS S3 버킷에 6장의 이미지를 업로드할 경우 예외가 발행한다.")
     @Test
     void MoreThenFiveUploadImageAWSS3Bucket() {
         // given
@@ -222,16 +224,14 @@ class AttachServiceImplTest {
                 .imgList(imgList)
                 .build();
 
-        // when
-        AttachResponse.UploadBucketResponse response = attachService.uploadS3BucketImages(request);
-
-        // then
-        assertThat(response.getCode()).isEqualTo("400 BAD_REQUEST");
-        assertThat(response.getMsg()).isEqualTo("이미지는 1장 이상, 최대 5장까지 등록할 수 있습니다.");
+        // when & then
+        assertThatThrownBy(() -> attachService.uploadS3BucketImages(request))
+                .isInstanceOf(ImageUploadOutOfRangeException.class)
+                .hasMessage("이미지는 최소 1장 이상, 최대 5장까지 등록할 수 있습니다.");
 
     }
 
-    @DisplayName("DB에는 최대 5장까지 이미지를 업로드할 수 있다.")
+    @DisplayName("DB에는 6장의 이미지 객체 URL을 업로드할 경우 예외가 발생한다.")
     @Test
     void MoreThenFiveUploadImage() {
         // given
@@ -249,12 +249,10 @@ class AttachServiceImplTest {
                 .imgList(imgList)
                 .build();
 
-        // when
-        AttachResponse.UploadResponse response = attachService.uploadImages(request);
-
-        // then
-        assertThat(response.getCode()).isEqualTo("400 BAD_REQUEST");
-        assertThat(response.getMsg()).isEqualTo("이미지는 1장 이상, 최대 5장까지 등록할 수 있습니다.");
+        // when & then
+        assertThatThrownBy(() -> attachService.uploadImages(request))
+                .isInstanceOf(ImageUploadOutOfRangeException.class)
+                .hasMessage("이미지는 최소 1장 이상, 최대 5장까지 등록할 수 있습니다.");
 
     }
 
@@ -277,9 +275,8 @@ class AttachServiceImplTest {
         AttachResponse.GetImageResponse response = attachService.getBoardImages(request);
 
         // then
-        assertThat(response.getCode()).isEqualTo("200 OK");
-        assertThat(response.getData()).hasSize(3);
-        assertThat(response.getData().keySet()).hasSize(3);
+        assertThat(response.getCode()).isEqualTo(200);
+        assertThat(response.getMsg()).isEqualTo("정상적으로 해당 게시글의 등록된 이미지 목록을 조회하였습니다.");
         assertThat(response.getData().values()).hasSize(3)
                 .contains(
                         Map.of(1L, "test1.jpg"),
@@ -326,7 +323,7 @@ class AttachServiceImplTest {
         AttachResponse.GetAllImageResponse response = attachService.getAllBoardImages();
 
         // then
-        assertThat(response.getCode()).isEqualTo("200 OK");
+        assertThat(response.getCode()).isEqualTo(200);
         assertThat(response.getMsg()).isEqualTo("정상적으로 모든 게시글의 등록된 이미지 목록을 조회하였습니다.");
         assertThat(response.getData().keySet()).containsExactly(1L, 2L, 3L);
         assertThat(response.getData().keySet()).hasSize(3);
@@ -353,7 +350,7 @@ class AttachServiceImplTest {
         AttachResponse.UpdateResponse response = attachService.updateImage(request);
 
         // then
-        assertThat(response.getCode()).isEqualTo("200 OK");
+        assertThat(response.getCode()).isEqualTo(200);
         assertThat(response.getMsg()).isEqualTo("정상적으로 게시글의 이미지를 수정했습니다.");
         assertThat(response.isData()).isTrue();
     }
@@ -371,12 +368,11 @@ class AttachServiceImplTest {
         AttachResponse.DeleteResponse response = attachService.deleteImage(attach1.getAttachId());
 
         // then
-        assertThat(response.getCode()).isEqualTo("200 OK");
+        assertThat(response.getCode()).isEqualTo(204);
         assertThat(response.getMsg()).isEqualTo("정상적으로 이미지를 삭제했습니다.");
         assertThat(response.isData()).isTrue();
 
     }
-
 
     private Attach createAttach(Long ids, Long seq, String path) {
         return Attach.builder()
