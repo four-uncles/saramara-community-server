@@ -1,8 +1,8 @@
 package com.kakao.saramaracommunity.common.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.*;
-import org.springframework.http.HttpStatus;
+import lombok.Builder;
+import lombok.Getter;
 
 /**
  * 공통 ResponseDTO로 사용할 Payload 클래스입니다.
@@ -26,7 +26,7 @@ public class Payload<T> {
      * @param message - 오류 메세지
      * @return Payload
      */
-    public static <T>Payload<T> errorPayload(final Integer status, final String message) {
+    public static <T> Payload<T> errorPayload(final Integer status, final String message) {
 
         return Payload.<T>builder()
                 .status(status)
@@ -42,7 +42,7 @@ public class Payload<T> {
      * @param data - 던져줄 데이터
      * @return Payload
      */
-    public static <T>Payload<T> successPayload(final Integer status, final String message, final T data) {
+    public static <T> Payload<T> successPayload(final Integer status, final String message, final T data) {
 
         return Payload.<T>builder()
                 .status(status)
