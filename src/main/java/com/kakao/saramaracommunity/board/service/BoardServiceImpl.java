@@ -7,6 +7,10 @@ import java.util.stream.Collectors;
 import com.kakao.saramaracommunity.board.dto.request.BoardRequestDto;
 import com.kakao.saramaracommunity.board.dto.response.BoardResponseDto;
 import com.kakao.saramaracommunity.board.entity.Board;
+import com.kakao.saramaracommunity.board.exception.BoardErrorCode;
+import com.kakao.saramaracommunity.board.exception.BoardInternalServerException;
+import com.kakao.saramaracommunity.board.exception.BoardNotFoundException;
+import com.kakao.saramaracommunity.board.exception.BoardUnauthorizedException;
 import com.kakao.saramaracommunity.board.repository.BoardRepository;
 import com.kakao.saramaracommunity.member.entity.Member;
 import com.kakao.saramaracommunity.member.repository.MemberRepository;
@@ -32,7 +36,7 @@ public class BoardServiceImpl implements BoardService {
 
         // 요청된 데이터로 Member 객체를 조회
         Member member = memberRepository.findById(requestDto.getMemberId())
-            .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+            .orElseThrow(() -> new BoardNotFoundException(BoardErrorCode.UNAUTHORIZED_TO_UPDATE_BOARD));
 
         // Board Entity 생성
         Board board = Board.builder()
@@ -43,14 +47,18 @@ public class BoardServiceImpl implements BoardService {
             .deadLine(deadLine)
             .build();
 
-        return boardRepository.save(board);
+        Board saveBoard = boardRepository.save(board);
+        if (saveBoard == null) {
+            throw new BoardInternalServerException(BoardErrorCode.BOARD_CREATE_FAILED);
+        }
+        return saveBoard;
     }
 
     @Override
     public BoardResponseDto.ReadOneBoardResponseDto readOneBoard(Long boardId) {
 
         Board board = boardRepository.findByBoardId(boardId)
-            .orElseThrow(() -> new EntityNotFoundException("게시글을 찾을 수 없습니다."));
+            .orElseThrow(() -> new BoardNotFoundException(BoardErrorCode.BOARD_NOT_FOUND));
 
         // Member information
         String memberNickname = board.getMember().getNickname();
@@ -117,7 +125,11 @@ public class BoardServiceImpl implements BoardService {
         BoardRequestDto.UpdateRequestDto requestDto) {
 
         Board board = boardRepository.findByBoardId(boardId)
-            .orElseThrow(() -> new EntityNotFoundException("게시글을 찾을 수 없습니다."));
+            .orElseThrow(() -> new BoardNotFoundException(BoardErrorCode.BOARD_NOT_FOUND));
+
+        if (!board.getMember().getMemberId().equals(requestDto.getMemberId())) {
+            throw new BoardUnauthorizedException(BoardErrorCode.UNAUTHORIZED_TO_UPDATE_BOARD);
+        }
 
         log.info("요청에 따라 게시글을 수정합니다.(Update the post as requested.)");
 
@@ -128,19 +140,25 @@ public class BoardServiceImpl implements BoardService {
         board.setDeadLine(requestDto.getDeadLine());
 
         // 수정된 게시글을 저장
-        boardRepository.save(board);
-
+        Board updateBoard = boardRepository.save(board);
+        if (updateBoard == null) {
+            throw new BoardInternalServerException(BoardErrorCode.BOARD_UPDATE_FAILED);
+        }
         return true;
     }
 
     @Override
     public Boolean deleteBoard(Long boardId) {
 
-        if (boardRepository.findByBoardId(boardId).isPresent()) {
-            boardRepository.deleteById(boardId);
-            log.info("요청에 따라 게시글을 삭제합니다. (Delete the post as requested)");
-            return true;
+        Board board = boardRepository.findByBoardId(boardId)
+            .orElseThrow(() -> new BoardNotFoundException(BoardErrorCode.BOARD_NOT_FOUND));
+
+        log.info("요청에 따라 게시글을 삭제합니다.(Delete the post as requested.)");
+
+        boardRepository.deleteById(boardId);
+        if (boardRepository.existsById(boardId)) {
+            throw new BoardInternalServerException(BoardErrorCode.BOARD_DELETE_FAILED);
         }
-        return false;
+        return true;
     }
 }
