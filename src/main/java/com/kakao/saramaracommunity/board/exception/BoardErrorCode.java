@@ -12,17 +12,6 @@ import lombok.RequiredArgsConstructor;
 public enum BoardErrorCode implements ErrorCode {
 
     /**
-     * 500 ERROR
-     * BOARD_CREATE_FAILED: 게시글 작성에 서버 문제가 발생할 경우 500 에러코드를 반환
-     * BOARD_UPDATE_FAILED: 게시글 수정에 서버 문제가 발생할 경우 500 에러코드를 반환
-     * BOARD_DELETE_FAILED: 게시글 삭제에 서버 문제가 발생할 경우 500 에러코드를 반환
-     */
-    BOARD_CREATE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "게시글 작성에 실패하였습니다."),
-    BOARD_UPDATE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "게시글 수정에 실패하였습니다."),
-    BOARD_DELETE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "게시글 삭제에 실패하였습니다."),
-
-
-    /**
      * 403 ERROR
      * UNAUTHORIZED_TO_UPDATE_BOARD: 게시글 작성, 수정, 삭제에 연관되어 있는 회원 고유 PK가 DB에 없는 경우 사용자가 없다 판단하여, 403 에러코드를 반환
      */

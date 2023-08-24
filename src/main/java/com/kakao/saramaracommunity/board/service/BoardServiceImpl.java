@@ -47,11 +47,7 @@ public class BoardServiceImpl implements BoardService {
             .deadLine(deadLine)
             .build();
 
-        Board saveBoard = boardRepository.save(board);
-        if (saveBoard == null) {
-            throw new BoardInternalServerException(BoardErrorCode.BOARD_CREATE_FAILED);
-        }
-        return saveBoard;
+        return boardRepository.save(board);
     }
 
     @Override
@@ -140,10 +136,7 @@ public class BoardServiceImpl implements BoardService {
         board.setDeadLine(requestDto.getDeadLine());
 
         // 수정된 게시글을 저장
-        Board updateBoard = boardRepository.save(board);
-        if (updateBoard == null) {
-            throw new BoardInternalServerException(BoardErrorCode.BOARD_UPDATE_FAILED);
-        }
+        boardRepository.save(board);
         return true;
     }
 
@@ -157,7 +150,7 @@ public class BoardServiceImpl implements BoardService {
 
         boardRepository.deleteById(boardId);
         if (boardRepository.existsById(boardId)) {
-            throw new BoardInternalServerException(BoardErrorCode.BOARD_DELETE_FAILED);
+            throw new BoardInternalServerException(BoardErrorCode.UNAUTHORIZED_TO_UPDATE_BOARD);
         }
         return true;
     }
