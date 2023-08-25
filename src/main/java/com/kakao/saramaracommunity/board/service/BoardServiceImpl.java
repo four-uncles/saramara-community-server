@@ -130,10 +130,11 @@ public class BoardServiceImpl implements BoardService {
         log.info("요청에 따라 게시글을 수정합니다.(Update the post as requested.)");
 
         // 요청된 데이터로 수정할 내용 업데이트
-        board.setTitle(requestDto.getTitle());
-        board.setContent(requestDto.getContent());
-        board.setCategoryBoard(requestDto.getCategoryBoard());
-        board.setDeadLine(requestDto.getDeadLine());
+        board.updateBoard(
+            requestDto.getTitle(),
+            requestDto.getContent(),
+            requestDto.getCategoryBoard(),
+            requestDto.getDeadLine());
 
         // 수정된 게시글을 저장
         boardRepository.save(board);
