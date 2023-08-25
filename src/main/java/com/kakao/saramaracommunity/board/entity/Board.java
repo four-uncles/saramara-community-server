@@ -82,4 +82,11 @@ public class Board extends BaseTimeEntity {
     public void setDeadLine(LocalDateTime deadLine) {
         this.deadLine = deadLine;
     }
+
+    public void updateBoard(String title, String content, CategoryBoard categoryBoard, LocalDateTime deadLine) {
+        this.title = title;
+        this.content = content;
+        this.categoryBoard = categoryBoard;
+        this.deadLine = deadLine;
+    }
 }
