@@ -41,11 +41,6 @@ com.kakao.saramaracommunity
 
 <br><hr><br>
 
-### 리팩토링 명세 목록
-- 해당 저장소의 Issues 탭에서 확인 가능합니다.
-
-<br><hr><br>
-
 ## DB ERD
 
 ![saramara](https://github.com/four-uncles/saramara-community-server/assets/59594946/ef6b3879-1149-44e1-a5ad-7194a8c2a486)
