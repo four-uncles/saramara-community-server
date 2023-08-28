@@ -15,9 +15,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.kakao.saramaracommunity.member.dto.ChangePWDto;
-import com.kakao.saramaracommunity.member.dto.MemberResDto;
-import com.kakao.saramaracommunity.member.dto.SignUpDto;
+import com.kakao.saramaracommunity.member.controller.dto.request.ChangePWDto;
+import com.kakao.saramaracommunity.member.dto.response.MemberResDto;
+import com.kakao.saramaracommunity.member.controller.dto.request.SignUpDto;
 import com.kakao.saramaracommunity.member.service.MemberSerivce;
 import com.kakao.saramaracommunity.member.service.MemberServiceMethod;
 import com.kakao.saramaracommunity.member.service.SignUpCheckingServiceImpl;
@@ -43,8 +43,8 @@ public class MemberController {
 
     // 회원가입
     @PostMapping("/member")
-    public ResponseEntity<MemberResDto> signup(@Valid @RequestBody SignUpDto signUpDto) {
-        MemberResDto response = memberSerivce.register(signUpDto);
+    public ResponseEntity<MemberResDto> signup(@Valid @RequestBody SignUpDto request) {
+        MemberResDto response = memberSerivce.register(request.toServiceRequest());
         HttpStatus status = memberServiceMethod.changeStatus(response);
         return new ResponseEntity<>(response, status);
     }
@@ -72,7 +72,7 @@ public class MemberController {
     // 회원정보 조회
     @GetMapping("/member/{email}")
     public ResponseEntity<MemberResDto> memberInfoChecking(
-        @Valid @PathVariable @Pattern(regexp = "(?=.*[0-9])(?=.*[a-zA-Z])(?=.*\\W)(?=\\S+$).{8,16}")String email
+        @Valid @PathVariable @Pattern(regexp = "(?=.*[0-9])(?=.*[a-zA-Z])(?=.*\\W)(?=\\S+$).{8,16}") String email
     ) {
         MemberResDto response = memberSerivce.memberInfoChecking(email);
         HttpStatus status = memberServiceMethod.changeStatus(response);
@@ -82,7 +82,7 @@ public class MemberController {
     // 닉네임 수정
     @PutMapping("/member/nickname/{email}/{currentNickname}/{changeNickname}")
     public ResponseEntity<MemberResDto> nicknameChanging(
-        @Valid @PathVariable @Pattern(regexp = "(?=.*[0-9])(?=.*[a-zA-Z])(?=.*\\W)(?=\\S+$).{8,16}")String email,
+        @Valid @PathVariable @Pattern(regexp = "(?=.*[0-9])(?=.*[a-zA-Z])(?=.*\\W)(?=\\S+$).{8,16}") String email,
         @Valid @PathVariable @Pattern(regexp = "^[ㄱ-ㅎ가-힣A-Za-z0-9-_]{2,10}$") String currentNickname,
         @Valid @PathVariable @Pattern(regexp = "^[ㄱ-ㅎ가-힣A-Za-z0-9-_]{2,10}$") String changeNickname
         ){
@@ -95,9 +95,9 @@ public class MemberController {
     @PutMapping("/member/password/{email}")
     public ResponseEntity<MemberResDto> passwordChange(
         @Valid @PathVariable @Pattern(regexp = "^(?:\\w+\\.?)*\\w+@(?:\\w+\\.)+\\w+$") String email,
-        @Valid @RequestBody @Pattern(regexp = "(?=.*[0-9])(?=.*[a-zA-Z])(?=.*\\W)(?=\\S+$).{8,16}") ChangePWDto changePWDto
+        @Valid @RequestBody @Pattern(regexp = "(?=.*[0-9])(?=.*[a-zA-Z])(?=.*\\W)(?=\\S+$).{8,16}") ChangePWDto request
     ){
-        MemberResDto response = memberSerivce.passwordChange(email, changePWDto);
+        MemberResDto response = memberSerivce.passwordChange(email, request.toServiceRequest());
         HttpStatus status = memberServiceMethod.changeStatus(response);
         return new ResponseEntity<>(response, status);
     }

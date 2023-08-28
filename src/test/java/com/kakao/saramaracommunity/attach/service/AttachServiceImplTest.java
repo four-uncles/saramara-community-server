@@ -1,22 +1,17 @@
 package com.kakao.saramaracommunity.attach.service;
 
-import com.kakao.saramaracommunity.attach.dto.request.AttachRequest;
-import com.kakao.saramaracommunity.attach.dto.response.AttachResponse;
+import com.kakao.saramaracommunity.attach.service.dto.response.AttachResponse;
 import com.kakao.saramaracommunity.attach.entity.Attach;
-import com.kakao.saramaracommunity.attach.entity.AttachType;
 import com.kakao.saramaracommunity.attach.exception.ImageUploadOutOfRangeException;
 import com.kakao.saramaracommunity.attach.repository.AttachRepository;
-import com.kakao.saramaracommunity.common.dto.Payload;
-import com.kakao.saramaracommunity.config.AwsS3MockConfig;
+import com.kakao.saramaracommunity.attach.service.dto.request.AttachServiceRequest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.nio.charset.StandardCharsets;
@@ -28,8 +23,6 @@ import java.util.Map;
 import static com.kakao.saramaracommunity.attach.entity.AttachType.BOARD;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.groups.Tuple.tuple;
-import static org.junit.jupiter.api.Assertions.*;
 
 
 /**
@@ -66,7 +59,7 @@ class AttachServiceImplTest {
         MultipartFile file = new MockMultipartFile("file", "test.png", "image/png", "test file".getBytes(StandardCharsets.UTF_8));
         imgList.add(file);
 
-        AttachRequest.UploadBucketRequest request = AttachRequest.UploadBucketRequest.builder()
+        AttachServiceRequest.UploadBucketRequest request = AttachServiceRequest.UploadBucketRequest.builder()
                 .imgList(imgList)
                 .build();
 
@@ -93,7 +86,7 @@ class AttachServiceImplTest {
         String imgPath = "https://saramara-storage.s3.ap-northeast-2.amazonaws.com//test_1.png";
         imgList.put(1L, imgPath);
 
-        AttachRequest.UploadRequest request = AttachRequest.UploadRequest.builder()
+        AttachServiceRequest.UploadRequest request = AttachServiceRequest.UploadRequest.builder()
                 .attachType(BOARD)
                 .ids(1L)
                 .imgList(imgList)
@@ -125,7 +118,7 @@ class AttachServiceImplTest {
         imgList.add(file4);
         imgList.add(file5);
 
-        AttachRequest.UploadBucketRequest request = AttachRequest.UploadBucketRequest.builder()
+        AttachServiceRequest.UploadBucketRequest request = AttachServiceRequest.UploadBucketRequest.builder()
                 .imgList(imgList)
                 .build();
 
@@ -150,7 +143,7 @@ class AttachServiceImplTest {
         imgList.put(4L, "https://saramara-storage.s3.ap-northeast-2.amazonaws.com//test_4.png");
         imgList.put(5L, "https://saramara-storage.s3.ap-northeast-2.amazonaws.com//test_5.png");
 
-        AttachRequest.UploadRequest request = AttachRequest.UploadRequest.builder()
+        AttachServiceRequest.UploadRequest request = AttachServiceRequest.UploadRequest.builder()
                 .attachType(BOARD)
                 .ids(1L)
                 .imgList(imgList)
@@ -172,7 +165,7 @@ class AttachServiceImplTest {
         // given
         List<MultipartFile> imgList = new ArrayList<>();
 
-        AttachRequest.UploadBucketRequest request = AttachRequest.UploadBucketRequest.builder()
+        AttachServiceRequest.UploadBucketRequest request = AttachServiceRequest.UploadBucketRequest.builder()
                 .imgList(imgList)
                 .build();
 
@@ -189,7 +182,7 @@ class AttachServiceImplTest {
         // given
         Map<Long, String> imgList = new HashMap<>();
 
-        AttachRequest.UploadRequest request = AttachRequest.UploadRequest.builder()
+        AttachServiceRequest.UploadRequest request = AttachServiceRequest.UploadRequest.builder()
                 .attachType(BOARD)
                 .ids(1L)
                 .imgList(imgList)
@@ -220,7 +213,7 @@ class AttachServiceImplTest {
         imgList.add(file5);
         imgList.add(file6);
 
-        AttachRequest.UploadBucketRequest request = AttachRequest.UploadBucketRequest.builder()
+        AttachServiceRequest.UploadBucketRequest request = AttachServiceRequest.UploadBucketRequest.builder()
                 .imgList(imgList)
                 .build();
 
@@ -243,7 +236,7 @@ class AttachServiceImplTest {
         imgList.put(5L, "https://saramara-storage.s3.ap-northeast-2.amazonaws.com//test_5.png");
         imgList.put(6L, "https://saramara-storage.s3.ap-northeast-2.amazonaws.com//test_6.png");
 
-        AttachRequest.UploadRequest request = AttachRequest.UploadRequest.builder()
+        AttachServiceRequest.UploadRequest request = AttachServiceRequest.UploadRequest.builder()
                 .attachType(BOARD)
                 .ids(1L)
                 .imgList(imgList)
@@ -266,7 +259,7 @@ class AttachServiceImplTest {
         Attach attach3 = createAttach(1L, 3L, "test3.jpg");
         attachRepository.saveAll(List.of(attach1, attach2, attach3));
 
-        AttachRequest.GetBoardImageRequest request = AttachRequest.GetBoardImageRequest.builder()
+        AttachServiceRequest.GetBoardImageRequest request = AttachServiceRequest.GetBoardImageRequest.builder()
                 .attachType(BOARD)
                 .ids(1L)
                 .build();
@@ -339,7 +332,7 @@ class AttachServiceImplTest {
         Attach attach3 = createAttach(1L, 3L, "third3.jpg");
         attachRepository.saveAll(List.of(attach1, attach2, attach3));
 
-        AttachRequest.UpdateRequest request = AttachRequest.UpdateRequest.builder()
+        AttachServiceRequest.UpdateRequest request = AttachServiceRequest.UpdateRequest.builder()
                 .attachId(attach1.getAttachId())
                 .attachType(BOARD)
                 .ids(1L)

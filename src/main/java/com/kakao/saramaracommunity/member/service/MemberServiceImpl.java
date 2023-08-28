@@ -3,18 +3,18 @@ package com.kakao.saramaracommunity.member.service;
 import java.time.LocalDateTime;
 import java.util.Collections;
 
-import com.kakao.saramaracommunity.member.dto.ChangePWDto;
-import com.kakao.saramaracommunity.member.dto.MemberImageDto;
-import com.kakao.saramaracommunity.member.dto.MemberInfoResDto;
-import com.kakao.saramaracommunity.member.dto.MemberResDto;
-import com.kakao.saramaracommunity.member.dto.SignUpDto;
-import com.kakao.saramaracommunity.member.dto.MemberErrorCode;
+import com.kakao.saramaracommunity.member.dto.response.MemberImageDto;
+import com.kakao.saramaracommunity.member.dto.response.MemberInfoResDto;
+import com.kakao.saramaracommunity.member.dto.response.MemberResDto;
+import com.kakao.saramaracommunity.member.exception.MemberErrorCode;
 import com.kakao.saramaracommunity.member.entity.Member;
 import com.kakao.saramaracommunity.member.entity.MemberImage;
 import com.kakao.saramaracommunity.member.entity.Role;
 import com.kakao.saramaracommunity.member.entity.Type;
 import com.kakao.saramaracommunity.member.repository.MemberRepository;
 
+import com.kakao.saramaracommunity.member.service.dto.request.ChangePWServiceDto;
+import com.kakao.saramaracommunity.member.service.dto.request.SignUpServiceDto;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -32,7 +32,7 @@ public class MemberServiceImpl implements MemberSerivce {
 
     // 회원가입
     @Override
-    public MemberResDto register(SignUpDto signUpDto) {
+    public MemberResDto register(SignUpServiceDto signUpDto) {
 
         boolean duplicatedEmail = memberServiceMethod.isDuplicatedEmail(
             memberRepository.countByEmail(signUpDto.getEmail())
@@ -133,7 +133,7 @@ public class MemberServiceImpl implements MemberSerivce {
 
     // 비밀번호 수정
     @Override
-    public MemberResDto passwordChange(String email, ChangePWDto changePWDto) {
+    public MemberResDto passwordChange(String email, ChangePWServiceDto changePWDto) {
         try {
             // 현재 입력한 비밀번호가 저장된 비밀번호와 일치하지 않는 경우에 대한 예외 처리
             String storedCurrentPw = memberRepository.findByEmail(email).getPassword();

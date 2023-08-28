@@ -3,8 +3,7 @@ package com.kakao.saramaracommunity.member.exception;
 
 import org.springframework.validation.FieldError;
 
-import com.kakao.saramaracommunity.member.dto.MemberErrorCode;
-import com.kakao.saramaracommunity.member.dto.MemberResDto;
+import com.kakao.saramaracommunity.member.dto.response.MemberResDto;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;

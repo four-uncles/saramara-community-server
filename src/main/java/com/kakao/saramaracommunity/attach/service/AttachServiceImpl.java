@@ -1,13 +1,13 @@
 package com.kakao.saramaracommunity.attach.service;
 
-import com.kakao.saramaracommunity.attach.dto.request.AttachRequest;
-import com.kakao.saramaracommunity.attach.dto.response.AttachResponse;
+import com.kakao.saramaracommunity.attach.service.dto.response.AttachResponse;
 import com.kakao.saramaracommunity.attach.entity.Attach;
 import com.kakao.saramaracommunity.attach.entity.AttachType;
 import com.kakao.saramaracommunity.attach.exception.AttachErrorCode;
 import com.kakao.saramaracommunity.attach.exception.AttachNotFoundException;
 import com.kakao.saramaracommunity.attach.exception.ImageUploadOutOfRangeException;
 import com.kakao.saramaracommunity.attach.repository.AttachRepository;
+import com.kakao.saramaracommunity.attach.service.dto.request.AttachServiceRequest;
 import com.kakao.saramaracommunity.util.AwsS3Uploader;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -41,7 +41,7 @@ public class AttachServiceImpl implements AttachService {
      * @return AttachResponse.UploadBucketResponse
      */
     @Override
-    public AttachResponse.UploadBucketResponse uploadS3BucketImages(AttachRequest.UploadBucketRequest request) {
+    public AttachResponse.UploadBucketResponse uploadS3BucketImages(AttachServiceRequest.UploadBucketRequest request) {
 
             List<MultipartFile> imgList = request.getImgList();
 
@@ -75,7 +75,7 @@ public class AttachServiceImpl implements AttachService {
      * @return AttachResponse.UploadResponse
      */
     @Override
-    public AttachResponse.UploadResponse uploadImages(AttachRequest.UploadRequest request) {
+    public AttachResponse.UploadResponse uploadImages(AttachServiceRequest.UploadRequest request) {
 
             AttachType type = request.getAttachType();
             Long id = request.getIds();
@@ -120,7 +120,7 @@ public class AttachServiceImpl implements AttachService {
      * @return AttachResponse.GetImageResponse
      */
     @Override
-    public AttachResponse.GetImageResponse getBoardImages(AttachRequest.GetBoardImageRequest request) {
+    public AttachResponse.GetImageResponse getBoardImages(AttachServiceRequest.GetBoardImageRequest request) {
 
             AttachType type = request.getAttachType();
             Long id = request.getIds();
@@ -191,7 +191,7 @@ public class AttachServiceImpl implements AttachService {
      * @return AttachResponse.UpdateResponse
      */
     @Override
-    public AttachResponse.UpdateResponse updateImage(AttachRequest.UpdateRequest request) {
+    public AttachResponse.UpdateResponse updateImage(AttachServiceRequest.UpdateRequest request) {
 
             Long attachId = request.getAttachId();
             String imgPath = request.getImgPath();
