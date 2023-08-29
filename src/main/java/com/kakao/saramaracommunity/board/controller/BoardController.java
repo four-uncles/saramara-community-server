@@ -67,7 +67,7 @@ public class BoardController {
     public ResponseEntity<Object> readAllBoardsByLatest(@RequestParam(defaultValue = "0") int page,
                                                         @RequestParam(defaultValue = "24") int size) {
         Page<BoardResponseDto.ReadAllBoardResponseDto> boardPage = boardService.readAllBoardsByLatest(
-            PageRequest.of(page, size, Sort.by("createdAt").descending())
+            PageRequest.of(page, size)
         );
 
         // 응답 데이터 생성
@@ -85,7 +85,7 @@ public class BoardController {
     public ResponseEntity<Object> readAllBoardsByPopularity(@RequestParam(defaultValue = "0") int page,
                                                             @RequestParam(defaultValue = "24") int size) {
         Page<BoardResponseDto.ReadAllBoardResponseDto> boardPage = boardService.readAllBoardsByPopularity(
-            PageRequest.of(page, size, Sort.by("likeCnt").descending())
+            PageRequest.of(page, size)
         );
 
         // 응답 데이터 생성
