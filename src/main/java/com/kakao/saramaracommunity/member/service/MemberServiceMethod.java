@@ -5,8 +5,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.kakao.saramaracommunity.member.dto.MemberErrorCode;
-import com.kakao.saramaracommunity.member.dto.MemberResDto;
+import com.kakao.saramaracommunity.member.exception.MemberErrorCode;
+import com.kakao.saramaracommunity.member.dto.response.MemberResDto;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;

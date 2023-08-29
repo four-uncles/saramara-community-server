@@ -56,7 +56,7 @@ public class AwsS3Test {
 
     @DisplayName("AWS S3 버킷에 이미지 파일을 업로드한다.")
     @Test
-    void test() throws IOException {
+    void uploadImageToS3Bucket() throws IOException {
         // given
         String path = "test.png";
         String contentType = "image/png";

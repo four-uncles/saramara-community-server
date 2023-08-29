@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.kakao.saramaracommunity.common.dto.TokenDto;
-import com.kakao.saramaracommunity.member.dto.LoginDto;
+import com.kakao.saramaracommunity.member.controller.dto.request.LoginDto;
 import com.kakao.saramaracommunity.security.jwt.JwtFilter;
 import com.kakao.saramaracommunity.security.jwt.TokenProvider;
 
@@ -25,8 +25,6 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 @RequiredArgsConstructor
 @RestController
-
-
 @RequestMapping("/api")
 public class AuthController {
 
@@ -35,24 +33,14 @@ public class AuthController {
 
     @PostMapping("/authenticate")
     public ResponseEntity<TokenDto> authorize(@Valid @RequestBody LoginDto loginDto) {
-        UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(loginDto.getEmail(), loginDto.getPassword());
-
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginDto.getEmail(), loginDto.getPassword());
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-
         SecurityContextHolder.getContext().setAuthentication(authentication);
-
         TokenDto jwt = tokenProvider.returnToken(authentication);
-
         HttpHeaders httpHeaders = new HttpHeaders();
-
         httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER, "Bearer " + jwt.getAccessToken());
-
         log.info(new ResponseEntity<>(jwt, httpHeaders, HttpStatus.OK));
-
         return new ResponseEntity<>(/*new TokenDto(jwt)*/ jwt, httpHeaders, HttpStatus.OK);
     }
-
-
 
 }

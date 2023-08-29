@@ -1,24 +1,22 @@
 package com.kakao.saramaracommunity.board.service;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import com.kakao.saramaracommunity.board.dto.request.BoardRequestDto;
-import com.kakao.saramaracommunity.board.dto.response.BoardResponseDto;
 import com.kakao.saramaracommunity.board.entity.Board;
 import com.kakao.saramaracommunity.board.exception.BoardErrorCode;
 import com.kakao.saramaracommunity.board.exception.BoardInternalServerException;
 import com.kakao.saramaracommunity.board.exception.BoardNotFoundException;
 import com.kakao.saramaracommunity.board.exception.BoardUnauthorizedException;
 import com.kakao.saramaracommunity.board.repository.BoardRepository;
+import com.kakao.saramaracommunity.board.service.dto.request.BoardServiceRequestDto;
+import com.kakao.saramaracommunity.board.service.dto.response.BoardResponseDto;
 import com.kakao.saramaracommunity.member.entity.Member;
 import com.kakao.saramaracommunity.member.repository.MemberRepository;
-
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Log4j2
@@ -29,7 +27,7 @@ public class BoardServiceImpl implements BoardService {
     private final MemberRepository memberRepository;
 
     @Override
-    public Board saveBoard(BoardRequestDto.SaveRequestDto requestDto) {
+    public Board saveBoard(BoardServiceRequestDto.SaveRequestDto requestDto) {
 
         String deadLineStr = String.valueOf(requestDto.getDeadLine()); // 문자열 값으로 받음
         LocalDateTime deadLine = LocalDateTime.parse(deadLineStr); // 문자열을 LocalDateTime으로 변환
@@ -61,8 +59,7 @@ public class BoardServiceImpl implements BoardService {
         String memberEmail = board.getMember().getEmail();
 
         // 게시글 정보와 멤버 정보를 매핑해서 응답
-        BoardResponseDto.ReadOneBoardResponseDto responseDto =
-            BoardResponseDto.ReadOneBoardResponseDto.builder()
+        return BoardResponseDto.ReadOneBoardResponseDto.builder()
                 .boardId(board.getBoardId())
                 .title(board.getTitle())
                 .content(board.getContent())
@@ -73,8 +70,6 @@ public class BoardServiceImpl implements BoardService {
                 .likeCnt(board.getBoardCnt())
                 .deadLine(board.getDeadLine())
                 .build();
-
-        return responseDto;
     }
 
     @Override
@@ -117,8 +112,7 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public Boolean updateBoard(Long boardId,
-        BoardRequestDto.UpdateRequestDto requestDto) {
+    public Boolean updateBoard(Long boardId, BoardServiceRequestDto.UpdateRequestDto requestDto) {
 
         Board board = boardRepository.findByBoardId(boardId)
             .orElseThrow(() -> new BoardNotFoundException(BoardErrorCode.BOARD_NOT_FOUND));

@@ -1,7 +1,7 @@
 package com.kakao.saramaracommunity.attach.controller;
 
-import com.kakao.saramaracommunity.attach.dto.request.AttachRequest;
-import com.kakao.saramaracommunity.attach.dto.response.AttachResponse;
+import com.kakao.saramaracommunity.attach.controller.dto.request.AttachRequest;
+import com.kakao.saramaracommunity.attach.service.dto.response.AttachResponse;
 import com.kakao.saramaracommunity.attach.service.AttachService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +32,7 @@ public class AttachController {
      */
     @PostMapping("/upload/bucket")
     public ResponseEntity<AttachResponse.UploadBucketResponse> uploadS3BucketImages(@RequestBody @Valid AttachRequest.UploadBucketRequest request) {
-        AttachResponse.UploadBucketResponse response = attachService.uploadS3BucketImages(request);
+        AttachResponse.UploadBucketResponse response = attachService.uploadS3BucketImages(request.toServiceRequest());
         return ResponseEntity.ok().body(response);
     }
 
@@ -45,7 +45,7 @@ public class AttachController {
      */
     @PostMapping("/upload")
     public ResponseEntity<AttachResponse.UploadResponse> uploadImages(@RequestBody @Valid AttachRequest.UploadRequest request) {
-        AttachResponse.UploadResponse response = attachService.uploadImages(request);
+        AttachResponse.UploadResponse response = attachService.uploadImages(request.toServiceRequest());
         return ResponseEntity.ok().body(response);
     }
 
@@ -60,7 +60,7 @@ public class AttachController {
      */
     @GetMapping("/board")
     public ResponseEntity<AttachResponse.GetImageResponse> getBoardImages(@RequestBody @Valid AttachRequest.GetBoardImageRequest request) {
-        AttachResponse.GetImageResponse response = attachService.getBoardImages(request);
+        AttachResponse.GetImageResponse response = attachService.getBoardImages(request.toServiceRequest());
         return ResponseEntity.ok().body(response);
     }
 
@@ -85,7 +85,7 @@ public class AttachController {
      */
     @PutMapping("/board")
     public ResponseEntity<AttachResponse.UpdateResponse> updateImage(@RequestBody @Valid AttachRequest.UpdateRequest request) {
-        AttachResponse.UpdateResponse response = attachService.updateImage(request);
+        AttachResponse.UpdateResponse response = attachService.updateImage(request.toServiceRequest());
         return ResponseEntity.ok().body(response);
     }
 

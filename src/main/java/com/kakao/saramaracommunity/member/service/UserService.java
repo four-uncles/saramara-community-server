@@ -6,7 +6,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.kakao.saramaracommunity.member.dto.SignUpDto;
+import com.kakao.saramaracommunity.member.controller.dto.request.SignUpDto;
 import com.kakao.saramaracommunity.member.entity.Member;
 import com.kakao.saramaracommunity.member.entity.Role;
 import com.kakao.saramaracommunity.member.entity.Type;
@@ -20,13 +20,12 @@ import lombok.extern.log4j.Log4j2;
 @RequiredArgsConstructor
 @Service
 public class UserService {
+
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
 
-
     @Transactional
     public SignUpDto signup(SignUpDto signUpDto) {
-
 
         Member user = Member.builder()
             .email(signUpDto.getEmail())
@@ -35,7 +34,6 @@ public class UserService {
             .type(Type.LOCAL)
             .role(Collections.singleton(Role.USER))
             .build();
-
 
         return SignUpDto.from(memberRepository.save(user));
     }
@@ -47,11 +45,10 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public SignUpDto getMyUserWithAuthorities() {
-        SignUpDto member_not_found = SignUpDto.from(
+        return SignUpDto.from(
             SecurityUtil.getCurrentUsername()
                 .flatMap(memberRepository::getWithRoles)
                 .orElseThrow()
         );
-        return member_not_found;
     }
 }
