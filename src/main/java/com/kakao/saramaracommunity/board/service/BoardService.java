@@ -2,6 +2,9 @@ package com.kakao.saramaracommunity.board.service;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import com.kakao.saramaracommunity.board.service.dto.request.BoardServiceRequestDto;
 import com.kakao.saramaracommunity.board.service.dto.response.BoardResponseDto;
 import com.kakao.saramaracommunity.board.entity.Board;
@@ -15,10 +18,10 @@ public interface BoardService {
     BoardResponseDto.ReadOneBoardResponseDto readOneBoard(Long boardId);
 
     // 게시글 전체를 최신순으로 조회하는 기능의 Method
-    List<BoardResponseDto.ReadAllBoardResponseDto> readAllBoardsByLatest();
+    Page<BoardResponseDto.ReadAllBoardResponseDto> readAllBoardsByLatest(Pageable pageable);
 
     // 게시글 전체를 인기순으로 조회하는 기능의 Method
-    List<BoardResponseDto.ReadAllBoardResponseDto> readAllBoardsByPopularity();
+    Page<BoardResponseDto.ReadAllBoardResponseDto> readAllBoardsByPopularity(Pageable pageable);
 
     // 게시글 수정 요청 Method
     Boolean updateBoard(Long boardId, BoardServiceRequestDto.UpdateRequestDto requestDto);

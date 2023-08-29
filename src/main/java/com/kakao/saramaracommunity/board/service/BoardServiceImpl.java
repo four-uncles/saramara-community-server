@@ -12,6 +12,9 @@ import com.kakao.saramaracommunity.member.entity.Member;
 import com.kakao.saramaracommunity.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -73,29 +76,29 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public List<BoardResponseDto.ReadAllBoardResponseDto> readAllBoardsByLatest() {
-        List<Board> boards = boardRepository.findAllOrderByCreatedAtDesc();
+    public Page<BoardResponseDto.ReadAllBoardResponseDto> readAllBoardsByLatest(Pageable pageable) {
+        Page<Board> boardPage = boardRepository.findAllOrderByCreatedAtDesc(pageable);
 
         log.info("최신순으로 게시글을 조회합니다.(Reading all boards by latest)");
 
-        return mapBoardListToResponseDtoList(boards);
+        return mapBoardPageToResponseDtoList(boardPage);
     }
 
     @Override
-    public List<BoardResponseDto.ReadAllBoardResponseDto> readAllBoardsByPopularity() {
-        List<Board> boards = boardRepository.findAllOrderByLikeCntDesc();
+    public Page<BoardResponseDto.ReadAllBoardResponseDto> readAllBoardsByPopularity(Pageable pageable) {
+        Page<Board> boardPage = boardRepository.findAllOrderByLikeCntDesc(pageable);
 
         log.info("인기순으로 게시글을 조회합니다.(Reading all boards by popularity)");
 
-        return mapBoardListToResponseDtoList(boards);
+        return mapBoardPageToResponseDtoList(boardPage);
     }
 
-    private List<BoardResponseDto.ReadAllBoardResponseDto> mapBoardListToResponseDtoList(List<Board> boards) {
+    private Page<BoardResponseDto.ReadAllBoardResponseDto> mapBoardPageToResponseDtoList(Page<Board> boardPage) {
 
         log.info("게시글 목록을 응답 DTO 목록에 Mapping 합니다.: "
             + "(Mapping board list to response DTO list)");
 
-        return boards.stream().map(board -> {
+        return boardPage.map(board -> {
             String memberNickname = board.getMember().getNickname();
             Long boardCnt = board.getBoardCnt();
             Long likeCnt = board.getLikeCnt();
@@ -108,7 +111,7 @@ public class BoardServiceImpl implements BoardService {
                 .likeCnt(likeCnt)
                 .deadLine(deadLine)
                 .build();
-        }).collect(Collectors.toList());
+        });
     }
 
     @Override
