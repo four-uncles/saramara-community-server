@@ -23,6 +23,4 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     List<Board> findAllByOrderByLikeCntDesc(Pageable pageable);
 
     List<Board> findByLikeCntLessThanOrderByLikeCntDesc(Long LikeCnt, Pageable page);
-
-    Boolean existsByBoardIdLessThan(Long boardId);
 }
