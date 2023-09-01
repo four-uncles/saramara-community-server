@@ -18,7 +18,7 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
 
     List<Board> findAllByOrderByCreatedAtDesc(Pageable pageable);
 
-    List<Board> findByCreatedAtLessThanOrderByCreatedAtDesc(LocalDateTime createdAt, Pageable page);
+    List<Board> findByBoardIdLessThanOrderByCreatedAtDesc(Long boardId, Pageable page);
 
     List<Board> findAllByOrderByLikeCntDesc(Pageable pageable);
 

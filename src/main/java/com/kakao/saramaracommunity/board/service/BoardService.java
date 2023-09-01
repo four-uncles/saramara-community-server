@@ -18,7 +18,7 @@ public interface BoardService {
     BoardResponseDto.ReadOneBoardResponseDto readOneBoard(Long boardId);
 
     // 게시글 전체를 최신순으로 조회하는 기능의 Method
-    CursorResult<BoardResponseDto.ReadAllBoardResponseDto> readAllBoardsByLatest(LocalDateTime cursorId, Pageable pageable);
+    CursorResult<BoardResponseDto.ReadAllBoardResponseDto> readAllBoardsByLatest(Long cursorId, Pageable pageable);
 
     // 게시글 전체를 인기순으로 조회하는 기능의 Method
     CursorResult<BoardResponseDto.ReadAllBoardResponseDto> readAllBoardsByPopularity(Long cursorId, Pageable pageable);

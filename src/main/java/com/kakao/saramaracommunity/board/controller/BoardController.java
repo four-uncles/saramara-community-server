@@ -1,6 +1,5 @@
 package com.kakao.saramaracommunity.board.controller;
 
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,7 +32,7 @@ import lombok.RequiredArgsConstructor;
 public class BoardController {
 
     private final BoardService boardService;
-    private static final int DEFAULT_PAGE_SIZE = 24;
+    private static final int DEFAULT_PAGE_SIZE = 3;
 
     @PostMapping("/register")
     public ResponseEntity<?> createBoard(@RequestBody @Valid BoardRequestDto.SaveRequestDto request) {
@@ -67,7 +66,7 @@ public class BoardController {
 
     @GetMapping
     public ResponseEntity<CursorResult<BoardResponseDto.ReadAllBoardResponseDto>> readAllBoardsByLatest(
-        @RequestParam(name = "cursorId", required = false) LocalDateTime cursorId,
+        @RequestParam(name = "cursorId", required = false) Long cursorId,
         @RequestParam(name = "size", required = false) Integer size
     ) {
         if (size == null) size = DEFAULT_PAGE_SIZE;

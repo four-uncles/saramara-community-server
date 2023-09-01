@@ -77,10 +77,10 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public CursorResult<BoardResponseDto.ReadAllBoardResponseDto> readAllBoardsByLatest(LocalDateTime createdAt, Pageable page) {
-        List<Board> boards = createdAt == null ?
+    public CursorResult<BoardResponseDto.ReadAllBoardResponseDto> readAllBoardsByLatest(Long boardId, Pageable page) {
+        List<Board> boards = boardId == null ?
             boardRepository.findAllByOrderByCreatedAtDesc(page) :
-            boardRepository.findByCreatedAtLessThanOrderByCreatedAtDesc(createdAt, page);
+            boardRepository.findByBoardIdLessThanOrderByCreatedAtDesc(boardId, page);
 
         log.info("최신순으로 게시글을 조회합니다.(Reading all boards by latest)");
 
