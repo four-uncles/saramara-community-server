@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -19,9 +20,9 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
 
     List<Board> findByCreatedAtLessThanOrderByCreatedAtDesc(LocalDateTime createdAt, Pageable page);
 
-    // List<Board> findAllByOrderByLikeCntDesc(Pageable pageable);
-    //
-    // List<Board> findByBoardIdLessThanOrderByLikeCntDesc(Long boardId, Pageable page);
+    List<Board> findAllByOrderByLikeCntDesc(Pageable pageable);
+
+    List<Board> findByLikeCntLessThanOrderByLikeCntDesc(Long LikeCnt, Pageable page);
 
     Boolean existsByBoardIdLessThan(Long boardId);
 }

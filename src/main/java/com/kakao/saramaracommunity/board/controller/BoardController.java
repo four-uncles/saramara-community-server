@@ -86,6 +86,27 @@ public class BoardController {
         return ResponseEntity.ok().headers(headers).body(cursorResult);
     }
 
+    @GetMapping("/popular")
+    public ResponseEntity<CursorResult<BoardResponseDto.ReadAllBoardResponseDto>> readAllBoardsByPopularity(
+        @RequestParam(name = "cursorId", required = false) Long cursorId,
+        @RequestParam(name = "size", required = false) Integer size
+    ) {
+        if (size == null) size = DEFAULT_PAGE_SIZE;
+        Pageable page = PageRequest.of(0, size);
+
+        CursorResult<BoardResponseDto.ReadAllBoardResponseDto> cursorResult =
+            boardService.readAllBoardsByPopularity(cursorId, page);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("X-Has-Next", cursorResult.getHasNext().toString());
+        Long nextCursorId = cursorResult.getNextCursorId();
+        if (nextCursorId != null) {
+            headers.add("X-Next-Cursor-Id", nextCursorId.toString());
+        }
+
+        return ResponseEntity.ok().headers(headers).body(cursorResult);
+    }
+
 
     @PatchMapping("/{boardId}")
     public ResponseEntity<Object> updateBoard(

@@ -78,12 +78,14 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     public CursorResult<BoardResponseDto.ReadAllBoardResponseDto> readAllBoardsByLatest(LocalDateTime createdAt, Pageable page) {
-        List<Board> boards = getBoards(createdAt, page);
+        List<Board> boards = createdAt == null ?
+            boardRepository.findAllByOrderByCreatedAtDesc(page) :
+            boardRepository.findByCreatedAtLessThanOrderByCreatedAtDesc(createdAt, page);
 
         log.info("최신순으로 게시글을 조회합니다.(Reading all boards by latest)");
 
         Long lastPageId = boards.isEmpty() ? null : boards.get(boards.size() - 1).getBoardId();
-        Boolean hasNext = hasNext(lastPageId);
+        Boolean hasNext = boards.size() >= page.getPageSize();
 
         List<BoardResponseDto.ReadAllBoardResponseDto> toServiceResBoardDto = boards.stream()
             .map(board -> BoardResponseDto.ReadAllBoardResponseDto.builder()
@@ -98,15 +100,29 @@ public class BoardServiceImpl implements BoardService {
         return new CursorResult<>(toServiceResBoardDto, hasNext, lastPageId);
     }
 
-    private List<Board> getBoards(LocalDateTime createdAt, Pageable page) {
-        return createdAt == null ?
-            boardRepository.findAllByOrderByCreatedAtDesc(page) :
-            boardRepository.findByCreatedAtLessThanOrderByCreatedAtDesc(createdAt, page);
-    }
+    @Override
+    public CursorResult<BoardResponseDto.ReadAllBoardResponseDto> readAllBoardsByPopularity(Long likeCnt, Pageable page) {
+        List<Board> boards = likeCnt == null ?
+            boardRepository.findAllByOrderByLikeCntDesc(page) :
+            boardRepository.findByLikeCntLessThanOrderByLikeCntDesc(likeCnt, page);
 
-    private Boolean hasNext(Long boardId) {
-        if (boardId == null) return false;
-        return boardRepository.existsByBoardIdLessThan(boardId);
+
+        log.info("인기순으로 게시글을 조회합니다.(Reading all boards by popularity)");
+
+        Long lastPageId = boards.isEmpty() ? null : boards.get(boards.size() - 1).getLikeCnt();
+        Boolean hasNext = boards.size() >= page.getPageSize();
+
+        List<BoardResponseDto.ReadAllBoardResponseDto> toServiceResBoardDto = boards.stream()
+            .map(board -> BoardResponseDto.ReadAllBoardResponseDto.builder()
+                .title(board.getTitle())
+                .memberNickname(board.getMember().getNickname())
+                .boardCnt(board.getBoardCnt())
+                .likeCnt(board.getLikeCnt())
+                .deadLine(board.getDeadLine())
+                .build())
+            .collect(Collectors.toList());
+
+        return new CursorResult<>(toServiceResBoardDto, hasNext, lastPageId);
     }
 
     @Override
