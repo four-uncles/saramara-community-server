@@ -1,12 +1,12 @@
 package com.kakao.saramaracommunity.board.controller;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,9 +19,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.kakao.saramaracommunity.board.controller.dto.request.BoardRequestDto;
-import com.kakao.saramaracommunity.board.service.dto.response.BoardResponseDto;
 import com.kakao.saramaracommunity.board.entity.Board;
 import com.kakao.saramaracommunity.board.service.BoardService;
+import com.kakao.saramaracommunity.board.service.dto.response.BoardResponseDto;
+import com.kakao.saramaracommunity.board.util.CursorResult;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +33,7 @@ import lombok.RequiredArgsConstructor;
 public class BoardController {
 
     private final BoardService boardService;
+    private static final int DEFAULT_PAGE_SIZE = 24;
 
     @PostMapping("/register")
     public ResponseEntity<?> createBoard(@RequestBody @Valid BoardRequestDto.SaveRequestDto request) {
@@ -63,41 +65,27 @@ public class BoardController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/")
-    public ResponseEntity<Object> readAllBoardsByLatest(@RequestParam(defaultValue = "0") int page,
-                                                        @RequestParam(defaultValue = "24") int size) {
-        Page<BoardResponseDto.ReadAllBoardResponseDto> boardPage = boardService.readAllBoardsByLatest(
-            PageRequest.of(page, size)
-        );
+    @GetMapping
+    public ResponseEntity<CursorResult<BoardResponseDto.ReadAllBoardResponseDto>> readAllBoardsByLatest(
+        @RequestParam(name = "cursorId", required = false) LocalDateTime cursorId,
+        @RequestParam(name = "size", required = false) Integer size
+    ) {
+        if (size == null) size = DEFAULT_PAGE_SIZE;
+        Pageable page = PageRequest.of(0, size);
 
-        // 응답 데이터 생성
-        Map<String, Object> response = new HashMap<>();
-        response.put("code", 200);
-        response.put("msg", "success");
+        CursorResult<BoardResponseDto.ReadAllBoardResponseDto> cursorResult =
+            boardService.readAllBoardsByLatest(cursorId, page);
 
-        // 게시글 목록
-        response.put("data", boardPage);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("X-Has-Next", cursorResult.getHasNext().toString());
+        Long nextCursorId = cursorResult.getNextCursorId();
+        if (nextCursorId != null) {
+            headers.add("X-Next-Cursor-Id", nextCursorId.toString());
+        }
 
-        return ResponseEntity.ok().body(response);
+        return ResponseEntity.ok().headers(headers).body(cursorResult);
     }
 
-    @GetMapping("/popular")
-    public ResponseEntity<Object> readAllBoardsByPopularity(@RequestParam(defaultValue = "0") int page,
-                                                            @RequestParam(defaultValue = "24") int size) {
-        Page<BoardResponseDto.ReadAllBoardResponseDto> boardPage = boardService.readAllBoardsByPopularity(
-            PageRequest.of(page, size)
-        );
-
-        // 응답 데이터 생성
-        Map<String, Object> response = new HashMap<>();
-        response.put("code", 200);
-        response.put("msg", "success");
-
-        // 게시글 목록
-        response.put("data", boardPage);
-
-        return ResponseEntity.ok().body(response);
-    }
 
     @PatchMapping("/{boardId}")
     public ResponseEntity<Object> updateBoard(

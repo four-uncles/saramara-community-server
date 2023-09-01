@@ -1,5 +1,12 @@
 package com.kakao.saramaracommunity.board.service;
 
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+
 import com.kakao.saramaracommunity.board.entity.Board;
 import com.kakao.saramaracommunity.board.exception.BoardErrorCode;
 import com.kakao.saramaracommunity.board.exception.BoardInternalServerException;
@@ -8,18 +15,12 @@ import com.kakao.saramaracommunity.board.exception.BoardUnauthorizedException;
 import com.kakao.saramaracommunity.board.repository.BoardRepository;
 import com.kakao.saramaracommunity.board.service.dto.request.BoardServiceRequestDto;
 import com.kakao.saramaracommunity.board.service.dto.response.BoardResponseDto;
+import com.kakao.saramaracommunity.board.util.CursorResult;
 import com.kakao.saramaracommunity.member.entity.Member;
 import com.kakao.saramaracommunity.member.repository.MemberRepository;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Log4j2
@@ -76,42 +77,36 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public Page<BoardResponseDto.ReadAllBoardResponseDto> readAllBoardsByLatest(Pageable pageable) {
-        Page<Board> boardPage = boardRepository.findAllOrderByCreatedAtDesc(pageable);
+    public CursorResult<BoardResponseDto.ReadAllBoardResponseDto> readAllBoardsByLatest(LocalDateTime createdAt, Pageable page) {
+        List<Board> boards = getBoards(createdAt, page);
 
         log.info("최신순으로 게시글을 조회합니다.(Reading all boards by latest)");
 
-        return mapBoardPageToResponseDtoList(boardPage);
-    }
+        Long lastPageId = boards.isEmpty() ? null : boards.get(boards.size() - 1).getBoardId();
+        Boolean hasNext = hasNext(lastPageId);
 
-    @Override
-    public Page<BoardResponseDto.ReadAllBoardResponseDto> readAllBoardsByPopularity(Pageable pageable) {
-        Page<Board> boardPage = boardRepository.findAllOrderByLikeCntDesc(pageable);
-
-        log.info("인기순으로 게시글을 조회합니다.(Reading all boards by popularity)");
-
-        return mapBoardPageToResponseDtoList(boardPage);
-    }
-
-    private Page<BoardResponseDto.ReadAllBoardResponseDto> mapBoardPageToResponseDtoList(Page<Board> boardPage) {
-
-        log.info("게시글 목록을 응답 DTO 목록에 Mapping 합니다.: "
-            + "(Mapping board list to response DTO list)");
-
-        return boardPage.map(board -> {
-            String memberNickname = board.getMember().getNickname();
-            Long boardCnt = board.getBoardCnt();
-            Long likeCnt = board.getLikeCnt();
-            LocalDateTime deadLine = board.getDeadLine();
-
-            return BoardResponseDto.ReadAllBoardResponseDto.builder()
+        List<BoardResponseDto.ReadAllBoardResponseDto> toServiceResBoardDto = boards.stream()
+            .map(board -> BoardResponseDto.ReadAllBoardResponseDto.builder()
                 .title(board.getTitle())
-                .memberNickname(memberNickname)
-                .boardCnt(boardCnt)
-                .likeCnt(likeCnt)
-                .deadLine(deadLine)
-                .build();
-        });
+                .memberNickname(board.getMember().getNickname())
+                .boardCnt(board.getBoardCnt())
+                .likeCnt(board.getLikeCnt())
+                .deadLine(board.getDeadLine())
+                .build())
+            .collect(Collectors.toList());
+
+        return new CursorResult<>(toServiceResBoardDto, hasNext, lastPageId);
+    }
+
+    private List<Board> getBoards(LocalDateTime createdAt, Pageable page) {
+        return createdAt == null ?
+            boardRepository.findAllByOrderByCreatedAtDesc(page) :
+            boardRepository.findByCreatedAtLessThanOrderByCreatedAtDesc(createdAt, page);
+    }
+
+    private Boolean hasNext(Long boardId) {
+        if (boardId == null) return false;
+        return boardRepository.existsByBoardIdLessThan(boardId);
     }
 
     @Override

@@ -1,5 +1,7 @@
 package com.kakao.saramaracommunity.board.repository;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -13,9 +15,13 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
 
     Optional<Board> findByBoardId(Long boardId);
 
-    @Query("SELECT b FROM Board b ORDER BY b.createdAt DESC")
-    Page<Board> findAllOrderByCreatedAtDesc(Pageable pageable);
+    List<Board> findAllByOrderByCreatedAtDesc(Pageable pageable);
 
-    @Query("SELECT b FROM Board b ORDER BY b.likeCnt DESC")
-    Page<Board> findAllOrderByLikeCntDesc(Pageable pageable);
+    List<Board> findByCreatedAtLessThanOrderByCreatedAtDesc(LocalDateTime createdAt, Pageable page);
+
+    // List<Board> findAllByOrderByLikeCntDesc(Pageable pageable);
+    //
+    // List<Board> findByBoardIdLessThanOrderByLikeCntDesc(Long boardId, Pageable page);
+
+    Boolean existsByBoardIdLessThan(Long boardId);
 }
