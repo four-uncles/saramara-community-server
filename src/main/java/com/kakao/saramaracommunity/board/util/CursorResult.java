@@ -6,11 +6,11 @@ import lombok.Getter;
 
 @Getter
 public class CursorResult<T> {
-    private List<T> values;
+    private final List<T> values;
 
-    private Boolean hasNext;
+    private final Boolean hasNext;
 
-    private Long nextCursorId;
+    private final Long nextCursorId;
 
     public CursorResult(List<T> values, Boolean hasNext, Long nextCursorId) {
         this.values = values;

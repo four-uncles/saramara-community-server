@@ -32,7 +32,7 @@ import lombok.RequiredArgsConstructor;
 public class BoardController {
 
     private final BoardService boardService;
-    private static final int DEFAULT_PAGE_SIZE = 3;
+    private static final int DEFAULT_PAGE_SIZE = 24;
 
     @PostMapping("/register")
     public ResponseEntity<?> createBoard(@RequestBody @Valid BoardRequestDto.SaveRequestDto request) {
