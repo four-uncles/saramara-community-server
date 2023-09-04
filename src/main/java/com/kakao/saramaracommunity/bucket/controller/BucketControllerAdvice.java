@@ -1,7 +1,7 @@
-package com.kakao.saramaracommunity.attach.controller;
+package com.kakao.saramaracommunity.bucket.controller;
 
-import com.kakao.saramaracommunity.attach.exception.AttachNotFoundException;
-import com.kakao.saramaracommunity.attach.exception.ImageUploadOutOfRangeException;
+import com.kakao.saramaracommunity.bucket.exception.BucketUploadException;
+import com.kakao.saramaracommunity.bucket.exception.BucketUploadOutOfRangeException;
 import com.kakao.saramaracommunity.common.dto.Payload;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.core.Ordered;
@@ -12,17 +12,10 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-/**
- * AttachControllerAdvice: Attach(첨부 이미지) 관련 예외를 처리할 클래스
- * 가장 높은 우선순위로 예외를 핸들링합니다.
- *
- * @author Taejun
- * @version 0.0.1
- */
 @Log4j2
 @RestControllerAdvice
 @Order(Ordered.HIGHEST_PRECEDENCE)
-public class AttachControllerAdvice {
+public class BucketControllerAdvice {
 
     /**
      * 업로드한 이미지의 개수가 정한 범위를 벗어났을 경우 발생하는 예외를 핸들링하는 메서드입니다.
@@ -32,32 +25,10 @@ public class AttachControllerAdvice {
      * @return Status 코드와 예외 메시지 반환
      */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(ImageUploadOutOfRangeException.class)
-    public ResponseEntity<Payload> handleImageUploadOutOfRange(ImageUploadOutOfRangeException exception) {
+    @ExceptionHandler(BucketUploadOutOfRangeException.class)
+    public ResponseEntity<Payload> handleImageUploadOutOfRange(BucketUploadOutOfRangeException exception) {
 
-        log.error("[ImageUploadOutOfRangeException] Attach DB에 저장하기 위한 이미지 객체 URL 문자열의 개수가 0개 혹은 6개 이상입니다.");
-
-        return ResponseEntity
-                .status(exception.getStatusWithCode().getHttpStatus())
-                .body(
-                        Payload.errorPayload(
-                            exception.getStatusWithCode().getHttpStatus().value(),
-                            exception.getStatusWithCode().getMessage()
-                        )
-                );
-    }
-
-    /**
-     * 원하는 이미지를 찾지 못했을 때 발생하는 예외를 핸들링하는 메서드입니다.
-     *
-     * @param exception 이미지를 찾지 못했을 경우
-     * @return Status 코드와 예외 메시지 반환
-     */
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ExceptionHandler(AttachNotFoundException.class)
-    public ResponseEntity<Payload> handleAttachNotFound(AttachNotFoundException exception) {
-
-        log.error("[AttachNotFoundException]");
+        log.error("[ImageUploadOutOfRangeException] AWS S3 버킷에 이미지를 업로드하기 위한 이미지 개수가 0장 혹은 6장 이상입니다.");
 
         return ResponseEntity
                 .status(exception.getStatusWithCode().getHttpStatus())
@@ -69,7 +40,26 @@ public class AttachControllerAdvice {
                 );
     }
 
+    /**
+     * AWS S3 버킷에 이미지를 업로드하던중 서버 문제 발생시 핸들링할 예외 메서드입니다.
+     *
+     * @param exception AWS S3 버킷 등록중 서버 문제 발생시
+     * @return Status 코드와 예외 메시지 반환
+     */
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(BucketUploadException.class)
+    public ResponseEntity<Payload> handleBucketUploadFailed(BucketUploadException exception) {
 
+        log.error("[BucketUploadException] AWS S3 버킷에 이미지를 업로드하던 중 서버 문제가 발생했습니다.");
 
+        return ResponseEntity
+                .status(exception.getStatusWithCode().getHttpStatus())
+                .body(
+                        Payload.errorPayload(
+                                exception.getStatusWithCode().getHttpStatus().value(),
+                                exception.getStatusWithCode().getMessage()
+                        )
+                );
+    }
 
 }

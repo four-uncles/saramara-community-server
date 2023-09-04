@@ -12,13 +12,11 @@ import com.kakao.saramaracommunity.attach.service.dto.request.AttachServiceReque
  */
 public interface AttachService {
 
-    AttachResponse.UploadBucketResponse uploadS3BucketImages(AttachServiceRequest.UploadBucketRequest request);
-
-    AttachResponse.UploadResponse uploadImages(AttachServiceRequest.UploadRequest request);
-
     AttachResponse.GetImageResponse getBoardImages(AttachServiceRequest.GetBoardImageRequest request);
 
     AttachResponse.GetAllImageResponse getAllBoardImages();
+
+    AttachResponse.UploadResponse uploadImages(AttachServiceRequest.UploadRequest request);
 
     AttachResponse.UpdateResponse updateImage(AttachServiceRequest.UpdateRequest request);
 

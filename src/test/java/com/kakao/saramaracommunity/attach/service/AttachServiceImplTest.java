@@ -26,9 +26,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 
 /**
- * AttachServiceImplTest: 이미지 업로드 서비스 구현체를 테스트할 클래스
- *
- * 아직 단위 테스트와 통합 테스트 구분이 명확하지 않은 상태입니다.
+ * AttachServiceImplTest: AttachService의 구현체를 테스트할 클래스
+ * Integration Test
+ * Attach 테이블과 상호작용하는 기능을 테스트한다.
  *
  * @author Taejun
  * @version 0.0.1
@@ -49,33 +49,6 @@ class AttachServiceImplTest {
     @AfterEach
     void tearDown() {
         attachRepository.deleteAllInBatch();
-    }
-
-    @DisplayName("1장의 이미지를 AWS S3 버킷에 등록한다.")
-    @Test
-    void singleImageUploadAWSS3Bucket() {
-        // given
-        List<MultipartFile> imgList = new ArrayList<>();
-        MultipartFile file = new MockMultipartFile("file", "test.png", "image/png", "test file".getBytes(StandardCharsets.UTF_8));
-        imgList.add(file);
-
-        AttachServiceRequest.UploadBucketRequest request = AttachServiceRequest.UploadBucketRequest.builder()
-                .imgList(imgList)
-                .build();
-
-        // when
-        AttachResponse.UploadBucketResponse response = attachService.uploadS3BucketImages(request);
-
-        System.out.println(response);
-
-        // then
-        assertThat(response.getCode()).isEqualTo(200);
-        assertThat(response.getMsg()).isEqualTo("정상적으로 AWS S3 버킷에 이미지 등록을 완료했습니다.");
-        assertThat(response.getData()).hasSize(1);
-
-        // 테스트 노란불 뜸 - 실제 파일명은 다음과 같음 "https://saramara-storage.s3.ap-northeast-2.amazonaws.com/%2F%2Ftest_1690875139637.png"
-        // assertThat(response.getData()).contains("test.png");
-
     }
 
     @DisplayName("1번 게시글에 대한 1장의 이미지 URL(S3 이미지 객체 URL)을 DB에 저장한다.")
@@ -99,36 +72,6 @@ class AttachServiceImplTest {
         assertThat(response.getCode()).isEqualTo(200);
         assertThat(response.getMsg()).isEqualTo("정상적으로 DB에 이미지 업로드를 완료했습니다.");
         assertThat(response.isData()).isTrue();
-
-    }
-
-    @DisplayName("5장의 이미지를 AWS S3 버킷에 등록한다.")
-    @Test
-    void MultipleImageUploadAWSS3Bucket() {
-        // given
-        List<MultipartFile> imgList = new ArrayList<>();
-        MultipartFile file1 = new MockMultipartFile("file", "test_1.png", "image/png", "test_1 file".getBytes(StandardCharsets.UTF_8));
-        MultipartFile file2 = new MockMultipartFile("file", "test_2.png", "image/png", "test_2 file".getBytes(StandardCharsets.UTF_8));
-        MultipartFile file3 = new MockMultipartFile("file", "test_3.png", "image/png", "test_3 file".getBytes(StandardCharsets.UTF_8));
-        MultipartFile file4 = new MockMultipartFile("file", "test_4.png", "image/png", "test_4 file".getBytes(StandardCharsets.UTF_8));
-        MultipartFile file5 = new MockMultipartFile("file", "test_5.png", "image/png", "test_5 file".getBytes(StandardCharsets.UTF_8));
-        imgList.add(file1);
-        imgList.add(file2);
-        imgList.add(file3);
-        imgList.add(file4);
-        imgList.add(file5);
-
-        AttachServiceRequest.UploadBucketRequest request = AttachServiceRequest.UploadBucketRequest.builder()
-                .imgList(imgList)
-                .build();
-
-        // when
-        AttachResponse.UploadBucketResponse response = attachService.uploadS3BucketImages(request);
-
-        // then
-        assertThat(response.getCode()).isEqualTo(200);
-        assertThat(response.getMsg()).isEqualTo("정상적으로 AWS S3 버킷에 이미지 등록을 완료했습니다.");
-        assertThat(response.getData()).hasSize(5);
 
     }
 
@@ -159,23 +102,6 @@ class AttachServiceImplTest {
 
     }
 
-    @DisplayName("AWS S3 버킷에 1장 미만의 이미지를 업로드할 경우 예외가 발생한다.")
-    @Test
-    void ZeroUploadImageAWSS3Bucket() {
-        // given
-        List<MultipartFile> imgList = new ArrayList<>();
-
-        AttachServiceRequest.UploadBucketRequest request = AttachServiceRequest.UploadBucketRequest.builder()
-                .imgList(imgList)
-                .build();
-
-        // when & then
-        assertThatThrownBy(() -> attachService.uploadS3BucketImages(request))
-                .isInstanceOf(ImageUploadOutOfRangeException.class)
-                .hasMessage("이미지는 최소 1장 이상, 최대 5장까지 등록할 수 있습니다.");
-
-    }
-
     @DisplayName("DB에 이미지 객체 URL이 빈 이미지 업로드 요청을 할 경우 예외가 발생한다.")
     @Test
     void ZeroUploadImage() {
@@ -190,35 +116,6 @@ class AttachServiceImplTest {
 
         // when & then
         assertThatThrownBy(() -> attachService.uploadImages(request))
-                .isInstanceOf(ImageUploadOutOfRangeException.class)
-                .hasMessage("이미지는 최소 1장 이상, 최대 5장까지 등록할 수 있습니다.");
-
-    }
-
-    @DisplayName("AWS S3 버킷에 6장의 이미지를 업로드할 경우 예외가 발행한다.")
-    @Test
-    void MoreThenFiveUploadImageAWSS3Bucket() {
-        // given
-        List<MultipartFile> imgList = new ArrayList<>();
-        MultipartFile file1 = new MockMultipartFile("file", "test_1.png", "image/png", "test_1 file".getBytes(StandardCharsets.UTF_8));
-        MultipartFile file2 = new MockMultipartFile("file", "test_2.png", "image/png", "test_2 file".getBytes(StandardCharsets.UTF_8));
-        MultipartFile file3 = new MockMultipartFile("file", "test_3.png", "image/png", "test_3 file".getBytes(StandardCharsets.UTF_8));
-        MultipartFile file4 = new MockMultipartFile("file", "test_4.png", "image/png", "test_4 file".getBytes(StandardCharsets.UTF_8));
-        MultipartFile file5 = new MockMultipartFile("file", "test_5.png", "image/png", "test_5 file".getBytes(StandardCharsets.UTF_8));
-        MultipartFile file6 = new MockMultipartFile("file", "test_6.png", "image/png", "test_6 file".getBytes(StandardCharsets.UTF_8));
-        imgList.add(file1);
-        imgList.add(file2);
-        imgList.add(file3);
-        imgList.add(file4);
-        imgList.add(file5);
-        imgList.add(file6);
-
-        AttachServiceRequest.UploadBucketRequest request = AttachServiceRequest.UploadBucketRequest.builder()
-                .imgList(imgList)
-                .build();
-
-        // when & then
-        assertThatThrownBy(() -> attachService.uploadS3BucketImages(request))
                 .isInstanceOf(ImageUploadOutOfRangeException.class)
                 .hasMessage("이미지는 최소 1장 이상, 최대 5장까지 등록할 수 있습니다.");
 

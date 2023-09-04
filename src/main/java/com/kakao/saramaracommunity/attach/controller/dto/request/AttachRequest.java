@@ -21,33 +21,6 @@ import java.util.Map;
 @Getter
 public class AttachRequest {
 
-    /**
-     * UploadRequestDeprecated: 게시글에 대한 이미지를 등록하기 위한 요청 DTO 클래스
-     * attachType: 게시글 및 댓글 유형 여부
-     * ids: 게시글이나 댓글의 번호(PK)
-     * imgList: 이미지의 순서(Long)와 이미지 파일(MultipartFile)이 담긴 Map
-     */
-    @NoArgsConstructor(access = AccessLevel.PROTECTED)
-    @Getter
-    public static class UploadRequestDeprecated {
-
-        @NotNull(message = "어떤 유형의 글에서 이미지가 등록되었는지 알 수 없습니다.")
-        private AttachType attachType;
-
-        @NotNull(message = "게시글이나 댓글의 번호값을 알 수 없습니다.")
-        private Long ids;
-
-        @NotNull(message = "이미지 목록이 비어있습니다.")
-        private Map<Long, MultipartFile> imgList;
-
-        @Builder
-        public UploadRequestDeprecated(AttachType attachType, Long ids, Map<Long, MultipartFile> imgList) {
-            this.attachType = attachType;
-            this.ids = ids;
-            this.imgList = imgList;
-        }
-
-    }
 
     /**
      * UploadRequest: 게시글에 대한 이미지를 등록하기 위한 요청 DTO 클래스
@@ -79,29 +52,6 @@ public class AttachRequest {
             return AttachServiceRequest.UploadRequest.builder()
                     .attachType(attachType)
                     .ids(ids)
-                    .imgList(imgList)
-                    .build();
-        }
-
-    }
-
-    /**
-     * UploadBucketRequest: 게시글의 이미지 목록을 AWS S3에 등록하기 위한 요청 DTO 클래스
-     * imgList: 이미지 파일(MultipartFile)이 담긴 ArrayList
-     */
-    @NoArgsConstructor(access = AccessLevel.PROTECTED)
-    @Getter
-    public static class UploadBucketRequest {
-        @NotNull(message = "이미지 목록이 비어있습니다.")
-        private List<MultipartFile> imgList;
-
-        @Builder
-        private UploadBucketRequest(List<MultipartFile> imgList) {
-            this.imgList = imgList;
-        }
-
-        public AttachServiceRequest.UploadBucketRequest toServiceRequest() {
-            return AttachServiceRequest.UploadBucketRequest.builder()
                     .imgList(imgList)
                     .build();
         }

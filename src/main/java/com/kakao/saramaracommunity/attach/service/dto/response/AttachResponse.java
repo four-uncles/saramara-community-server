@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * AttachResponse: uploadImage 메서드의 응답 데이터를 담을 DTO 클래스
+ * AttachResponse: Attach와 관련된 응답 데이터를 담을 DTO 클래스
  *
  * @author Taejun
  * @version 0.0.1
