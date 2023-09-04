@@ -5,7 +5,6 @@ import java.util.Map;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -22,7 +21,6 @@ import com.kakao.saramaracommunity.board.controller.dto.request.BoardRequestDto;
 import com.kakao.saramaracommunity.board.entity.Board;
 import com.kakao.saramaracommunity.board.service.BoardService;
 import com.kakao.saramaracommunity.board.service.dto.response.BoardResponseDto;
-import com.kakao.saramaracommunity.board.util.CursorResult;
 import com.kakao.saramaracommunity.common.dto.Payload;
 
 import jakarta.validation.Valid;
@@ -66,50 +64,33 @@ public class BoardController {
         return ResponseEntity.ok(response);
     }
 
+    /**
+     * 모든 게시물을 조회하는 엔드포인트 입니다.
+     * @param cursorId 다음 페이지의 커서 ID
+     * @param size 페이지 크기
+     * @param sort 정렬 방식 - 최신순(latest), 인기순(popular)
+     * @return ResponseEntity<Object> 객체
+     */
     @GetMapping
-    public ResponseEntity<Payload<CursorResult<BoardResponseDto.ReadAllBoardResponseDto>>> readAllBoardsByLatest(
+    public ResponseEntity<Object> readAllBoards(
         @RequestParam(name = "cursorId", required = false) Long cursorId,
-        @RequestParam(name = "size", required = false) Integer size
+        @RequestParam(name = "size", required = false) Integer size,
+        @RequestParam(name = "sort", defaultValue = "latest") String sort
     ) {
         if (size == null) size = DEFAULT_PAGE_SIZE;
         Pageable page = PageRequest.of(0, size);
 
-        CursorResult<BoardResponseDto.ReadAllBoardResponseDto> cursorResult =
-            boardService.readAllBoardsByLatest(cursorId, page);
+        BoardResponseDto.ReadPageBoardResponseDto readPage;
+        if ("popular".equals(sort)) readPage = boardService.readAllBoardsByPopularity(cursorId, page);
+        else readPage = boardService.readAllBoardsByLatest(cursorId, page);
 
-        return createCustomResponseForCursorResult(cursorResult);
-    }
-
-    @GetMapping("/popular")
-    public ResponseEntity<Payload<CursorResult<BoardResponseDto.ReadAllBoardResponseDto>>> readAllBoardsByPopularity(
-        @RequestParam(name = "cursorId", required = false) Long cursorId,
-        @RequestParam(name = "size", required = false) Integer size
-    ) {
-        if (size == null) size = DEFAULT_PAGE_SIZE;
-        Pageable page = PageRequest.of(0, size);
-
-        CursorResult<BoardResponseDto.ReadAllBoardResponseDto> cursorResult =
-            boardService.readAllBoardsByPopularity(cursorId, page);
-
-        return createCustomResponseForCursorResult(cursorResult);
-    }
-
-    private ResponseEntity<Payload<CursorResult<BoardResponseDto.ReadAllBoardResponseDto>>> createCustomResponseForCursorResult(
-        CursorResult<BoardResponseDto.ReadAllBoardResponseDto> cursorResult) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("X-Has-Next", cursorResult.getHasNext().toString());
-        Long nextCursorId = cursorResult.getNextCursorId();
-        if (nextCursorId != null) {
-            headers.add("X-Next-Cursor-Id", nextCursorId.toString());
-        }
-
-        Payload<CursorResult<BoardResponseDto.ReadAllBoardResponseDto>> responsePayload = Payload.successPayload(
+        Payload<BoardResponseDto.ReadPageBoardResponseDto> resPayload = Payload.successPayload(
             HttpStatus.OK.value(),
-            "Success",
-            cursorResult
+            "success",
+            readPage
         );
 
-        return ResponseEntity.ok().headers(headers).body(responsePayload);
+        return ResponseEntity.ok().body(resPayload);
     }
 
     @PatchMapping("/{boardId}")

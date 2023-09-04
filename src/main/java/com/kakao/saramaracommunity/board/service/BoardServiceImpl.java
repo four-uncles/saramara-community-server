@@ -15,7 +15,6 @@ import com.kakao.saramaracommunity.board.exception.BoardUnauthorizedException;
 import com.kakao.saramaracommunity.board.repository.BoardRepository;
 import com.kakao.saramaracommunity.board.service.dto.request.BoardServiceRequestDto;
 import com.kakao.saramaracommunity.board.service.dto.response.BoardResponseDto;
-import com.kakao.saramaracommunity.board.util.CursorResult;
 import com.kakao.saramaracommunity.member.entity.Member;
 import com.kakao.saramaracommunity.member.repository.MemberRepository;
 
@@ -77,42 +76,31 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public CursorResult<BoardResponseDto.ReadAllBoardResponseDto> readAllBoardsByLatest(Long boardId, Pageable page) {
+    public BoardResponseDto.ReadPageBoardResponseDto readAllBoardsByLatest(Long boardId, Pageable page) {
         List<Board> boards = boardId == null ?
             boardRepository.findAllByOrderByCreatedAtDesc(page) :
             boardRepository.findByBoardIdLessThanOrderByCreatedAtDesc(boardId, page);
 
         log.info("최신순으로 게시글을 조회합니다.(Reading all boards by latest)");
 
-        Long nextCursorId = boards.isEmpty() ? null : boards.get(boards.size() - 1).getBoardId();
-        Boolean hasNext = boards.size() >= page.getPageSize();
-
-        List<BoardResponseDto.ReadAllBoardResponseDto> toServiceResBoardDto = boards.stream()
-            .map(board -> BoardResponseDto.ReadAllBoardResponseDto.builder()
-                .title(board.getTitle())
-                .memberNickname(board.getMember().getNickname())
-                .boardCnt(board.getBoardCnt())
-                .likeCnt(board.getLikeCnt())
-                .deadLine(board.getDeadLine())
-                .build())
-            .collect(Collectors.toList());
-
-        return CursorResult.<BoardResponseDto.ReadAllBoardResponseDto>builder()
-            .values(toServiceResBoardDto)
-            .hasNext(hasNext)
-            .nextCursorId(nextCursorId)
-            .build();
+        return readBoards(boards, page, "boardId");
     }
 
     @Override
-    public CursorResult<BoardResponseDto.ReadAllBoardResponseDto> readAllBoardsByPopularity(Long likeCnt, Pageable page) {
+    public BoardResponseDto.ReadPageBoardResponseDto readAllBoardsByPopularity(Long likeCnt, Pageable page) {
         List<Board> boards = likeCnt == null ?
             boardRepository.findAllByOrderByLikeCntDesc(page) :
             boardRepository.findByLikeCntLessThanOrderByLikeCntDesc(likeCnt, page);
 
         log.info("인기순으로 게시글을 조회합니다.(Reading all boards by popularity)");
 
-        Long nextCursorId = boards.isEmpty() ? null : boards.get(boards.size() - 1).getLikeCnt();
+        return readBoards(boards, page, "likeCnt");
+    }
+
+    private BoardResponseDto.ReadPageBoardResponseDto readBoards(List<Board> boards, Pageable page, String cursorField) {
+        Long cursorId = boards.isEmpty() ?
+            null : "likeCnt".equals(cursorField) ?
+            boards.get(boards.size() - 1).getLikeCnt() : boards.get(boards.size() - 1).getBoardId();
         Boolean hasNext = boards.size() >= page.getPageSize();
 
         List<BoardResponseDto.ReadAllBoardResponseDto> toServiceResBoardDto = boards.stream()
@@ -125,10 +113,10 @@ public class BoardServiceImpl implements BoardService {
                 .build())
             .collect(Collectors.toList());
 
-        return CursorResult.<BoardResponseDto.ReadAllBoardResponseDto>builder()
+        return BoardResponseDto.ReadPageBoardResponseDto.builder()
             .values(toServiceResBoardDto)
             .hasNext(hasNext)
-            .nextCursorId(nextCursorId)
+            .cursorId(cursorId)
             .build();
     }
 
