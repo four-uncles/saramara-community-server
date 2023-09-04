@@ -75,14 +75,7 @@ public class BoardController {
         CursorResult<BoardResponseDto.ReadAllBoardResponseDto> cursorResult =
             boardService.readAllBoardsByLatest(cursorId, page);
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("X-Has-Next", cursorResult.getHasNext().toString());
-        Long nextCursorId = cursorResult.getNextCursorId();
-        if (nextCursorId != null) {
-            headers.add("X-Next-Cursor-Id", nextCursorId.toString());
-        }
-
-        return ResponseEntity.ok().headers(headers).body(cursorResult);
+        return createCustomResponseForCursorResult(cursorResult);
     }
 
     @GetMapping("/popular")
@@ -96,16 +89,19 @@ public class BoardController {
         CursorResult<BoardResponseDto.ReadAllBoardResponseDto> cursorResult =
             boardService.readAllBoardsByPopularity(cursorId, page);
 
+        return createCustomResponseForCursorResult(cursorResult);
+    }
+
+    private ResponseEntity<CursorResult<BoardResponseDto.ReadAllBoardResponseDto>> createCustomResponseForCursorResult(
+        CursorResult<BoardResponseDto.ReadAllBoardResponseDto> cursorResult) {
         HttpHeaders headers = new HttpHeaders();
         headers.add("X-Has-Next", cursorResult.getHasNext().toString());
         Long nextCursorId = cursorResult.getNextCursorId();
         if (nextCursorId != null) {
             headers.add("X-Next-Cursor-Id", nextCursorId.toString());
         }
-
         return ResponseEntity.ok().headers(headers).body(cursorResult);
     }
-
 
     @PatchMapping("/{boardId}")
     public ResponseEntity<Object> updateBoard(
