@@ -2,9 +2,11 @@ package com.kakao.saramaracommunity.board.util;
 
 import java.util.List;
 
+import lombok.Builder;
 import lombok.Getter;
 
 @Getter
+@Builder
 public class CursorResult<T> {
     private final List<T> values;
 

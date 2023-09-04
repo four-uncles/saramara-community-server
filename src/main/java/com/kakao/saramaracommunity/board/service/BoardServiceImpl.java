@@ -84,7 +84,7 @@ public class BoardServiceImpl implements BoardService {
 
         log.info("최신순으로 게시글을 조회합니다.(Reading all boards by latest)");
 
-        Long lastPageId = boards.isEmpty() ? null : boards.get(boards.size() - 1).getBoardId();
+        Long nextCursorId = boards.isEmpty() ? null : boards.get(boards.size() - 1).getBoardId();
         Boolean hasNext = boards.size() >= page.getPageSize();
 
         List<BoardResponseDto.ReadAllBoardResponseDto> toServiceResBoardDto = boards.stream()
@@ -97,7 +97,11 @@ public class BoardServiceImpl implements BoardService {
                 .build())
             .collect(Collectors.toList());
 
-        return new CursorResult<>(toServiceResBoardDto, hasNext, lastPageId);
+        return CursorResult.<BoardResponseDto.ReadAllBoardResponseDto>builder()
+            .values(toServiceResBoardDto)
+            .hasNext(hasNext)
+            .nextCursorId(nextCursorId)
+            .build();
     }
 
     @Override
@@ -106,10 +110,9 @@ public class BoardServiceImpl implements BoardService {
             boardRepository.findAllByOrderByLikeCntDesc(page) :
             boardRepository.findByLikeCntLessThanOrderByLikeCntDesc(likeCnt, page);
 
-
         log.info("인기순으로 게시글을 조회합니다.(Reading all boards by popularity)");
 
-        Long lastPageId = boards.isEmpty() ? null : boards.get(boards.size() - 1).getLikeCnt();
+        Long nextCursorId = boards.isEmpty() ? null : boards.get(boards.size() - 1).getLikeCnt();
         Boolean hasNext = boards.size() >= page.getPageSize();
 
         List<BoardResponseDto.ReadAllBoardResponseDto> toServiceResBoardDto = boards.stream()
@@ -122,7 +125,11 @@ public class BoardServiceImpl implements BoardService {
                 .build())
             .collect(Collectors.toList());
 
-        return new CursorResult<>(toServiceResBoardDto, hasNext, lastPageId);
+        return CursorResult.<BoardResponseDto.ReadAllBoardResponseDto>builder()
+            .values(toServiceResBoardDto)
+            .hasNext(hasNext)
+            .nextCursorId(nextCursorId)
+            .build();
     }
 
     @Override
