@@ -6,6 +6,7 @@ import java.util.Map;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,6 +23,7 @@ import com.kakao.saramaracommunity.board.entity.Board;
 import com.kakao.saramaracommunity.board.service.BoardService;
 import com.kakao.saramaracommunity.board.service.dto.response.BoardResponseDto;
 import com.kakao.saramaracommunity.board.util.CursorResult;
+import com.kakao.saramaracommunity.common.dto.Payload;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -65,7 +67,7 @@ public class BoardController {
     }
 
     @GetMapping
-    public ResponseEntity<CursorResult<BoardResponseDto.ReadAllBoardResponseDto>> readAllBoardsByLatest(
+    public ResponseEntity<Payload<CursorResult<BoardResponseDto.ReadAllBoardResponseDto>>> readAllBoardsByLatest(
         @RequestParam(name = "cursorId", required = false) Long cursorId,
         @RequestParam(name = "size", required = false) Integer size
     ) {
@@ -79,7 +81,7 @@ public class BoardController {
     }
 
     @GetMapping("/popular")
-    public ResponseEntity<CursorResult<BoardResponseDto.ReadAllBoardResponseDto>> readAllBoardsByPopularity(
+    public ResponseEntity<Payload<CursorResult<BoardResponseDto.ReadAllBoardResponseDto>>> readAllBoardsByPopularity(
         @RequestParam(name = "cursorId", required = false) Long cursorId,
         @RequestParam(name = "size", required = false) Integer size
     ) {
@@ -92,7 +94,7 @@ public class BoardController {
         return createCustomResponseForCursorResult(cursorResult);
     }
 
-    private ResponseEntity<CursorResult<BoardResponseDto.ReadAllBoardResponseDto>> createCustomResponseForCursorResult(
+    private ResponseEntity<Payload<CursorResult<BoardResponseDto.ReadAllBoardResponseDto>>> createCustomResponseForCursorResult(
         CursorResult<BoardResponseDto.ReadAllBoardResponseDto> cursorResult) {
         HttpHeaders headers = new HttpHeaders();
         headers.add("X-Has-Next", cursorResult.getHasNext().toString());
@@ -100,7 +102,14 @@ public class BoardController {
         if (nextCursorId != null) {
             headers.add("X-Next-Cursor-Id", nextCursorId.toString());
         }
-        return ResponseEntity.ok().headers(headers).body(cursorResult);
+
+        Payload<CursorResult<BoardResponseDto.ReadAllBoardResponseDto>> responsePayload = Payload.successPayload(
+            HttpStatus.OK.value(),
+            "Success",
+            cursorResult
+        );
+
+        return ResponseEntity.ok().headers(headers).body(responsePayload);
     }
 
     @PatchMapping("/{boardId}")
