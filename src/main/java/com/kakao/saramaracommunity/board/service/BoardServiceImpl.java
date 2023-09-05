@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.kakao.saramaracommunity.board.entity.Board;
+import com.kakao.saramaracommunity.board.entity.SortType;
 import com.kakao.saramaracommunity.board.exception.BoardErrorCode;
 import com.kakao.saramaracommunity.board.exception.BoardInternalServerException;
 import com.kakao.saramaracommunity.board.exception.BoardNotFoundException;
@@ -76,30 +77,23 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public BoardResponseDto.ReadPageBoardResponseDto readAllBoardsByLatest(Long boardId, Pageable page) {
-        List<Board> boards = boardId == null ?
-            boardRepository.findAllByOrderByCreatedAtDesc(page) :
-            boardRepository.findByBoardIdLessThanOrderByCreatedAtDesc(boardId, page);
+    public BoardResponseDto.ReadPageBoardResponseDto readAllBoards(Long cursorId, Pageable page, SortType sort) {
+        List<Board> boards;
 
-        log.info("최신순으로 게시글을 조회합니다.(Reading all boards by latest)");
+        if (SortType.POPULAR.equals(sort)) {
+            log.info("인기순으로 게시글을 조회합니다.(Reading all boards by popularity)");
+            boards = cursorId == null ?
+                boardRepository.findAllByOrderByLikeCntDesc(page) :
+                boardRepository.findByLikeCntLessThanOrderByLikeCntDesc(cursorId, page);
+        } else {
+            log.info("최신순으로 게시글을 조회합니다.(Reading all boards by latest)");
+            boards = cursorId == null ?
+                boardRepository.findAllByOrderByCreatedAtDesc(page) :
+                boardRepository.findByBoardIdLessThanOrderByCreatedAtDesc(cursorId, page);
+        }
 
-        return readBoards(boards, page, "boardId");
-    }
-
-    @Override
-    public BoardResponseDto.ReadPageBoardResponseDto readAllBoardsByPopularity(Long likeCnt, Pageable page) {
-        List<Board> boards = likeCnt == null ?
-            boardRepository.findAllByOrderByLikeCntDesc(page) :
-            boardRepository.findByLikeCntLessThanOrderByLikeCntDesc(likeCnt, page);
-
-        log.info("인기순으로 게시글을 조회합니다.(Reading all boards by popularity)");
-
-        return readBoards(boards, page, "likeCnt");
-    }
-
-    private BoardResponseDto.ReadPageBoardResponseDto readBoards(List<Board> boards, Pageable page, String cursorField) {
-        Long cursorId = boards.isEmpty() ?
-            null : "likeCnt".equals(cursorField) ?
+        Long nextCursorId = boards.isEmpty() ?
+            null : SortType.POPULAR.equals(sort) ?
             boards.get(boards.size() - 1).getLikeCnt() : boards.get(boards.size() - 1).getBoardId();
         Boolean hasNext = boards.size() >= page.getPageSize();
 
@@ -116,7 +110,7 @@ public class BoardServiceImpl implements BoardService {
         return BoardResponseDto.ReadPageBoardResponseDto.builder()
             .values(toServiceResBoardDto)
             .hasNext(hasNext)
-            .cursorId(cursorId)
+            .cursorId(nextCursorId)
             .build();
     }
 

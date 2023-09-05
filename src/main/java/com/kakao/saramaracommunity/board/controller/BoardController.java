@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.kakao.saramaracommunity.board.controller.dto.request.BoardRequestDto;
 import com.kakao.saramaracommunity.board.entity.Board;
+import com.kakao.saramaracommunity.board.entity.SortType;
 import com.kakao.saramaracommunity.board.service.BoardService;
 import com.kakao.saramaracommunity.board.service.dto.response.BoardResponseDto;
 import com.kakao.saramaracommunity.common.dto.Payload;
@@ -75,14 +76,12 @@ public class BoardController {
     public ResponseEntity<Object> readAllBoards(
         @RequestParam(name = "cursorId", required = false) Long cursorId,
         @RequestParam(name = "size", required = false) Integer size,
-        @RequestParam(name = "sort", defaultValue = "latest") String sort
+        @RequestParam(name = "sort", defaultValue = "LATEST") SortType sort
     ) {
         if (size == null) size = DEFAULT_PAGE_SIZE;
         Pageable page = PageRequest.of(0, size);
 
-        BoardResponseDto.ReadPageBoardResponseDto readPage;
-        if ("popular".equals(sort)) readPage = boardService.readAllBoardsByPopularity(cursorId, page);
-        else readPage = boardService.readAllBoardsByLatest(cursorId, page);
+        BoardResponseDto.ReadPageBoardResponseDto readPage = boardService.readAllBoards(cursorId, page, sort);
 
         Payload<BoardResponseDto.ReadPageBoardResponseDto> resPayload = Payload.successPayload(
             HttpStatus.OK.value(),

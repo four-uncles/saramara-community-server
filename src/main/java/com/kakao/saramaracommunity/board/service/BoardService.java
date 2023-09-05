@@ -2,6 +2,7 @@ package com.kakao.saramaracommunity.board.service;
 
 import org.springframework.data.domain.Pageable;
 
+import com.kakao.saramaracommunity.board.entity.SortType;
 import com.kakao.saramaracommunity.board.service.dto.request.BoardServiceRequestDto;
 import com.kakao.saramaracommunity.board.service.dto.response.BoardResponseDto;
 import com.kakao.saramaracommunity.board.entity.Board;
@@ -14,11 +15,8 @@ public interface BoardService {
     // boardId를 매개변수로 받아 해당 게시글을 조회하는 기능의 Method
     BoardResponseDto.ReadOneBoardResponseDto readOneBoard(Long boardId);
 
-    // 게시글 전체를 최신순으로 조회하는 기능의 Method
-    BoardResponseDto.ReadPageBoardResponseDto readAllBoardsByLatest(Long cursorId, Pageable pageable);
-
-    // 게시글 전체를 인기순으로 조회하는 기능의 Method
-    BoardResponseDto.ReadPageBoardResponseDto readAllBoardsByPopularity(Long cursorId, Pageable pageable);
+    // 게시글 조회 요청 Method
+    BoardResponseDto.ReadPageBoardResponseDto readAllBoards(Long cursorId, Pageable page, SortType sort);
 
     // 게시글 수정 요청 Method
     Boolean updateBoard(Long boardId, BoardServiceRequestDto.UpdateRequestDto requestDto);
