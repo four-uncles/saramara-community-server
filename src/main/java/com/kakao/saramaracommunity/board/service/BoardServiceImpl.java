@@ -1,6 +1,14 @@
 package com.kakao.saramaracommunity.board.service;
 
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+
 import com.kakao.saramaracommunity.board.entity.Board;
+import com.kakao.saramaracommunity.board.entity.SortType;
 import com.kakao.saramaracommunity.board.exception.BoardErrorCode;
 import com.kakao.saramaracommunity.board.exception.BoardInternalServerException;
 import com.kakao.saramaracommunity.board.exception.BoardNotFoundException;
@@ -10,13 +18,9 @@ import com.kakao.saramaracommunity.board.service.dto.request.BoardServiceRequest
 import com.kakao.saramaracommunity.board.service.dto.response.BoardResponseDto;
 import com.kakao.saramaracommunity.member.entity.Member;
 import com.kakao.saramaracommunity.member.repository.MemberRepository;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Log4j2
@@ -73,42 +77,41 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public List<BoardResponseDto.ReadAllBoardResponseDto> readAllBoardsByLatest() {
-        List<Board> boards = boardRepository.findAllOrderByCreatedAtDesc();
+    public BoardResponseDto.ReadPageBoardResponseDto readAllBoards(Long cursorId, Pageable page, SortType sort) {
+        List<Board> boards;
 
-        log.info("최신순으로 게시글을 조회합니다.(Reading all boards by latest)");
+        if (SortType.POPULAR.equals(sort)) {
+            log.info("인기순으로 게시글을 조회합니다.(Reading all boards by popularity)");
+            boards = cursorId == null ?
+                boardRepository.findAllByOrderByLikeCntDesc(page) :
+                boardRepository.findByLikeCntLessThanOrderByLikeCntDesc(cursorId, page);
+        } else {
+            log.info("최신순으로 게시글을 조회합니다.(Reading all boards by latest)");
+            boards = cursorId == null ?
+                boardRepository.findAllByOrderByCreatedAtDesc(page) :
+                boardRepository.findByBoardIdLessThanOrderByCreatedAtDesc(cursorId, page);
+        }
 
-        return mapBoardListToResponseDtoList(boards);
-    }
+        Long nextCursorId = boards.isEmpty() ?
+            null : SortType.POPULAR.equals(sort) ?
+            boards.get(boards.size() - 1).getLikeCnt() : boards.get(boards.size() - 1).getBoardId();
+        Boolean hasNext = boards.size() >= page.getPageSize();
 
-    @Override
-    public List<BoardResponseDto.ReadAllBoardResponseDto> readAllBoardsByPopularity() {
-        List<Board> boards = boardRepository.findAllOrderByLikeCntDesc();
-
-        log.info("인기순으로 게시글을 조회합니다.(Reading all boards by popularity)");
-
-        return mapBoardListToResponseDtoList(boards);
-    }
-
-    private List<BoardResponseDto.ReadAllBoardResponseDto> mapBoardListToResponseDtoList(List<Board> boards) {
-
-        log.info("게시글 목록을 응답 DTO 목록에 Mapping 합니다.: "
-            + "(Mapping board list to response DTO list)");
-
-        return boards.stream().map(board -> {
-            String memberNickname = board.getMember().getNickname();
-            Long boardCnt = board.getBoardCnt();
-            Long likeCnt = board.getLikeCnt();
-            LocalDateTime deadLine = board.getDeadLine();
-
-            return BoardResponseDto.ReadAllBoardResponseDto.builder()
+        List<BoardResponseDto.ReadAllBoardResponseDto> toServiceResBoardDto = boards.stream()
+            .map(board -> BoardResponseDto.ReadAllBoardResponseDto.builder()
                 .title(board.getTitle())
-                .memberNickname(memberNickname)
-                .boardCnt(boardCnt)
-                .likeCnt(likeCnt)
-                .deadLine(deadLine)
-                .build();
-        }).collect(Collectors.toList());
+                .memberNickname(board.getMember().getNickname())
+                .boardCnt(board.getBoardCnt())
+                .likeCnt(board.getLikeCnt())
+                .deadLine(board.getDeadLine())
+                .build())
+            .collect(Collectors.toList());
+
+        return BoardResponseDto.ReadPageBoardResponseDto.builder()
+            .values(toServiceResBoardDto)
+            .hasNext(hasNext)
+            .cursorId(nextCursorId)
+            .build();
     }
 
     @Override

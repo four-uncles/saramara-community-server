@@ -1,6 +1,7 @@
 package com.kakao.saramaracommunity.board.service.dto.response;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import com.kakao.saramaracommunity.board.entity.CategoryBoard;
 
@@ -51,5 +52,21 @@ public class BoardResponseDto {
         private Long likeCnt;
 
         private LocalDateTime deadLine;
+    }
+
+    @Getter
+    @Builder
+    public static class ReadPageBoardResponseDto {
+        private final List<ReadAllBoardResponseDto> values;
+
+        private final Boolean hasNext;
+
+        private final Long cursorId;
+
+        public ReadPageBoardResponseDto(List<ReadAllBoardResponseDto> values, Boolean hasNext, Long cursorId) {
+            this.values = values;
+            this.hasNext = hasNext;
+            this.cursorId = cursorId;
+        }
     }
 }
