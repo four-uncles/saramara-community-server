@@ -62,7 +62,7 @@ public class MemberServiceImpl implements MemberSerivce {
             .memberImage(
                 MemberImage.builder().
                     uuid("default").
-                    image_name("default").
+                    imageName("default").
                     path("default").
                     build()
             )

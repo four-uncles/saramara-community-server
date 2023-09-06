@@ -24,7 +24,7 @@ public class Board extends BaseTimeEntity {
     private Long boardId; // 게시글 고유 번호
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="memberId")
+    @JoinColumn(name="member_id")
     private Member member; // 게시글 작성자
 
     @Enumerated(EnumType.STRING)

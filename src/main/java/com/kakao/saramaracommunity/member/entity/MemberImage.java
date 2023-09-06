@@ -20,7 +20,7 @@ public class MemberImage {
 	@Id
 	@Column(nullable = false)
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long member_image_id;
+	private Long memberImageId;
 
 	@Column(nullable = false)
 	@NotBlank
@@ -28,20 +28,20 @@ public class MemberImage {
 
 	@Column(nullable = false)
 	@NotBlank
-	private String image_name;
+	private String imageName;
 
 	@Column(nullable = false)
 	@NotBlank
 	private String path;
 
 	@Builder
-	public MemberImage(String uuid, String image_name, String path){
+	public MemberImage(String uuid, String imageName, String path){
 		this.uuid = uuid;
-		this.image_name = image_name;
+		this.imageName = imageName;
 		this.path = path;
 	}
 
 	public void changeUuid(String uuid){ this.uuid = uuid; }
-	public void changeImage_name(String image_name){ this.image_name = image_name; }
+	public void changeImage_name(String image_name){ this.imageName = image_name; }
 	public void changePath(String path){ this.path = path; }
 }
