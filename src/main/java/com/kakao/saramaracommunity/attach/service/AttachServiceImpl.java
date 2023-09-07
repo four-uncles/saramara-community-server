@@ -7,7 +7,6 @@ import com.kakao.saramaracommunity.attach.exception.ImageUploadOutOfRangeExcepti
 import com.kakao.saramaracommunity.attach.repository.AttachRepository;
 import com.kakao.saramaracommunity.attach.service.dto.request.AttachServiceRequest;
 import com.kakao.saramaracommunity.attach.service.dto.response.AttachResponse;
-import com.kakao.saramaracommunity.util.AwsS3Uploader;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
@@ -52,6 +51,7 @@ public class AttachServiceImpl implements AttachService {
                 throw new ImageUploadOutOfRangeException(ATTACH_IMAGE_RANGE_OUT);
             }
 
+            // private 추출
             List<Attach> attachs = imgList.entrySet()
                     .stream()
                     .map(entry -> {
@@ -214,6 +214,8 @@ public class AttachServiceImpl implements AttachService {
      * isImageCntOutOfRange: 이미지 업로드 및 저장시 이미지 개수를 확인할 메서드
      * 시스템 정책상 1장 ~ 5장까지만 업로드가 가능합니다.
      * 0장이나, 6장 이상의 이미지 업로드 요청이 올 경우 ATTACH_IMAGE_RANGE_OUT 예외를 발생시킵니다.
+     *
+     * 이미지 개수는 서버 설정이 아닌 DB에서 진행하는 것이 좋을 수 있다!
      *
      * @param imgCnt
      */

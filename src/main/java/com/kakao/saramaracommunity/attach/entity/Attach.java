@@ -16,6 +16,8 @@ import org.hibernate.annotations.Where;
  * seq: 사용자가 지정한 이미지 순서를 저장할 필드
  * imgPath: S3 버킷에 등록된 이미지 URL을 저장할 필드
  *
+ * JPA를 사용하는 것은 쿼리 의존도를 제외하기 위함인데 아래 Soft delete 방식은 이를 위반하는 것이다.
+ *
  * @author Taejun
  * @version 0.0.1
  */
@@ -30,7 +32,7 @@ public class Attach extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long attachId;
 
-    @Enumerated(value = EnumType.STRING)
+    @Enumerated(value = EnumType.STRING) // 사용 목적 찾기
     private AttachType type;
 
     @Column(nullable = false)
