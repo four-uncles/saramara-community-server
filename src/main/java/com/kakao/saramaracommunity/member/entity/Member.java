@@ -78,6 +78,7 @@ public class Member extends BaseTimeEntity {
     // MemberImage를 먼저 저장하고 Member를 저장하지 않으면, hibernate.TransientPropertyValueException 가 발생한다.
     // 해결 방법은 전자가 있고 cascade = CascadeType.ALL 를 선언해 연관 엔티티를 바로 저장하도록 하는 방법이 있다.
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "member_image_id")
     private MemberImage memberImage;
 
    //private String token;

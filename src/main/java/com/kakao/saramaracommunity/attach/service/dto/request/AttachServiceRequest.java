@@ -20,39 +20,8 @@ import java.util.Map;
 @Getter
 public class AttachServiceRequest {
 
-    /**
-     * UploadRequestDeprecated: 게시글에 대한 이미지를 등록하기 위한 요청 DTO 클래스
-     * attachType: 게시글 및 댓글 유형 여부
-     * ids: 게시글이나 댓글의 번호(PK)
-     * imgList: 이미지의 순서(Long)와 이미지 파일(MultipartFile)이 담긴 Map
-     */
-    @NoArgsConstructor(access = AccessLevel.PROTECTED)
     @Getter
-    public static class UploadRequestDeprecated {
-
-        private AttachType attachType;
-
-        private Long ids;
-
-        private Map<Long, MultipartFile> imgList;
-
-        @Builder
-        public UploadRequestDeprecated(AttachType attachType, Long ids, Map<Long, MultipartFile> imgList) {
-            this.attachType = attachType;
-            this.ids = ids;
-            this.imgList = imgList;
-        }
-
-    }
-
-    /**
-     * UploadRequest: 게시글에 대한 이미지를 등록하기 위한 요청 DTO 클래스
-     * attachType: 게시글 및 댓글 유형 여부
-     * ids: 게시글이나 댓글의 번호(PK)
-     * imgList: 이미지의 순서(Long)와 S3 이미지 객체 URL(String)이 담긴 Map
-     */
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
-    @Getter
     public static class UploadRequest {
 
         private AttachType attachType;
@@ -70,29 +39,8 @@ public class AttachServiceRequest {
 
     }
 
-    /**
-     * UploadBucketRequest: 게시글의 이미지 목록을 AWS S3에 등록하기 위한 요청 DTO 클래스
-     * imgList: 이미지 파일(MultipartFile)이 담긴 ArrayList
-     */
-    @NoArgsConstructor(access = AccessLevel.PROTECTED)
     @Getter
-    public static class UploadBucketRequest {
-
-        private List<MultipartFile> imgList;
-
-        @Builder
-        private UploadBucketRequest(List<MultipartFile> imgList) {
-            this.imgList = imgList;
-        }
-    }
-
-    /**
-     * GetBoardImageRequest: 하나의 게시글에 대한 이미지를 가져오기 위한 요청 DTO 클래스
-     * attachType: 게시글 및 댓글 유형 여부
-     * ids: 게시글이나 댓글의 번호(PK)
-     */
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
-    @Getter
     public static class GetBoardImageRequest {
 
         AttachType attachType;
@@ -107,15 +55,8 @@ public class AttachServiceRequest {
 
     }
 
-    /**
-     * UpdateRequest: 하나의 게시글에 대한 이미지를 수정하기 위한 요청 DTO 클래스
-     * attachType: 게시글 및 댓글 유형 여부
-     * ids: 게시글이나 댓글의 번호(PK)
-     * imgList: 이미지의 순서(Long)와 S3 이미지 객체 URL(String)이 담긴 Map
-     *
-     */
-    @NoArgsConstructor(access = AccessLevel.PROTECTED)
     @Getter
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class UpdateRequest {
 
         private Long attachId;

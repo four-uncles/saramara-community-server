@@ -19,48 +19,53 @@ repositories {
 }
 
 dependencies {
-	// JWT
+	// Spring Web
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+
+	// Test
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+	/**
+	 * Spring Devtools
+	 * Automatic Restart를 통해 claapath에 있는 파일이 변경될 때마다 애플리케이션을 자동으로 재시작해준다.
+	 * Live Reload를 통해 정적 자원(html, css, js) 수정 시 새로고침 없이 바로 적용된다.
+	 */
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+	// Spring Validaion: @Valid 등의 유효성 검사를 위한 검증 어노테이션을 사용할 수 있다.
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+	// Spring Security
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	testImplementation 'org.springframework.security:spring-security-test'
+
+	// Spring Data JPA
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	// MariaDB
+	runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
+
+	// OAuth2: 소셜 로그인을 사용하기 위한 의존성
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
+	// JWT
 	implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.5'
 	runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.5'
 	runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.5'
 
-	// Spring Boot
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
-	implementation 'org.springframework.boot:spring-boot-starter-security'
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	developmentOnly 'org.springframework.boot:spring-boot-devtools'
-	// Lombok
-    testImplementation 'org.projectlombok:lombok:1.18.22'
-    compileOnly 'org.projectlombok:lombok'
+	// Lombok: 어노테이션을 통해 보일러플레이트 코드를 줄일 수 있는 라이브러리
+	testImplementation 'org.projectlombok:lombok:1.18.22'
+	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 
-	// mariaDB
-	runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
-
-	// test
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'org.springframework.security:spring-security-test'
-
-	// modelmapper
+	// ModelMapper
 	implementation group: 'org.modelmapper', name: 'modelmapper', version: '3.1.1'
 
-	// amazon s3
+	// AWS S3: Amazon S3 Bucket을 사용하여 이미지를 괸리한다.
 	implementation 'io.awspring.cloud:spring-cloud-starter-aws:2.3.1'
-
-	// amazon s3 test
 	testImplementation 'io.findify:s3mock_2.12:0.2.4'
-
-	// spring batch
-	implementation 'org.springframework.boot:spring-boot-starter-batch'
-	// spring batch test
-	testImplementation 'org.springframework.batch:spring-batch-test'
-	testImplementation 'com.h2database:h2:1.4.200'
 
 	// RandomStringUtils(Random 문자열 생성)에 사용
 	implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.12.0'
-
 
 }
 

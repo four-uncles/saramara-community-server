@@ -1,4 +1,4 @@
-package com.kakao.saramaracommunity.attach.AwsS3;
+package com.kakao.saramaracommunity.AwsS3;
 
 
 import com.amazonaws.services.s3.AmazonS3;
@@ -26,7 +26,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * AwsS3Test: S3 버킷과 연동하여 이미지 객체 업로드 여부를 테스트할 클래스
  *
- * 아직 단위 테스트와 통합 테스트 구분이 명확하지 않은 상태입니다.
+ * 추후 통합테스트가 아닌 Mock을 통한 단위테스트로 개선할 예정입니다.
  *
  * @author Taejun
  * @version 0.0.1
@@ -71,7 +71,7 @@ public class AwsS3Test {
         // then
         assertThat(s3Object.getKey()).isEqualTo(path);
         assertThat(s3Object.getObjectMetadata().getContentType()).isEqualTo(contentType);
-        assertThat(new String(FileCopyUtils.copyToByteArray(s3Object.getObjectContent()))).isEqualTo("");
+        assertThat(new String(FileCopyUtils.copyToByteArray(s3Object.getObjectContent()))).isEmpty();
     }
 
 }

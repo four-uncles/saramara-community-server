@@ -24,19 +24,6 @@ public class AttachController {
     private final AttachService attachService;
 
     /**
-     * uploadS3BucketImages: AWS S3 Bucket 이미지 파일 등록 API
-     * URL: POST /api/v1/attach/upload/bucket
-     *
-     * @param request type, id, imgList
-     * @return AttachResponse.UploadBucketResponse
-     */
-    @PostMapping("/upload/bucket")
-    public ResponseEntity<AttachResponse.UploadBucketResponse> uploadS3BucketImages(@RequestBody @Valid AttachRequest.UploadBucketRequest request) {
-        AttachResponse.UploadBucketResponse response = attachService.uploadS3BucketImages(request.toServiceRequest());
-        return ResponseEntity.ok().body(response);
-    }
-
-    /**
      * uploadImages: AWS S3 Bucket 이미지 파일 등록 API
      * URL: POST /api/v1/attach/upload/bucket
      *

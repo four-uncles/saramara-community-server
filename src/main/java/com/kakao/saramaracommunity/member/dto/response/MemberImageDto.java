@@ -23,7 +23,7 @@ public class MemberImageDto {
 	public static MemberImageDto from(MemberImage memberImage){
 		return MemberImageDto.builder()
 			.uuid(memberImage.getUuid())
-			.image_name(memberImage.getImage_name())
+			.image_name(memberImage.getImageName())
 			.path(memberImage.getPath())
 			.build();
 	}
