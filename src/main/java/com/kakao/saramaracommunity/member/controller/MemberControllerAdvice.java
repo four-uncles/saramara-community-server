@@ -24,7 +24,7 @@ Exception에 대한 결과를 ErrorCode 클래스를 이용해서 MemberResDto�
 @Log4j2
 @RequiredArgsConstructor
 @RestControllerAdvice
-@Order(Ordered.HIGHEST_PRECEDENCE)
+@Order
 public class MemberControllerAdvice {
 
 	@ExceptionHandler(MethodArgumentNotValidException.class)
