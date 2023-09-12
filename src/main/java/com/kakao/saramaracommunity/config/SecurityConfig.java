@@ -76,7 +76,7 @@ public class SecurityConfig {
         httpSecurity
                 .authorizeHttpRequests()
                 .requestMatchers( "/favicon.ico","/error", "/api/authenticate","/api/v1/member/**", "/api/login").permitAll()
-                .requestMatchers("/auth/**", "/oauth2/**", "/api/v1/board/**", "/api/v1/comment/**", "/api/v1/attach/**").permitAll()
+                .requestMatchers("/auth/**", "/oauth2/**", "/api/v1/board/**", "/api/v1/comment/**", "/api/v1/attach/**", "/api/v1/bucket/**").permitAll()
                 .anyRequest().authenticated();
 
         httpSecurity.addFilterBefore(corsFilter, UsernamePasswordAuthenticationFilter.class);
