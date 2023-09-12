@@ -1,21 +1,17 @@
 package com.kakao.saramaracommunity.attach.service;
 
-import com.kakao.saramaracommunity.attach.service.dto.response.AttachResponse;
 import com.kakao.saramaracommunity.attach.entity.Attach;
 import com.kakao.saramaracommunity.attach.exception.ImageUploadOutOfRangeException;
 import com.kakao.saramaracommunity.attach.repository.AttachRepository;
 import com.kakao.saramaracommunity.attach.service.dto.request.AttachServiceRequest;
+import com.kakao.saramaracommunity.attach.service.dto.response.AttachResponse;
+import com.kakao.saramaracommunity.support.IntegrationTestSupport;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.context.ApplicationContext;
 
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,15 +22,13 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 
 /**
- * AttachServiceImplTest: AttachService의 구현체를 테스트할 클래스
- * Integration Test
- * Attach 테이블과 상호작용하는 기능을 테스트한다.
+ * AttachServiceImplTest: Business Layer인 AttachService의 구현체를 테스트할 클래스
+ * @SpringBootTest를 통한 통합 테스트로 진행한다.
  *
  * @author Taejun
  * @version 0.0.1
  */
-@SpringBootTest
-class AttachServiceImplTest {
+class AttachServiceImplTest extends IntegrationTestSupport {
 
     @Autowired
     AttachRepository attachRepository;
@@ -42,13 +36,18 @@ class AttachServiceImplTest {
     @Autowired
     private AttachService attachService;
 
-    @BeforeEach
-    void setUp() {
-    }
-
     @AfterEach
     void tearDown() {
         attachRepository.deleteAllInBatch();
+    }
+
+    @Autowired
+    ApplicationContext ac;
+
+    @DisplayName("ApplicationContext!!!")
+    @Test
+    void test() {
+        System.out.println(ac);
     }
 
     @DisplayName("1번 게시글에 대한 1장의 이미지 URL(S3 이미지 객체 URL)을 DB에 저장한다.")
@@ -80,10 +79,10 @@ class AttachServiceImplTest {
     void MultipleImageUpload() {
         // given
         Map<Long, String> imgList = new HashMap<>();
-        imgList.put(1L, "https://saramara-storage.s3.ap-northeast-2.amazonaws.com//test_1.png");
-        imgList.put(2L, "https://saramara-storage.s3.ap-northeast-2.amazonaws.com//test_2.png");
-        imgList.put(3L, "https://saramara-storage.s3.ap-northeast-2.amazonaws.com//test_3.png");
-        imgList.put(4L, "https://saramara-storage.s3.ap-northeast-2.amazonaws.com//test_4.png");
+        imgList.put(1L, "https://saramara-storage.s3.ap-northeast-2.amazonaws.com/test_1.png");
+        imgList.put(2L, "https://saramara-storage.s3.ap-northeast-2.amazonaws.com/test_2.png");
+        imgList.put(3L, "https://saramara-storage.s3.ap-northeast-2.amazonaws.com/test_3.png");
+        imgList.put(4L, "https://saramara-storage.s3.ap-northeast-2.amazonaws.com/test_4.png");
         imgList.put(5L, "https://saramara-storage.s3.ap-northeast-2.amazonaws.com//test_5.png");
 
         AttachServiceRequest.UploadRequest request = AttachServiceRequest.UploadRequest.builder()
