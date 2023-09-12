@@ -17,8 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
  * @author Taejun
  * @version 0.0.1
  */
-@RequiredArgsConstructor
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/v1/bucket")
 public class BucketController {
 
@@ -31,7 +31,7 @@ public class BucketController {
      * @param request type, id, imgList
      * @return BucketResponse.BucketUploadResponse
      */
-    @PostMapping("/upload/bucket")
+    @PostMapping("/upload")
     public ResponseEntity<BucketResponse.BucketUploadResponse> bucketUploadImages(@RequestBody @Valid BucketRequest.BucketUploadRequest request) {
         BucketResponse.BucketUploadResponse response = bucketService.bucketUploadImages(request.toServiceRequest());
         return ResponseEntity.ok().body(response);
