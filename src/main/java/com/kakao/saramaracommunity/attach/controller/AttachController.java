@@ -82,7 +82,7 @@ public class AttachController {
      *
      * @return AttachResponse.DeleteResponse
      */
-    @DeleteMapping("/board")
+    @DeleteMapping("/board/{attachId}")
     public ResponseEntity<AttachResponse.DeleteResponse> deleteImage(@Valid @PathVariable Long attachId) {
         AttachResponse.DeleteResponse response = attachService.deleteImage(attachId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(response);

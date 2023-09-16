@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 
 import static com.kakao.saramaracommunity.bucket.exception.BucketErrorCode.BUCKET_IMAGE_RANGE_OUT;
 
+
 /**
  * BucketServiceImpl: AWS S3 버킷에 클라이언트의 요청 이미지를 업로드하기 위한 비즈니스 로직을 수행할 서비스 인터페이스의 구현체 클래스
  *
@@ -23,8 +24,8 @@ import static com.kakao.saramaracommunity.bucket.exception.BucketErrorCode.BUCKE
  * @version 0.0.1
  */
 @Log4j2
-@RequiredArgsConstructor
 @Service
+@RequiredArgsConstructor
 public class BucketServiceImpl implements BucketService {
 
     private final AwsS3Uploader awsS3Uploader;

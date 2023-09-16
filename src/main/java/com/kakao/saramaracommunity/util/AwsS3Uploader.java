@@ -1,6 +1,6 @@
 package com.kakao.saramaracommunity.util;
 
-import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
@@ -20,11 +20,11 @@ import java.io.InputStream;
  * @version 0.0.1
  */
 @Log4j2
-@RequiredArgsConstructor
 @Component
+@RequiredArgsConstructor
 public class AwsS3Uploader {
 
-    private final AmazonS3Client amazonS3Client;
+    private final AmazonS3 amazonS3Client;
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucketName;

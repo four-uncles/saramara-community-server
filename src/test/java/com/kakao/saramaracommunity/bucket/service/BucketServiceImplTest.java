@@ -1,21 +1,32 @@
 package com.kakao.saramaracommunity.bucket.service;
 
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.PutObjectResult;
 import com.kakao.saramaracommunity.bucket.exception.BucketUploadOutOfRangeException;
 import com.kakao.saramaracommunity.bucket.service.dto.request.BucketServiceRequest;
 import com.kakao.saramaracommunity.bucket.service.dto.response.BucketResponse;
+import com.kakao.saramaracommunity.support.IntegrationTestSupport;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ApplicationContext;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
 
 /**
  * BucketServiceImplTest: BucketServiceImpl를 테스트할 클래스
@@ -25,19 +36,34 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  * @author Taejun
  * @version 0.0.1
  */
-@SpringBootTest
-class BucketServiceImplTest {
+class BucketServiceImplTest extends IntegrationTestSupport {
 
     @Autowired
     private BucketService bucketService;
+
+    @Autowired
+    private AmazonS3 amazonS3;
+
+    @BeforeEach
+    void setUp() throws Exception {
+        given(amazonS3.putObject(any(PutObjectRequest.class))).willReturn(new PutObjectResult());
+        given(amazonS3.getUrl(any(), any())).willReturn(new URL("https://saramara-storage.s3.ap-northeast-2.amazonaws.com/test.png"));
+    }
+
+    @Autowired
+    ApplicationContext ac;
+
+    @DisplayName("ApplicationContext!!!")
+    @Test
+    void test() {
+        System.out.println(ac);
+    }
 
     @DisplayName("1장의 이미지를 버킷에 등록한다.")
     @Test
     void bucketUploadImagesToOne() {
         // given
-        List<MultipartFile> imgList = new ArrayList<>();
-        MultipartFile file = new MockMultipartFile("file", "test.png", "image/png", "test file".getBytes(StandardCharsets.UTF_8));
-        imgList.add(file);
+        List<MultipartFile> imgList = createImageFileList(1);
 
         BucketServiceRequest.BucketUploadRequest request = BucketServiceRequest.BucketUploadRequest.builder()
                 .imgList(imgList)
@@ -60,17 +86,7 @@ class BucketServiceImplTest {
     @Test
     void bucketUploadImagesToFive() {
         // given
-        List<MultipartFile> imgList = new ArrayList<>();
-        MultipartFile file1 = new MockMultipartFile("file", "test_1.png", "image/png", "test_1 file".getBytes(StandardCharsets.UTF_8));
-        MultipartFile file2 = new MockMultipartFile("file", "test_2.png", "image/png", "test_2 file".getBytes(StandardCharsets.UTF_8));
-        MultipartFile file3 = new MockMultipartFile("file", "test_3.png", "image/png", "test_3 file".getBytes(StandardCharsets.UTF_8));
-        MultipartFile file4 = new MockMultipartFile("file", "test_4.png", "image/png", "test_4 file".getBytes(StandardCharsets.UTF_8));
-        MultipartFile file5 = new MockMultipartFile("file", "test_5.png", "image/png", "test_5 file".getBytes(StandardCharsets.UTF_8));
-        imgList.add(file1);
-        imgList.add(file2);
-        imgList.add(file3);
-        imgList.add(file4);
-        imgList.add(file5);
+        List<MultipartFile> imgList = createImageFileList(5);
 
         BucketServiceRequest.BucketUploadRequest request = BucketServiceRequest.BucketUploadRequest.builder()
                 .imgList(imgList)
@@ -90,7 +106,7 @@ class BucketServiceImplTest {
     @Test
     void bucketUploadImagesWithoutNoImage() {
         // given
-        List<MultipartFile> imgList = new ArrayList<>();
+        List<MultipartFile> imgList = createImageFileList(0);
 
         BucketServiceRequest.BucketUploadRequest request = BucketServiceRequest.BucketUploadRequest.builder()
                 .imgList(imgList)
@@ -107,20 +123,7 @@ class BucketServiceImplTest {
     @Test
     void MoreThenFiveUploadImageAWSS3Bucket() {
         // given
-        List<MultipartFile> imgList = new ArrayList<>();
-        MultipartFile file1 = new MockMultipartFile("file", "test_1.png", "image/png", "test_1 file".getBytes(StandardCharsets.UTF_8));
-        MultipartFile file2 = new MockMultipartFile("file", "test_2.png", "image/png", "test_2 file".getBytes(StandardCharsets.UTF_8));
-        MultipartFile file3 = new MockMultipartFile("file", "test_3.png", "image/png", "test_3 file".getBytes(StandardCharsets.UTF_8));
-        MultipartFile file4 = new MockMultipartFile("file", "test_4.png", "image/png", "test_4 file".getBytes(StandardCharsets.UTF_8));
-        MultipartFile file5 = new MockMultipartFile("file", "test_5.png", "image/png", "test_5 file".getBytes(StandardCharsets.UTF_8));
-        MultipartFile file6 = new MockMultipartFile("file", "test_6.png", "image/png", "test_6 file".getBytes(StandardCharsets.UTF_8));
-
-        imgList.add(file1);
-        imgList.add(file2);
-        imgList.add(file3);
-        imgList.add(file4);
-        imgList.add(file5);
-        imgList.add(file6);
+        List<MultipartFile> imgList = createImageFileList(6);
 
         BucketServiceRequest.BucketUploadRequest request = BucketServiceRequest.BucketUploadRequest.builder()
                 .imgList(imgList)
@@ -132,5 +135,14 @@ class BucketServiceImplTest {
                 .hasMessage("이미지는 최소 1장 이상, 최대 5장까지 등록할 수 있습니다.");
 
     }
+
+    private List<MultipartFile> createImageFileList(int size) {
+        List<MultipartFile> imageFileList = new ArrayList<>();
+        for(int i=0; i<size; i++) {
+            imageFileList.add(new MockMultipartFile("test", "test.png", "image/png", "test_file".getBytes(StandardCharsets.UTF_8)));
+        }
+        return imageFileList;
+    }
+
 
 }
