@@ -1,19 +1,11 @@
 package com.kakao.saramaracommunity.attach.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kakao.saramaracommunity.attach.controller.dto.request.AttachRequest;
 import com.kakao.saramaracommunity.attach.exception.ImageUploadOutOfRangeException;
-import com.kakao.saramaracommunity.attach.service.AttachService;
 import com.kakao.saramaracommunity.attach.service.dto.response.AttachResponse;
 import com.kakao.saramaracommunity.support.ControllerTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.ApplicationContext;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.HashMap;
 import java.util.Map;
