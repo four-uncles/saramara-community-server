@@ -169,7 +169,6 @@ class AttachControllerTest extends ControllerTestSupport {
                 .andExpect(jsonPath("$.message").value(ATTACH_IMAGE_RANGE_OUT.getMessage()));
     }
 
-    @WithMockUser(roles = "USER")
     @DisplayName("새로운 이미지 목록을 등록할 때, 이미지가 6장 이상일 경우 예외가 발생한다.")
     @Test
     void uploadImagesImageListIsRangeOut() throws Exception {
