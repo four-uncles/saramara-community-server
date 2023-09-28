@@ -43,4 +43,4 @@ com.kakao.saramaracommunity
 
 ## DB ERD
 
-![saramara](https://github.com/four-uncles/saramara-community-server/assets/59594946/ef6b3879-1149-44e1-a5ad-7194a8c2a486)
+<img width="1033" alt="image" src="https://github.com/four-uncles/saramara-community-server/assets/59594946/914328c0-4691-4f43-925f-f47837a8968b">
