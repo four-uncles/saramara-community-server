@@ -43,4 +43,9 @@ com.kakao.saramaracommunity
 
 ## DB ERD
 
+
 <img width="1033" alt="image" src="https://github.com/four-uncles/saramara-community-server/assets/59594946/914328c0-4691-4f43-925f-f47837a8968b">
+
+<br>
+
+> 상세 설계 내용은 [ERD Cloud](https://www.erdcloud.com/d/ZYW5N9CJiSYWQbPap)에서 확인 가능합니다.
