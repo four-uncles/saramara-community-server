@@ -1,7 +1,7 @@
 package com.kakao.saramaracommunity.comment.controller;
 
 import com.kakao.saramaracommunity.comment.exception.CommentNotFoundException;
-import com.kakao.saramaracommunity.common.dto.Payload;
+import com.kakao.saramaracommunity.common.response.ApiResponse;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -15,12 +15,12 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class CommentControllerAdvice {
 
     @ExceptionHandler(CommentNotFoundException.class)
-    public ResponseEntity<Payload> handleCommentNotFoundException(CommentNotFoundException e) {
+    public ResponseEntity<ApiResponse> handleCommentNotFoundException(CommentNotFoundException e) {
 
         return ResponseEntity
                 .status(e.getCommentErrorCode().getHttpStatus())
                 .body(
-                        Payload.errorPayload(
+                        ApiResponse.errorResponse(
                                 e.getCommentErrorCode().getHttpStatus().value(),
                                 e.getCommentErrorCode().getMessage()
                         )
