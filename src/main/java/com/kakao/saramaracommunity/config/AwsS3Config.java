@@ -11,11 +11,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
 /**
- * AwsS3Config: AWS S3 버킷과 관련된 설정 클래스
- * 테스트 환경에서는 적용되지 않도록 @Profile 어노테이션을 구성했습니다.
- *
- * @author Taejun
- * @version 0.0.1
+ * AWS S3 버킷과 관련된 설정 클래스입니다.
+ * 테스트 환경(test)에서는 적용되지 않도록 @Profile 어노테이션을 구성했습니다.
  */
 @Configuration
 @Profile("!test")
