@@ -13,7 +13,7 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
      * @return
      * JPQL을 이용하여 boardId 파라미터에 맞는 Comment data들을 추출해옵니다.
      */
-    @Query("select c from Comment c where c.board.boardId = :boardId")
+    @Query("select c from Comment c where c.board.id = :boardId")
     List<Comment> getCommentsByBoard(Long boardId);
 
 }
