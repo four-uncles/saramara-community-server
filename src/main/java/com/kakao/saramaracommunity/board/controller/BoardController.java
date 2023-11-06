@@ -1,31 +1,16 @@
 package com.kakao.saramaracommunity.board.controller;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.kakao.saramaracommunity.board.controller.dto.request.BoardRequestDto;
-import com.kakao.saramaracommunity.board.entity.Board;
+import com.kakao.saramaracommunity.board.controller.dto.request.BoardRequest;
 import com.kakao.saramaracommunity.board.entity.SortType;
 import com.kakao.saramaracommunity.board.service.BoardService;
-import com.kakao.saramaracommunity.board.service.dto.response.BoardResponseDto;
-import com.kakao.saramaracommunity.common.dto.Payload;
-
+import com.kakao.saramaracommunity.board.service.dto.response.BoardResponse;
+import com.kakao.saramaracommunity.common.response.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -36,88 +21,84 @@ public class BoardController {
     private static final int DEFAULT_PAGE_SIZE = 24;
 
     @PostMapping("/register")
-    public ResponseEntity<?> createBoard(@RequestBody @Valid BoardRequestDto.SaveRequestDto request) {
-        Board savedBoard = boardService.saveBoard(request.toServiceRequest());
-
-        // 응답 데이터 생성
-        Map<String, Object> response = new HashMap<>();
-        response.put("code", 200);
-        response.put("msg", "success");
-
-        // 게시글 정보
-        response.put("data", savedBoard);
-
-        return ResponseEntity.ok(response);
+    public ResponseEntity<ApiResponse<BoardResponse.BoardCreateResponse>> createBoard(
+            @RequestBody @Valid BoardRequest.BoardCreateRequest request
+    ) {
+        BoardResponse.BoardCreateResponse response = boardService.createBoard(request.toServiceRequest());
+        return ResponseEntity.ok().body(
+                ApiResponse.of(
+                        HttpStatus.OK,
+                        "성공적으로 게시글 작성을 완료하였습니다.",
+                        response
+                )
+        );
     }
 
     @GetMapping("/{boardId}")
-    public ResponseEntity<Object> readOneBoard(@PathVariable Long boardId) {
-        BoardResponseDto.ReadOneBoardResponseDto boardResponseDto = boardService.readOneBoard(boardId);
-
-        // 응답 데이터 생성
-        Map<String, Object> response = new HashMap<>();
-        response.put("code", 200);
-        response.put("msg", "success");
-
-        // 게시글 정보
-        response.put("data", boardResponseDto);
-
-        return ResponseEntity.ok(response);
+    public ResponseEntity<ApiResponse<BoardResponse.BoardGetResponse>> getBoard(
+            @PathVariable("boardId") Long boardId
+    ) {
+        BoardResponse.BoardGetResponse response = boardService.getBoard(boardId);
+        return ResponseEntity.ok().body(
+                ApiResponse.of(
+                        HttpStatus.OK,
+                        "성공적으로 게시글 정보를 조회하였습니다.",
+                        response
+                )
+        );
     }
 
     /**
      * 모든 게시물을 조회하는 엔드포인트 입니다.
+     *
      * @param cursorId 다음 페이지의 커서 ID
-     * @param size 페이지 크기
-     * @param sort 정렬 방식 - 최신순(latest), 인기순(popular)
+     * @param size     페이지 크기
+     * @param sort     정렬 방식 - 최신순(latest), 인기순(popular)
      * @return ResponseEntity<Object> 객체
      */
     @GetMapping
-    public ResponseEntity<Object> readAllBoards(
-        @RequestParam(name = "cursorId", required = false) Long cursorId,
-        @RequestParam(name = "size", required = false) Integer size,
-        @RequestParam(name = "sort", defaultValue = "LATEST") SortType sort
+    public ResponseEntity<ApiResponse<BoardResponse.BoardSearchResponse>> searchBoards(
+            @RequestParam(name = "cursorId", required = false) Long cursorId,
+            @RequestParam(name = "size", required = false) Integer size,
+            @RequestParam(name = "sort", defaultValue = "LATEST") SortType sort
     ) {
         if (size == null) size = DEFAULT_PAGE_SIZE;
-        Pageable page = PageRequest.of(0, size);
-
-        BoardResponseDto.ReadPageBoardResponseDto readPage = boardService.readAllBoards(cursorId, page, sort);
-
-        Payload<BoardResponseDto.ReadPageBoardResponseDto> resPayload = Payload.successPayload(
-            HttpStatus.OK.value(),
-            "success",
-            readPage
+        BoardResponse.BoardSearchResponse response = boardService.searchBoards(cursorId, PageRequest.of(0, size), sort);
+        return ResponseEntity.ok().body(
+                ApiResponse.of(
+                        HttpStatus.OK,
+                        "성공적으로 모든 게시글 정보를 조회하였습니다.",
+                        response
+                )
         );
-
-        return ResponseEntity.ok().body(resPayload);
     }
 
     @PatchMapping("/{boardId}")
-    public ResponseEntity<Object> updateBoard(
-            @PathVariable ("boardId") Long boardId,
-            @RequestBody @Valid BoardRequestDto.UpdateRequestDto request
+    public ResponseEntity<ApiResponse> updateBoard(
+            @PathVariable("boardId") Long boardId,
+            @RequestBody @Valid BoardRequest.BoardUpdateRequest request
     ) {
-
-        Boolean result = boardService.updateBoard(boardId, request.toServiceRequest());
-
-        // 응답 데이터 생성
-        Map<String, Object> response = new HashMap<>();
-        response.put("code", 200);
-        response.put("msg", "success");
-        response.put("result", result);
-
-        return ResponseEntity.status((int)response.get("code")).body(response);
+        boardService.updateBoard(boardId, request.toServiceRequest());
+        return ResponseEntity.ok().body(
+                ApiResponse.of(
+                        HttpStatus.OK,
+                        "성공적으로 게시글을 수정하였습니다.",
+                        true
+                )
+        );
     }
 
     @DeleteMapping("/{boardId}")
-    public ResponseEntity<Map<String, Object>> deleteBoard(@PathVariable ("boardId") Long boardId) {
-
-        Boolean deletedBoard = boardService.deleteBoard(boardId);
-
-        Map<String, Object> result = new HashMap<>();
-
-        result.put("result", deletedBoard);
-
-        return ResponseEntity.ok(result);
+    public ResponseEntity<ApiResponse> deleteBoard(
+            @PathVariable("boardId") Long boardId
+    ) {
+        boardService.deleteBoard(boardId);
+        return ResponseEntity.ok().body(
+                ApiResponse.of(
+                        HttpStatus.OK,
+                        "성공적으로 게시글을 삭제하였습니다.",
+                        true
+                )
+        );
     }
 }
