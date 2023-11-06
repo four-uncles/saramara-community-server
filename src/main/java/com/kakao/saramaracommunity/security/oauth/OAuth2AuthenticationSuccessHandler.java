@@ -13,7 +13,7 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationSu
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.kakao.saramaracommunity.common.dto.TokenDto;
+import com.kakao.saramaracommunity.common.response.TokenDto;
 //import com.kakao.saramaracommunity.member.exception.BadRequestException;
 import com.kakao.saramaracommunity.security.jwt.TokenProvider;
 import com.kakao.saramaracommunity.util.CookieUtil;

@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.kakao.saramaracommunity.common.dto.TokenDto;
+import com.kakao.saramaracommunity.common.response.TokenDto;
 import com.kakao.saramaracommunity.member.controller.dto.request.LoginDto;
 import com.kakao.saramaracommunity.security.jwt.JwtFilter;
 import com.kakao.saramaracommunity.security.jwt.TokenProvider;
