@@ -5,19 +5,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 
 /**
- * AttachRequest: Attach(첨부 이미지) 관련 요청 DTO를 관리하는 클래스
- *
- * @author Taejun
- * @version 0.0.1
+ * 전역으로 내려줄 HttpStatus 상태코드 및 메시지 정보를 가지는 Enum입니다.
  */
-@RequiredArgsConstructor
 @Getter
+@RequiredArgsConstructor
 public enum CommonErrorCode implements ErrorCode {
 
-    /**
-     * 전역으로 내려줄 HttpStatus Code와 메시지입니다.
-     * 400, 401, 403, 404, 405, 500
-     */
     BAD_REQUEST(HttpStatus.BAD_REQUEST, "잘못된 요청입니다."),
     UNAUTHORIZED_REQUEST(HttpStatus.UNAUTHORIZED, "인증되지 않은 사용자의 요청입니다."),
     FORBIDDEN_ACCESS(HttpStatus.FORBIDDEN, "권한이 없는 사용자의 요청입니다."),

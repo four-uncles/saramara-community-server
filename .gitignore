@@ -211,8 +211,6 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-# End of https://www.toptal.com/developers/gitignore/api/windows,macos,intellij
-
 # Spring Profile ignore apply
 application-local.yml
 application-dev.yml
