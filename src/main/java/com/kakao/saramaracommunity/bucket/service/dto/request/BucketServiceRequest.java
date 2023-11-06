@@ -9,10 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 /**
- * BucketServiceRequest: Business Layer에서 Bucket(AWS S3 버킷에 등록할 이미지) 관련 요청 DTO를 관리하는 클래스
- *
- * @author Taejun
- * @version 0.0.1
+ * Business Layer에서 Bucket(AWS S3 버킷에 등록할 이미지) 관련 요청 DTO를 관리하는 클래스입니다.
  */
 @Getter
 public class BucketServiceRequest {
