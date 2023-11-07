@@ -14,10 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * AwsS3Uploader: AWS S3 버킷에 파일 업로드 로직을 수행할 클래스
- *
- * @author Taejun
- * @version 0.0.1
+ * AWS S3 버킷에 파일 업로드 로직을 수행할 클래스입니다.
  */
 @Log4j2
 @Component

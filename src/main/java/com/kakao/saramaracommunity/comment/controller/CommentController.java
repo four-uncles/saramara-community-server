@@ -38,6 +38,7 @@ public class CommentController {
 		return ResponseEntity.ok(result);
 	}
 
+	// 전체 리소스를 수정할 필요가 없기 때문에 PUT보다 PATCH를 사용하는 것이 좋을 수 있다.
 	@PutMapping("/{commentId}")
 	public ResponseEntity<Map<String, Object>> updateComment(
 			@Valid @PathVariable("commentId") Long commentId,

@@ -12,9 +12,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.ApplicationContext;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.util.FileCopyUtils;
 
 import java.io.ByteArrayInputStream;
@@ -24,12 +21,10 @@ import java.nio.charset.StandardCharsets;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * AwsS3Test: AWS S3 버킷과 연동하여 이미지 객체 업로드 여부를 테스트할 클래스
- *
- * @author Taejun
- * @version 0.0.1
+ * AWS S3 버킷과 연동하여 이미지 객체 업로드 여부를 테스트할 클래스입니다.
+ * 통합 테스트를 위해 @SpringBootTest를 설정했습니다.
  */
-public class AwsS3BucketUploadIntegrationTest extends IntegrationTestSupport {
+class AwsS3BucketUploadIntegrationTest extends IntegrationTestSupport {
 
     @Autowired
     private AmazonS3Client amazonS3Client;
@@ -47,15 +42,6 @@ public class AwsS3BucketUploadIntegrationTest extends IntegrationTestSupport {
     static void tearDown(@Autowired S3Mock s3Mock, @Autowired AmazonS3Client amazonS3Client) {
         amazonS3Client.shutdown();
         s3Mock.stop();
-    }
-
-    @Autowired
-    ApplicationContext ac;
-
-    @DisplayName("ApplicationContext!!!")
-    @Test
-    void test() {
-        System.out.println(ac);
     }
 
     @DisplayName("AWS S3 버킷에 이미지 파일을 업로드한다.")

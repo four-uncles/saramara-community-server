@@ -1,4 +1,4 @@
-package com.kakao.saramaracommunity.common.dto;
+package com.kakao.saramaracommunity.common.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

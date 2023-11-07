@@ -4,49 +4,51 @@ import com.kakao.saramaracommunity.board.entity.Board;
 import com.kakao.saramaracommunity.common.entity.BaseTimeEntity;
 import com.kakao.saramaracommunity.member.entity.Member;
 import jakarta.persistence.*;
-import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
-@Where(clause = "deleted_at is NULL")
-@SQLDelete(sql = "update comment set deleted_at = CURRENT_TIMESTAMP where comment_id = ?")
-@ToString(exclude = {"member", "board"})
 @Entity
+@Table(name = "COMMENT")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Comment extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long commentId;
+    @Column(name = "comment_id")
+    private Long id;
 
-    // 한 명의 유저가 여러 개의 코멘트 작성 가능
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="memberId")
+    @JoinColumn(name="member_id")
     private Member member;
 
-    // 한 개의 Board에서 여러 개의 코멘트 작성 가능
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="boardId")
+    @JoinColumn(name="board_id")
     private Board board;
 
-    @Lob
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
     private Long pick;
 
+    @Column(name = "attachment_url")
+    private String attachmentUrl;
 
-    /**
-     * 댓글 수정을 위한 메서드입니다.
-     * 전체 수정이 아닌 부분 수정을 위해 내용과 픽만 변경시킬 수 있게 잡아놓았습니다.
-     *
-     * @param content
-     * @param pick
-     */
-    public void changeComment(String content, Long pick) {
+    @Builder
+    private Comment(Member member, Board board, String content, Long pick, String attachmentUrl) {
+        this.member = member;
+        this.board = board;
         this.content = content;
         this.pick = pick;
+        this.attachmentUrl = attachmentUrl;
     }
+
+    public void changeComment(String content, Long pick, String attachmentUrl) {
+        this.content = content;
+        this.pick = pick;
+        this.attachmentUrl = attachmentUrl;
+    }
+
 }

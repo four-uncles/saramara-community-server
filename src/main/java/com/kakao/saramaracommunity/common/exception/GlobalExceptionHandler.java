@@ -1,6 +1,6 @@
 package com.kakao.saramaracommunity.common.exception;
 
-import com.kakao.saramaracommunity.common.dto.Payload;
+import com.kakao.saramaracommunity.common.response.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
@@ -17,13 +17,10 @@ import org.springframework.web.servlet.NoHandlerFoundException;
  * 기본적인 예외를 처리하기 위해 ResponseEntityExceptionHandler를 상속 받습니다.
  * 400(유효성 검사), 404, 500 에러에 대한 예외를 핸들링합니다.
  * 가장 낮은 우선순위로 예외를 핸들링합니다.
- *
- * @author Taejun
- * @version 0.0.1
  */
-@RestControllerAdvice
 @Order
 @Log4j2
+@RestControllerAdvice
 public class GlobalExceptionHandler {
 
     /**
@@ -37,12 +34,14 @@ public class GlobalExceptionHandler {
      * @return 예외 메세지와 응답 코드를 리턴
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    protected ResponseEntity<Payload> handleMethodArgumentNotValidException (MethodArgumentNotValidException exception) {
-
+    protected ResponseEntity<ApiResponse> handleMethodArgumentNotValidException (
+            MethodArgumentNotValidException exception
+    ) {
+        log.error("[handleMethodArgumentNotValidException] {}", exception.getMessage());
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(
-                        Payload.errorPayload(
+                        ApiResponse.errorResponse(
                                 HttpStatus.BAD_REQUEST.value(),
                                 exception.getBindingResult().getFieldErrors()
                                         .stream()
@@ -50,7 +49,6 @@ public class GlobalExceptionHandler {
                                         .toList().toString()
                         )
                 );
-
     }
 
     /**
@@ -60,19 +58,18 @@ public class GlobalExceptionHandler {
      * @return 예외 메세지와 응답 코드를 리턴
      */
     @ExceptionHandler(NoHandlerFoundException.class)
-    protected ResponseEntity<Payload> handleNotFoundException (
+    protected ResponseEntity<ApiResponse> handleNotFoundException (
             NoHandlerFoundException exception
     ) {
-
+        log.error("[handleNotFoundException] {}", exception.getMessage());
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .body(
-                        Payload.errorPayload(
+                        ApiResponse.errorResponse(
                                 HttpStatus.NOT_FOUND.value(),
                                 exception.getMessage()
                         )
                 );
-
     }
 
     /**
@@ -83,23 +80,20 @@ public class GlobalExceptionHandler {
      * @return 예외 메세지와 응답 코드를 리턴
      */
     @ExceptionHandler({Exception.class})
-    protected ResponseEntity<Payload> handleException (
+    protected ResponseEntity<ApiResponse> handleException (
             Exception exception,
             HttpServletRequest request
     ) {
-
         log.error("[ERROR] 서버 내부에서 문제가 발생했습니다. method: {}, requestURI: {}, msg: {}", request.getMethod(), request.getRequestURI(), exception.getMessage());
         log.error("{}", (Object) exception.getStackTrace());
-
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(
-                        Payload.errorPayload(
+                        ApiResponse.errorResponse(
                                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
                                 exception.getMessage()
                         )
                 );
-
     }
 
 }

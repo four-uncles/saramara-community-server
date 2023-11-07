@@ -1,155 +1,125 @@
 package com.kakao.saramaracommunity.board.service;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-
 import com.kakao.saramaracommunity.board.entity.Board;
 import com.kakao.saramaracommunity.board.entity.SortType;
 import com.kakao.saramaracommunity.board.exception.BoardErrorCode;
-import com.kakao.saramaracommunity.board.exception.BoardInternalServerException;
 import com.kakao.saramaracommunity.board.exception.BoardNotFoundException;
 import com.kakao.saramaracommunity.board.exception.BoardUnauthorizedException;
 import com.kakao.saramaracommunity.board.repository.BoardRepository;
-import com.kakao.saramaracommunity.board.service.dto.request.BoardServiceRequestDto;
-import com.kakao.saramaracommunity.board.service.dto.response.BoardResponseDto;
+import com.kakao.saramaracommunity.board.service.dto.request.BoardServiceRequest;
+import com.kakao.saramaracommunity.board.service.dto.response.BoardResponse;
 import com.kakao.saramaracommunity.member.entity.Member;
 import com.kakao.saramaracommunity.member.repository.MemberRepository;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-@RequiredArgsConstructor
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Log4j2
 @Service
+@Transactional
+@RequiredArgsConstructor
 public class BoardServiceImpl implements BoardService {
 
     private final BoardRepository boardRepository;
     private final MemberRepository memberRepository;
 
     @Override
-    public Board saveBoard(BoardServiceRequestDto.SaveRequestDto requestDto) {
-
-        String deadLineStr = String.valueOf(requestDto.getDeadLine()); // 문자열 값으로 받음
-        LocalDateTime deadLine = LocalDateTime.parse(deadLineStr); // 문자열을 LocalDateTime으로 변환
-
-        // 요청된 데이터로 Member 객체를 조회
-        Member member = memberRepository.findById(requestDto.getMemberId())
-            .orElseThrow(() -> new BoardNotFoundException(BoardErrorCode.UNAUTHORIZED_TO_UPDATE_BOARD));
-
-        // Board Entity 생성
-        Board board = Board.builder()
-            .member(member)
-            .categoryBoard(requestDto.getCategoryBoard())
-            .title(requestDto.getTitle())
-            .content(requestDto.getContent())
-            .deadLine(deadLine)
-            .build();
-
-        return boardRepository.save(board);
+    public BoardResponse.BoardCreateResponse createBoard(BoardServiceRequest.BoardCreateServiceRequest request) {
+        Board createdBoard = boardRepository.save(
+                request.toEntity(
+                        getMemberEntity(request.getMemberId())
+                )
+        );
+        return BoardResponse.BoardCreateResponse.of(createdBoard);
     }
 
     @Override
-    public BoardResponseDto.ReadOneBoardResponseDto readOneBoard(Long boardId) {
-
-        Board board = boardRepository.findByBoardId(boardId)
-            .orElseThrow(() -> new BoardNotFoundException(BoardErrorCode.BOARD_NOT_FOUND));
-
-        // Member information
-        String memberNickname = board.getMember().getNickname();
-        String memberEmail = board.getMember().getEmail();
-
-        // 게시글 정보와 멤버 정보를 매핑해서 응답
-        return BoardResponseDto.ReadOneBoardResponseDto.builder()
-                .boardId(board.getBoardId())
-                .title(board.getTitle())
-                .content(board.getContent())
-                .categoryBoard(board.getCategoryBoard())
-                .memberNickname(memberNickname)
-                .memberEmail(memberEmail)
-                .boardCnt(board.getBoardCnt())
-                .likeCnt(board.getBoardCnt())
-                .deadLine(board.getDeadLine())
-                .build();
+    @Transactional(readOnly = true)
+    public BoardResponse.BoardGetResponse getBoard(Long boardId) {
+        Board board = getBoardEntity(boardId);
+        return BoardResponse.BoardGetResponse.of(board);
     }
 
     @Override
-    public BoardResponseDto.ReadPageBoardResponseDto readAllBoards(Long cursorId, Pageable page, SortType sort) {
-        List<Board> boards;
-
-        if (SortType.POPULAR.equals(sort)) {
-            log.info("인기순으로 게시글을 조회합니다.(Reading all boards by popularity)");
-            boards = cursorId == null ?
-                boardRepository.findAllByOrderByLikeCntDesc(page) :
-                boardRepository.findByLikeCntLessThanOrderByLikeCntDesc(cursorId, page);
-        } else {
-            log.info("최신순으로 게시글을 조회합니다.(Reading all boards by latest)");
-            boards = cursorId == null ?
-                boardRepository.findAllByOrderByCreatedAtDesc(page) :
-                boardRepository.findByBoardIdLessThanOrderByCreatedAtDesc(cursorId, page);
-        }
-
-        Long nextCursorId = boards.isEmpty() ?
-            null : SortType.POPULAR.equals(sort) ?
-            boards.get(boards.size() - 1).getLikeCnt() : boards.get(boards.size() - 1).getBoardId();
+    @Transactional(readOnly = true)
+    public BoardResponse.BoardSearchResponse searchBoards(Long cursorId, Pageable page, SortType sort) {
+        List<Board> boards = getBoards(cursorId, page, sort);
+        Long nextCursorId = getNextCursorId(sort, boards);
         Boolean hasNext = boards.size() >= page.getPageSize();
-
-        List<BoardResponseDto.ReadAllBoardResponseDto> toServiceResBoardDto = boards.stream()
-            .map(board -> BoardResponseDto.ReadAllBoardResponseDto.builder()
-                .title(board.getTitle())
-                .memberNickname(board.getMember().getNickname())
-                .boardCnt(board.getBoardCnt())
-                .likeCnt(board.getLikeCnt())
-                .deadLine(board.getDeadLine())
-                .build())
-            .collect(Collectors.toList());
-
-        return BoardResponseDto.ReadPageBoardResponseDto.builder()
-            .values(toServiceResBoardDto)
-            .hasNext(hasNext)
-            .cursorId(nextCursorId)
-            .build();
+        return BoardResponse.BoardSearchResponse.of(
+                boards.stream()
+                        .map(BoardResponse.BoardGetResponse::of)
+                        .collect(Collectors.toList()),
+                hasNext,
+                nextCursorId
+        );
     }
 
     @Override
-    public Boolean updateBoard(Long boardId, BoardServiceRequestDto.UpdateRequestDto requestDto) {
+    public void updateBoard(Long boardId, BoardServiceRequest.BoardUpdateServiceRequest request) {
+        Board savedBoard = getBoardEntity(boardId);
+        verifyBoardOwner(savedBoard, request.getMemberId());
+        log.info("[BoardServiceImpl] 요청에 따라 게시글을 수정합니다.(Update the post as requested.)");
+        savedBoard.update(
+                request.getTitle(),
+                request.getContent(),
+                request.getCategoryBoard(),
+                request.getDeadLine(),
+                request.getBoardImages()
+        );
+    }
 
-        Board board = boardRepository.findByBoardId(boardId)
-            .orElseThrow(() -> new BoardNotFoundException(BoardErrorCode.BOARD_NOT_FOUND));
+    /**
+     * 추후 삭제 로직 내에서 verifyBoardOwner 메소드를 활용해 게시글 작성자 여부를 함께 검사하도록 수정해야 함.
+     */
+    @Override
+    public void deleteBoard(Long boardId) {
+        Board savedBoard = getBoardEntity(boardId);
+        log.info("[BoardServiceImpl] 요청에 따라 게시글을 삭제합니다.(Delete the post as requested.)");
+        boardRepository.delete(savedBoard);
+    }
 
-        if (!board.getMember().getMemberId().equals(requestDto.getMemberId())) {
+    private void verifyBoardOwner(Board board, Long memberId) {
+        if (!board.getMember().getMemberId().equals(memberId)) {
             throw new BoardUnauthorizedException(BoardErrorCode.UNAUTHORIZED_TO_UPDATE_BOARD);
         }
-
-        log.info("요청에 따라 게시글을 수정합니다.(Update the post as requested.)");
-
-        // 요청된 데이터로 수정할 내용 업데이트
-        board.updateBoard(
-            requestDto.getTitle(),
-            requestDto.getContent(),
-            requestDto.getCategoryBoard(),
-            requestDto.getDeadLine());
-
-        // 수정된 게시글을 저장
-        boardRepository.save(board);
-        return true;
     }
 
-    @Override
-    public Boolean deleteBoard(Long boardId) {
+    /**
+     * 추후 UNAUTHORIZED_TO_UPDATE_BOARD 예외가 아닌 MemberErrorCode.MEMBER_NOT_FOUND로 수정해야 함.
+     */
+    private Member getMemberEntity(Long memberId) {
+        return memberRepository.findById(memberId)
+                .orElseThrow(() -> new BoardNotFoundException(BoardErrorCode.UNAUTHORIZED_TO_UPDATE_BOARD));
+    }
 
-        Board board = boardRepository.findByBoardId(boardId)
-            .orElseThrow(() -> new BoardNotFoundException(BoardErrorCode.BOARD_NOT_FOUND));
+    private Board getBoardEntity(Long boardId) {
+        return boardRepository.findById(boardId)
+                .orElseThrow(() -> new BoardNotFoundException(BoardErrorCode.BOARD_NOT_FOUND));
+    }
 
-        log.info("요청에 따라 게시글을 삭제합니다.(Delete the post as requested.)");
+    private Long getNextCursorId(SortType sort, List<Board> boards) {
+        return boards.isEmpty() ?
+                null : SortType.POPULAR.equals(sort) ?
+                boards.get(boards.size() - 1).getLikeCount() : boards.get(boards.size() - 1).getId();
+    }
 
-        boardRepository.deleteById(boardId);
-        if (boardRepository.existsById(boardId)) {
-            throw new BoardInternalServerException(BoardErrorCode.UNAUTHORIZED_TO_UPDATE_BOARD);
+    private List<Board> getBoards(Long cursorId, Pageable page, SortType sort) {
+        if (SortType.POPULAR.equals(sort)) {
+            log.info("[BoardServiceImpl] 인기순으로 게시글을 조회합니다.(Reading all boards by popularity)");
+            return cursorId == null ?
+                    boardRepository.findAllByOrderByLikeCountDesc(page) :
+                    boardRepository.findByLikeCountLessThanOrderByLikeCountDesc(cursorId, page);
+        } else {
+            log.info("[BoardServiceImpl] 최신순으로 게시글을 조회합니다.(Reading all boards by latest)");
+            return cursorId == null ?
+                    boardRepository.findAllByOrderByCreatedAtDesc(page) :
+                    boardRepository.findByIdLessThanOrderByCreatedAtDesc(cursorId, page);
         }
-        return true;
     }
 }

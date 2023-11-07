@@ -37,7 +37,7 @@ public class CommentServiceImpl implements CommentService{
     @Override
     public Long createComment(CommentCreateServiceRequest request) {
         Comment comment = modelMapper.map(request, Comment.class);
-        return commentRepository.save(comment).getCommentId();
+        return commentRepository.save(comment).getId();
     }
 
     /**
@@ -68,7 +68,7 @@ public class CommentServiceImpl implements CommentService{
     public Boolean updateComment(Long commentId, CommentUpdateServiceRequset requset) {
         Optional<Comment> findComment = commentRepository.findById(commentId);
         Comment comment = findComment.orElseThrow(()-> new CommentNotFoundException(CommentErrorCode.COMMENT_NOT_FOUND));
-        comment.changeComment(requset.getContent(), requset.getPick());
+//        comment.changeComment(requset.getContent(), requset.getPick());
         commentRepository.save(comment);
         return true;
     }

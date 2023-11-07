@@ -19,5 +19,6 @@ public class CommentListDTO {
 
     private String content;
 
+    // 댓글로 선택한 이미지의 경우 최대로 쳐도 int 형의 범위를 벗어나지 않기에 int형으로 사용해도 무방하다.
     private Long pick;
 }

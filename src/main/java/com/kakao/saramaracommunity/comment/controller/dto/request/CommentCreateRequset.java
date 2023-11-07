@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CommentCreateRequset {
 
+    // 댓글을 등록하기전인데 만들어지지 않은 댓글의 번호를 알 수 없다. 고로 commentId는 필요없는 필드이다.
     private Long commentId;
 
     @NotNull(message = "회원정보은 필수입니다.")
@@ -25,6 +26,7 @@ public class CommentCreateRequset {
     @NotNull(message = "투표를 선택해주세요.")
     private Long pick;
 
+    // 댓글 생성일자와 수정일자를 요청으로 받을 필요가 있는가?
     private LocalDateTime regDate;
 
     private LocalDateTime modDate;

@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.kakao.saramaracommunity.board.exception.BoardNotFoundException;
-import com.kakao.saramaracommunity.common.dto.Payload;
+import com.kakao.saramaracommunity.common.response.ApiResponse;
 
 import lombok.extern.log4j.Log4j2;
 
@@ -24,13 +24,10 @@ public class BoardControllerAdvice {
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(BoardNotFoundException.class)
-    public ResponseEntity<Payload> handleBoardNotFound(BoardNotFoundException exception) {
-
-        log.error("[BoardNotFoundException]");
-
+    public ResponseEntity<ApiResponse> handleBoardNotFound(BoardNotFoundException exception) {
         return ResponseEntity
             .status(exception.getStatusWithCode().getHttpStatus())
-            .body(Payload.errorPayload(
+            .body(ApiResponse.errorResponse(
                 exception.getStatusWithCode().getHttpStatus().value(),
                 exception.getStatusWithCode().getMessage()
             ));

@@ -2,7 +2,7 @@ package com.kakao.saramaracommunity.bucket.controller;
 
 import com.kakao.saramaracommunity.bucket.exception.BucketUploadException;
 import com.kakao.saramaracommunity.bucket.exception.BucketUploadOutOfRangeException;
-import com.kakao.saramaracommunity.common.dto.Payload;
+import com.kakao.saramaracommunity.common.response.ApiResponse;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -26,14 +26,14 @@ public class BucketControllerAdvice {
      */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(BucketUploadOutOfRangeException.class)
-    public ResponseEntity<Payload> handleImageUploadOutOfRange(BucketUploadOutOfRangeException exception) {
+    public ResponseEntity<ApiResponse> handleImageUploadOutOfRange(BucketUploadOutOfRangeException exception) {
 
         log.error("[ImageUploadOutOfRangeException] AWS S3 버킷에 이미지를 업로드하기 위한 이미지 개수가 0장 혹은 6장 이상입니다.");
 
         return ResponseEntity
                 .status(exception.getStatusWithCode().getHttpStatus())
                 .body(
-                        Payload.errorPayload(
+                        ApiResponse.errorResponse(
                                 exception.getStatusWithCode().getHttpStatus().value(),
                                 exception.getStatusWithCode().getMessage()
                         )
@@ -48,14 +48,14 @@ public class BucketControllerAdvice {
      */
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(BucketUploadException.class)
-    public ResponseEntity<Payload> handleBucketUploadFailed(BucketUploadException exception) {
+    public ResponseEntity<ApiResponse> handleBucketUploadFailed(BucketUploadException exception) {
 
         log.error("[BucketUploadException] AWS S3 버킷에 이미지를 업로드하던 중 서버 문제가 발생했습니다.");
 
         return ResponseEntity
                 .status(exception.getStatusWithCode().getHttpStatus())
                 .body(
-                        Payload.errorPayload(
+                        ApiResponse.errorResponse(
                                 exception.getStatusWithCode().getHttpStatus().value(),
                                 exception.getStatusWithCode().getMessage()
                         )

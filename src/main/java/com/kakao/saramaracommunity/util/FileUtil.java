@@ -1,10 +1,7 @@
 package com.kakao.saramaracommunity.util;
 
 /**
- * FileUtil: 파일의 originalFileName(원본이름)을 인자로 받아 파일명을 새로 지어주는 클래스
- *
- * @author Taejun
- * @version 0.0.1
+ * 파일의 originalFileName(원본명)을 인자로 받아 파일명을 새로 만드는 클래스입니다.
  */
 public class FileUtil {
 

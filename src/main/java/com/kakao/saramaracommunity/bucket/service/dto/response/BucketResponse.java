@@ -6,10 +6,7 @@ import lombok.Getter;
 import java.util.List;
 
 /**
- * BucketResponse: Bucket과 관련된 응답 데이터를 담을 DTO 클래스
- *
- * @author Taejun
- * @version 0.0.1
+ * Bucket과 관련된 응답 데이터를 담을 DTO 클래스입니다.
  */
 @Getter
 public class BucketResponse {

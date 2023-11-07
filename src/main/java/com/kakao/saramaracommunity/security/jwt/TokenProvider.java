@@ -15,7 +15,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 
-import com.kakao.saramaracommunity.common.dto.TokenDto;
+import com.kakao.saramaracommunity.common.response.TokenDto;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
