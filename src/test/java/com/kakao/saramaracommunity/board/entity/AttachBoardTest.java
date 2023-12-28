@@ -32,17 +32,6 @@ class AttachBoardTest {
         assertThat(attachBoard1.getImagePath()).isEqualTo("image3.png");
     }
 
-    @DisplayName("특정 게시글의 첨부 목록")
-    @Test
-    void updateAttachBoards() {
-        // given
-
-        // when
-
-        // then
-    }
-
-
     private static Member createMember() {
         return Member.builder()
                 .email("test@test.com")

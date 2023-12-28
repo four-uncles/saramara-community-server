@@ -1,6 +1,5 @@
 package com.kakao.saramaracommunity.board.entity;
 
-import com.kakao.saramaracommunity.board.exception.BoardAttachOutOfRangeException;
 import com.kakao.saramaracommunity.common.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -11,8 +10,6 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-
-import static com.kakao.saramaracommunity.board.exception.BoardErrorCode.ATTACH_BOARD_RANGE_OUT;
 
 @Getter
 @Entity
