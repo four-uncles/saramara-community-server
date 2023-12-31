@@ -44,14 +44,6 @@ dependencies {
 	// MariaDB
 	runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
 
-	// OAuth2: 소셜 로그인을 사용하기 위한 의존성
-	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
-
-	// JWT
-	implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.5'
-	runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.5'
-	runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.5'
-
 	// Lombok: 어노테이션을 통해 보일러플레이트 코드를 줄일 수 있는 라이브러리
 	testImplementation 'org.projectlombok:lombok:1.18.22'
 	compileOnly 'org.projectlombok:lombok'
