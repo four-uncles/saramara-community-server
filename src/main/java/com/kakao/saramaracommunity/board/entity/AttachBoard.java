@@ -1,6 +1,5 @@
 package com.kakao.saramaracommunity.board.entity;
 
-import com.kakao.saramaracommunity.board.exception.BoardAttachOutOfRangeException;
 import com.kakao.saramaracommunity.common.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -11,8 +10,6 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-
-import static com.kakao.saramaracommunity.board.exception.BoardErrorCode.ATTACH_BOARD_RANGE_OUT;
 
 @Getter
 @Entity
@@ -42,7 +39,7 @@ public class AttachBoard extends BaseTimeEntity {
         this.imagePath = imagePath;
     }
 
-    private void update(int imageOrder, String imagePath) {
+    public void update(int imageOrder, String imagePath) {
         this.imageOrder = imageOrder;
         this.imagePath = imagePath;
     }
@@ -55,9 +52,9 @@ public class AttachBoard extends BaseTimeEntity {
 
     public static List<AttachBoard> updateAttachBoards(Board board, List<String> attachPaths) {
         List<AttachBoard> attachBoards = board.getAttachBoards();
-        if (attachBoards.size() != attachPaths.size()) {
-            throw new BoardAttachOutOfRangeException(ATTACH_BOARD_RANGE_OUT);
-        }
+//        if (attachBoards.size() != attachPaths.size()) {
+//            throw new BoardAttachOutOfRangeException(ATTACH_BOARD_RANGE_OUT);
+//        }
         IntStream.range(0, attachPaths.size())
                 .forEach(
                         idx -> attachBoards.get(idx).update(idx + 1, attachPaths.get(idx))
