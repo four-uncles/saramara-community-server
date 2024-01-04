@@ -10,6 +10,7 @@ import org.hibernate.annotations.Where;
 import org.springframework.data.domain.Persistable;
 
 import com.kakao.saramaracommunity.common.entity.BaseTimeEntity;
+import com.kakao.saramaracommunity.member.controller.request.MemberRegisterRequest;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.CollectionTable;
@@ -37,7 +38,7 @@ import lombok.ToString;
 @SQLDelete(sql = "update member set deleted_at = CURRENT_TIMESTAMP where member_id = ?")
 @DynamicUpdate
 @Entity
-public class Member extends BaseTimeEntity implements Persistable<Long> {
+public class Member extends BaseTimeEntity {
 
    @Id
    @Column(nullable = false)
@@ -53,13 +54,18 @@ public class Member extends BaseTimeEntity implements Persistable<Long> {
    @Column(length = 10, unique = true)
    private String nickname;
 
-   @Override
-   public Long getId() {
-      return this.memberId;
+   @Builder
+   private Member(String email, String password, String nickname) {
+      this.email = email;
+      this.password = password;
+      this.nickname = nickname;
    }
 
-   @Override
-   public boolean isNew() {
-      return getCreatedAt() == null;
+   public static Member register (MemberRegisterRequest newMemberInfo) {
+      return Member.builder()
+          .email(newMemberInfo.email())
+          .password(newMemberInfo.password())
+          .nickname(newMemberInfo.nickname())
+          .build();
    }
 }
