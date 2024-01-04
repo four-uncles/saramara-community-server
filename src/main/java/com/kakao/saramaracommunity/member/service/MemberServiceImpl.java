@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.kakao.saramaracommunity.member.controller.request.MemberRegisterRequest;
+import com.kakao.saramaracommunity.member.controller.response.MemberInfoResponse;
 import com.kakao.saramaracommunity.member.entity.Member;
 import com.kakao.saramaracommunity.member.repository.MemberRepository;
 
@@ -24,5 +25,15 @@ public class MemberServiceImpl implements MemberService {
 		Member newMember = Member.register(request);
 
 		memberRepository.save(newMember);
+	}
+
+	@Override
+	public MemberInfoResponse getMemberInfoByEmail(String email) {
+		if (!memberRepository.existsMemberByEmail(email)) {
+			// TODO: CUSTOM UNCHECKED EXCEPTION
+			throw new RuntimeException("NOT FOUND MEMBER");
+		}
+		Member memberInfo = memberRepository.findMemberByEmail(email);
+		return MemberInfoResponse.from(memberInfo);
 	}
 }
