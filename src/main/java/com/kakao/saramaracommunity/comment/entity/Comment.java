@@ -45,6 +45,11 @@ public class Comment extends BaseTimeEntity {
         this.attachmentUrl = attachmentUrl;
     }
 
+    public void changeComment(String content, String attachmentUrl) {
+        this.content = content;
+        this.attachmentUrl = attachmentUrl;
+    }
+
     public void changeComment(String content, int pick, String attachmentUrl) {
         this.content = content;
         this.pick = pick;
