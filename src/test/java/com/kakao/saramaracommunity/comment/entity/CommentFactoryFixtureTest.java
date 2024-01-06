@@ -1,18 +1,17 @@
 package com.kakao.saramaracommunity.comment.entity;
 
 import com.kakao.saramaracommunity.board.entity.Board;
-import com.kakao.saramaracommunity.board.entity.CategoryBoard;
 import com.kakao.saramaracommunity.member.entity.Member;
-import com.kakao.saramaracommunity.member.entity.Type;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
+import static com.kakao.saramaracommunity.fixture.BoardFixture.createBoard;
+import static com.kakao.saramaracommunity.fixture.MemberFixture.createMember;
 import static org.assertj.core.api.Assertions.assertThat;
 
-class CommentTest {
+class CommentFactoryFixtureTest {
 
     @DisplayName("댓글 작성시 투표하지 않아도 정상적으로 등록된다.")
     @Test
@@ -88,26 +87,6 @@ class CommentTest {
                 .board(board)
                 .content("저는 수면잠옷을 더 추천드려요..!")
                 .pick(1)
-                .build();
-    }
-
-    private Board createBoard(Member boardWriter, List<String> attachPaths) {
-        return Board.builder()
-                .title("집에서 잠옷으로 입을 옷을 골라주세요.")
-                .content("이전에 입던 옷이 오래되어서 새 옷을 사야해요.. 부탁합니다 여러분.")
-                .member(boardWriter)
-                .categoryBoard(CategoryBoard.VOTE)
-                .deadLine(LocalDateTime.now())
-                .attachPaths(attachPaths)
-                .build();
-    }
-
-    private Member createMember(String mail, String owner) {
-        return Member.builder()
-                .email(mail)
-                .nickname(owner)
-                .password("test")
-                .type(Type.LOCAL)
                 .build();
     }
 
