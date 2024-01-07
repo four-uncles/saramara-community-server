@@ -1,7 +1,6 @@
 package com.kakao.saramaracommunity.board.entity;
 
 import com.kakao.saramaracommunity.member.entity.Member;
-import com.kakao.saramaracommunity.member.entity.Type;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -35,9 +34,8 @@ class AttachBoardTest {
     private static Member createMember() {
         return Member.builder()
                 .email("test@test.com")
-                .nickname("test")
                 .password("test")
-                .type(Type.LOCAL)
+                .nickname("test")
                 .build();
     }
 

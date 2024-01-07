@@ -11,7 +11,7 @@ import static com.kakao.saramaracommunity.fixture.BoardFixture.createBoard;
 import static com.kakao.saramaracommunity.fixture.MemberFixture.createMember;
 import static org.assertj.core.api.Assertions.assertThat;
 
-class CommentTest2 {
+class CommentFactoryFixtureTest {
 
     @DisplayName("댓글 작성시 투표하지 않아도 정상적으로 등록된다.")
     @Test
