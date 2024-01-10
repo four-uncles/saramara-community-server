@@ -19,8 +19,6 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Where(clause = "deleted_at is NULL")
-@SQLDelete(sql = "update member set deleted_at = CURRENT_TIMESTAMP where member_id = ?")
 @DynamicUpdate
 @Entity
 public class Member extends BaseTimeEntity {
@@ -40,7 +38,7 @@ public class Member extends BaseTimeEntity {
    private String nickname;
 
    @Builder
-   private Member(String email, String password, String nickname) {
+   public Member(String email, String password, String nickname) {
       this.email = email;
       this.password = password;
       this.nickname = nickname;
