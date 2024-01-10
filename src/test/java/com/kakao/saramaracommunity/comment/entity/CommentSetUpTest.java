@@ -3,7 +3,6 @@ package com.kakao.saramaracommunity.comment.entity;
 import com.kakao.saramaracommunity.board.entity.Board;
 import com.kakao.saramaracommunity.board.entity.CategoryBoard;
 import com.kakao.saramaracommunity.member.entity.Member;
-import com.kakao.saramaracommunity.member.entity.Type;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,13 +25,13 @@ class CommentSetUpTest {
                 .email("owner@test.com")
                 .nickname("owner")
                 .password("test")
-                .type(Type.LOCAL)
+                // .type(Type.LOCAL)
                 .build();
         commentWriter = Member.builder()
                 .email("guest@test.com")
                 .nickname("guest")
                 .password("test")
-                .type(Type.LOCAL)
+                // .type(Type.LOCAL)
                 .build();
         board = Board.builder()
                 .title("집에서 잠옷으로 입을 옷을 골라주세요.")

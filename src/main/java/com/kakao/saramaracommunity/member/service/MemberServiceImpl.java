@@ -22,12 +22,13 @@ public class MemberServiceImpl implements MemberService {
 	@Override
 	@Transactional
 	public void registerMember(MemberRegisterRequest request) {
-		Member newMember = Member.register(request);
+		Member newMember = Member.of(request);
 
 		memberRepository.save(newMember);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public MemberInfoResponse getMemberInfoByEmail(String email) {
 		if (!memberRepository.existsMemberByEmail(email)) {
 			// TODO: CUSTOM UNCHECKED EXCEPTION

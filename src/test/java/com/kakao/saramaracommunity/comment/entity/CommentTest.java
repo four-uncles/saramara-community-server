@@ -3,7 +3,6 @@ package com.kakao.saramaracommunity.comment.entity;
 import com.kakao.saramaracommunity.board.entity.Board;
 import com.kakao.saramaracommunity.board.entity.CategoryBoard;
 import com.kakao.saramaracommunity.member.entity.Member;
-import com.kakao.saramaracommunity.member.entity.Type;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -107,7 +106,7 @@ class CommentTest {
                 .email(mail)
                 .nickname(owner)
                 .password("test")
-                .type(Type.LOCAL)
+                // .type(Type.LOCAL)
                 .build();
     }
 

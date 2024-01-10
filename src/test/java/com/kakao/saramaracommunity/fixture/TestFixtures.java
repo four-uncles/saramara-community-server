@@ -4,7 +4,6 @@ import com.kakao.saramaracommunity.board.entity.Board;
 import com.kakao.saramaracommunity.board.entity.CategoryBoard;
 import com.kakao.saramaracommunity.comment.entity.Comment;
 import com.kakao.saramaracommunity.member.entity.Member;
-import com.kakao.saramaracommunity.member.entity.Type;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -16,7 +15,7 @@ public class TestFixtures {
                 .email(email)
                 .nickname(nickname)
                 .password("test")
-                .type(Type.LOCAL)
+                // .type(Type.LOCAL)
                 .build();
     }
 

@@ -1,7 +1,6 @@
 package com.kakao.saramaracommunity.board.entity;
 
 import com.kakao.saramaracommunity.member.entity.Member;
-import com.kakao.saramaracommunity.member.entity.Type;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -132,7 +131,7 @@ class BoardTest {
                 .email("test@test.com")
                 .nickname("test")
                 .password("test")
-                .type(Type.LOCAL)
+                // .type(Type.LOCAL)
                 .build();
     }
 }
