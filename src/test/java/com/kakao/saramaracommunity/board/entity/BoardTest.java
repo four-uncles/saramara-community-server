@@ -131,7 +131,6 @@ class BoardTest {
                 .email("test@test.com")
                 .nickname("test")
                 .password("test")
-                // .type(Type.LOCAL)
                 .build();
     }
 }

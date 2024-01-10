@@ -7,9 +7,8 @@ public class MemberFixture {
     public static Member createMember(String email, String nickname) {
         return Member.builder()
                 .email(email)
-                .nickname(nickname)
                 .password("test")
-                // .type(Type.LOCAL)
+                .nickname(nickname)
                 .build();
     }
 
