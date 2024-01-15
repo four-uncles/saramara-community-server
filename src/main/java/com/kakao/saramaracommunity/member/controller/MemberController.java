@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.kakao.saramaracommunity.common.response.ApiResponse;
+import com.kakao.saramaracommunity.member.controller.request.MemberLoginRequest;
 import com.kakao.saramaracommunity.member.controller.request.MemberRegisterRequest;
 import com.kakao.saramaracommunity.member.controller.response.MemberInfoResponse;
 import com.kakao.saramaracommunity.member.service.MemberService;
@@ -29,6 +30,12 @@ import lombok.extern.log4j.Log4j2;
 public class MemberController {
 
 	private final MemberService memberService;
+
+	@PostMapping("/login")
+	public ResponseEntity<ApiResponse> login (@RequestBody MemberLoginRequest request) {
+
+		return null;
+	}
 
 	@PostMapping("/register")
 	public ResponseEntity<ApiResponse> registerMember (@RequestBody MemberRegisterRequest request) {
