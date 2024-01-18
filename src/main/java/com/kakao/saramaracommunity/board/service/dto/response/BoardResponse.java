@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.kakao.saramaracommunity.board.entity.AttachBoard;
+import com.kakao.saramaracommunity.board.entity.BoardImage;
 import com.kakao.saramaracommunity.board.entity.Board;
 import com.kakao.saramaracommunity.board.entity.CategoryBoard;
 
@@ -62,8 +62,8 @@ public class BoardResponse {
                     .viewCount(board.getViewCount())
                     .likeCount(board.getLikeCount())
                     .deadLine(board.getDeadLine())
-                    .boardImages(board.getAttachBoards().stream().
-                            map(AttachBoard::getImagePath)
+                    .boardImages(board.getBoardImages().stream().
+                            map(BoardImage::getPath)
                             .collect(Collectors.toList())
                     )
                     .build();
@@ -141,8 +141,8 @@ public class BoardResponse {
                     .viewCount(board.getViewCount())
                     .likeCount(board.getLikeCount())
                     .deadLine(board.getDeadLine())
-                    .boardImages(board.getAttachBoards().stream()
-                            .map(AttachBoard::getImagePath)
+                    .boardImages(board.getBoardImages().stream()
+                            .map(BoardImage::getPath)
                             .collect(Collectors.toList())
                     )
                     .build();
