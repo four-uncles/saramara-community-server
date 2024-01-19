@@ -1,21 +1,18 @@
 package com.kakao.saramaracommunity.comment.service;
 
 import com.kakao.saramaracommunity.board.repository.BoardRepository;
-import com.kakao.saramaracommunity.comment.service.dto.response.CommentListDTO;
 import com.kakao.saramaracommunity.comment.entity.Comment;
 import com.kakao.saramaracommunity.comment.exception.CommentErrorCode;
 import com.kakao.saramaracommunity.comment.exception.CommentNotFoundException;
 import com.kakao.saramaracommunity.comment.repository.CommentRepository;
 import com.kakao.saramaracommunity.comment.service.dto.request.CommentCreateServiceRequest;
 import com.kakao.saramaracommunity.comment.service.dto.request.CommentUpdateServiceRequset;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
-import org.modelmapper.ModelMapper;
-import org.springframework.stereotype.Service;
-
+import com.kakao.saramaracommunity.comment.service.dto.response.CommentListDTO;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+import org.springframework.stereotype.Service;
 
 @Service
 @Log4j2
@@ -26,8 +23,6 @@ public class CommentServiceImpl implements CommentService{
 
     private final BoardRepository boardRepository;
 
-    private final ModelMapper modelMapper;
-
     /**
      * 댓글 생성을 위한 메서드입니다.
      *
@@ -36,8 +31,9 @@ public class CommentServiceImpl implements CommentService{
      */
     @Override
     public Long createComment(CommentCreateServiceRequest request) {
-        Comment comment = modelMapper.map(request, Comment.class);
-        return commentRepository.save(comment).getId();
+//        Comment comment = modelMapper.map(request, Comment.class);
+//        return commentRepository.save(comment).getId();
+        return null;
     }
 
     /**
@@ -49,10 +45,11 @@ public class CommentServiceImpl implements CommentService{
      */
     @Override
     public List<CommentListDTO> getBoardComments(Long boardId) {
-        List<Comment> comments = commentRepository.getCommentsByBoard(boardId);
-        return comments.stream()
-                .map(comment -> modelMapper.map(comment, CommentListDTO.class))
-                .collect(Collectors.toList());
+//        List<Comment> comments = commentRepository.getCommentsByBoard(boardId);
+//        return comments.stream()
+//                .map(comment -> modelMapper.map(comment, CommentListDTO.class))
+//                .collect(Collectors.toList());
+        return null;
     }
 
     /**
@@ -89,4 +86,5 @@ public class CommentServiceImpl implements CommentService{
         log.error("이미 지워진 댓글 = {}", commentRepository.findById(commentId));
         return false;
     }
+
 }
