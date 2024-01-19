@@ -1,5 +1,6 @@
 package com.kakao.saramaracommunity.comment.controller;
 
+import com.kakao.saramaracommunity.comment.controller.dto.request.CommentCreateRequest;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,7 +10,7 @@ import com.kakao.saramaracommunity.comment.service.dto.response.CommentListDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.kakao.saramaracommunity.comment.controller.dto.request.CommentCreateRequset;
+
 import com.kakao.saramaracommunity.comment.service.CommentService;
 
 import jakarta.validation.Valid;
@@ -23,8 +24,8 @@ public class CommentController {
 	private final CommentService commentService;
 
 	@PostMapping("/register")
-	public ResponseEntity<Map<String, Object>> createComment(@Valid @RequestBody CommentCreateRequset requset){
-		Long comment = commentService.createComment(requset.toServiceRequest());
+	public ResponseEntity<Map<String, Object>> createComment(@Valid @RequestBody CommentCreateRequest request){
+		Long comment = commentService.createComment(request.toServiceRequest());
 		Map<String, Object> result = new HashMap<>();
 		result.put("result", comment);
 		return ResponseEntity.ok(result);
@@ -57,4 +58,5 @@ public class CommentController {
 		result.put("result", deletedComment);
 		return ResponseEntity.ok(result);
 	}
+
 }
