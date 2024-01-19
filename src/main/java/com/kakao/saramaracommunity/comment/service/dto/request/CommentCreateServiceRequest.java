@@ -10,21 +10,21 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CommentCreateServiceRequest {
+
     private Long commentId;
     private Long memberId;
     private Long boardId;
     private String content;
-    private Long pick;
     private LocalDateTime regDate;
     private LocalDateTime modDate;
 
     @Builder
-    private CommentCreateServiceRequest(Long commentId, Long memberId, Long boardId, String content, Long pick, LocalDateTime regDate, LocalDateTime modDate) {
+    private CommentCreateServiceRequest(Long commentId, Long memberId, Long boardId, String content,
+            LocalDateTime regDate, LocalDateTime modDate) {
         this.commentId = commentId;
         this.memberId = memberId;
         this.boardId = boardId;
         this.content = content;
-        this.pick = pick;
         this.regDate = regDate;
         this.modDate = modDate;
     }

@@ -31,29 +31,15 @@ public class Comment extends BaseTimeEntity {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
-    private int pick;
-
-    @Column(name = "attachment_url")
-    private String attachmentUrl;
-
     @Builder
-    private Comment(Member member, Board board, String content, int pick, String attachmentUrl) {
+    private Comment(Member member, Board board, String content) {
         this.member = member;
         this.board = board;
         this.content = content;
-        this.pick = pick;
-        this.attachmentUrl = attachmentUrl;
     }
 
-    public void changeComment(String content, String attachmentUrl) {
+    public void changeComment(String content) {
         this.content = content;
-        this.attachmentUrl = attachmentUrl;
-    }
-
-    public void changeComment(String content, int pick, String attachmentUrl) {
-        this.content = content;
-        this.pick = pick;
-        this.attachmentUrl = attachmentUrl;
     }
 
 }
