@@ -1,6 +1,6 @@
 package com.kakao.saramaracommunity.vote.entity;
 
-import com.kakao.saramaracommunity.board.entity.AttachBoard;
+import com.kakao.saramaracommunity.board.entity.BoardImage;
 import com.kakao.saramaracommunity.board.entity.Board;
 import com.kakao.saramaracommunity.common.entity.BaseTimeEntity;
 import com.kakao.saramaracommunity.member.entity.Member;
@@ -31,17 +31,17 @@ public class Vote extends BaseTimeEntity {
     private Member member;
 
     @ManyToOne
-    @JoinColumn(name = "attach_board_id")
-    private AttachBoard attachBoard;
+    @JoinColumn(name = "board_image_id")
+    private BoardImage boardImage;
 
     @ManyToOne
     @JoinColumn(name = "board_id")
     private Board board;
 
     @Builder
-    public Vote(Member member, AttachBoard attachBoard, Board board) {
+    public Vote(Member member, BoardImage boardImage, Board board) {
         this.member = member;
-        this.attachBoard = attachBoard;
+        this.boardImage = boardImage;
         this.board = board;
     }
 
