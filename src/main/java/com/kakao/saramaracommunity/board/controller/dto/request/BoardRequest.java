@@ -1,16 +1,18 @@
 package com.kakao.saramaracommunity.board.controller.dto.request;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.kakao.saramaracommunity.board.entity.CategoryBoard;
-
 import com.kakao.saramaracommunity.board.service.dto.request.BoardServiceRequest;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 public class BoardRequest {
 
