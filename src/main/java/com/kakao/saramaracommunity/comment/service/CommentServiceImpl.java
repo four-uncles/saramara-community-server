@@ -6,15 +6,15 @@ import com.kakao.saramaracommunity.board.repository.BoardRepository;
 import com.kakao.saramaracommunity.comment.entity.Comment;
 import com.kakao.saramaracommunity.comment.exception.CommentErrorCode;
 import com.kakao.saramaracommunity.comment.exception.CommentNotFoundException;
+import com.kakao.saramaracommunity.comment.exception.CommentUnauthorizedException;
 import com.kakao.saramaracommunity.comment.repository.CommentRepository;
 import com.kakao.saramaracommunity.comment.service.dto.request.CommentCreateServiceRequest;
-import com.kakao.saramaracommunity.comment.service.dto.request.CommentUpdateServiceRequset;
+import com.kakao.saramaracommunity.comment.service.dto.request.CommentUpdateServiceRequest;
 import com.kakao.saramaracommunity.comment.service.dto.response.CommentCreateResponse;
 import com.kakao.saramaracommunity.comment.service.dto.response.CommentListDTO;
 import com.kakao.saramaracommunity.member.entity.Member;
 import com.kakao.saramaracommunity.member.repository.MemberRepository;
 import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
@@ -66,21 +66,14 @@ public class CommentServiceImpl implements CommentService{
     }
 
     /**
-     * 댓글 수정에 관련된 메서드입니다.
-     * 수정을 위해 VO 클래스에 작성한 changeComment 메서드를 이용하여 부분 수정을 일으킵니다.
-     * Optional 객체를 이용해 안전한 예외처리를 일으킵니다.
-     *
-     * @param commentId 수정할 댓글의 고유 id 입니다.
-     * @param requset 수정할 댓글의 정보입니다.
-     * @return 수정완료되었다는 boolean 값을 던집니다.
+     * 댓글 수정에 관련된 메서드 입니다.
      */
     @Override
-    public Boolean updateComment(Long commentId, CommentUpdateServiceRequset requset) {
-        Optional<Comment> findComment = commentRepository.findById(commentId);
-        Comment comment = findComment.orElseThrow(()-> new CommentNotFoundException(CommentErrorCode.COMMENT_NOT_FOUND));
-//        comment.changeComment(requset.getContent(), requset.getPick());
-        commentRepository.save(comment);
-        return true;
+    public void updateComment(Long commentId, CommentUpdateServiceRequest request) {
+        Comment savedComment = getCommentEntity(commentId);
+        verifyWriter(savedComment, request.memberId());
+        log.info("[CommentServiceImpl.class] 요청에 따라 댓글을 수정합니다.");
+        savedComment.changeComment(request.content());
     }
 
     /**
@@ -100,6 +93,12 @@ public class CommentServiceImpl implements CommentService{
         return false;
     }
 
+    private void verifyWriter(Comment comment, Long memberId) {
+        if (!comment.getMember().getMemberId().equals(memberId)) {
+            throw new CommentUnauthorizedException(CommentErrorCode.UNAUTHORIZED_TO_UPDATE_COMMENT);
+        }
+    }
+
     // TODO: refactor - NotFoundException -> Comment Exception 처리
     private Member getMemberEntity(Long memberId) {
         return memberRepository.findById(memberId)
@@ -110,6 +109,12 @@ public class CommentServiceImpl implements CommentService{
     private Board getBoardEntity(Long boardId) {
         return boardRepository.findById(boardId)
                 .orElseThrow(() -> new NotFoundException("존재하지 않는 게시글입니다."));
+    }
+
+    private Comment getCommentEntity(Long commentId) {
+        return commentRepository.findById(commentId).orElseThrow(() ->
+                new CommentNotFoundException(CommentErrorCode.COMMENT_NOT_FOUND)
+        );
     }
 
 }
