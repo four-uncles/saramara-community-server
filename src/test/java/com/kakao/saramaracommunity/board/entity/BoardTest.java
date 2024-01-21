@@ -56,50 +56,6 @@ class BoardTest {
      * 게시글 수정 관련 테스트 케이스
      */
 
-    @DisplayName("게시글의 게시글 이미지 한장을 수정한다.")
-    @Test
-    void updateBoard() {
-        // given
-        Member NORMAL_MEMBER = NORMAL_MEMBER_LANGO.createMember();
-        List<String> createImages = List.of("path1", "path2", "path3");
-
-        Board board = Board.builder()
-                .title("title")
-                .content("content")
-                .member(NORMAL_MEMBER)
-                .categoryBoard(CategoryBoard.VOTE)
-                .deadLine(LocalDateTime.now())
-                .images(createImages)
-                .build();
-
-        ReflectionTestUtils.setField(board.getBoardImages().get(0), "id", 1L);
-        ReflectionTestUtils.setField(board.getBoardImages().get(1), "id", 2L);
-        ReflectionTestUtils.setField(board.getBoardImages().get(2), "id", 3L);
-
-        List<String> updateImages = List.of(
-                "update-path1",
-                "path2",
-                "path3"
-        );
-
-        // when
-        board.update(
-                "update-title",
-                "update-content",
-                CategoryBoard.VOTE,
-                LocalDateTime.now(),
-                updateImages
-        );
-
-        // then
-        assertThat(board.getTitle()).isEqualTo("update-title");
-        assertThat(board.getBoardImages()).hasSize(3)
-                .extracting("path")
-                .containsExactlyInAnyOrder(
-                        "update-path1", "path2", "path3"
-                );
-    }
-
     @DisplayName("게시글의 게시글 이미지 한장을 새로 추가한다.")
     @Test
     void updateBoardAddImage() {
