@@ -1,5 +1,7 @@
 package com.kakao.saramaracommunity.comment.service;
 
+import com.amazonaws.services.kms.model.NotFoundException;
+import com.kakao.saramaracommunity.board.entity.Board;
 import com.kakao.saramaracommunity.board.repository.BoardRepository;
 import com.kakao.saramaracommunity.comment.entity.Comment;
 import com.kakao.saramaracommunity.comment.exception.CommentErrorCode;
@@ -7,21 +9,28 @@ import com.kakao.saramaracommunity.comment.exception.CommentNotFoundException;
 import com.kakao.saramaracommunity.comment.repository.CommentRepository;
 import com.kakao.saramaracommunity.comment.service.dto.request.CommentCreateServiceRequest;
 import com.kakao.saramaracommunity.comment.service.dto.request.CommentUpdateServiceRequset;
+import com.kakao.saramaracommunity.comment.service.dto.response.CommentCreateResponse;
 import com.kakao.saramaracommunity.comment.service.dto.response.CommentListDTO;
+import com.kakao.saramaracommunity.member.entity.Member;
+import com.kakao.saramaracommunity.member.repository.MemberRepository;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Log4j2
 @RequiredArgsConstructor
+@Transactional
 public class CommentServiceImpl implements CommentService{
 
     private final CommentRepository commentRepository;
 
     private final BoardRepository boardRepository;
+
+    private final MemberRepository memberRepository;
 
     /**
      * 댓글 생성을 위한 메서드입니다.
@@ -30,10 +39,14 @@ public class CommentServiceImpl implements CommentService{
      * @return 생성된 comment의 고유 id를 반환해줍니다.
      */
     @Override
-    public Long createComment(CommentCreateServiceRequest request) {
-//        Comment comment = modelMapper.map(request, Comment.class);
-//        return commentRepository.save(comment).getId();
-        return null;
+    public CommentCreateResponse createComment(CommentCreateServiceRequest request) {
+        Comment register = commentRepository.save(
+                request.toEntity(
+                        getMemberEntity(request.memberId()),
+                        getBoardEntity(request.boardId())
+                )
+        );
+        return CommentCreateResponse.of(register);
     }
 
     /**
@@ -85,6 +98,18 @@ public class CommentServiceImpl implements CommentService{
         }
         log.error("이미 지워진 댓글 = {}", commentRepository.findById(commentId));
         return false;
+    }
+
+    // TODO: refactor - NotFoundException -> Comment Exception 처리
+    private Member getMemberEntity(Long memberId) {
+        return memberRepository.findById(memberId)
+                .orElseThrow(() -> new NotFoundException("존재하지 않는 회원입니다."));
+    }
+
+    // TODO: refactor - NotFoundException -> Comment Exception 처리
+    private Board getBoardEntity(Long boardId) {
+        return boardRepository.findById(boardId)
+                .orElseThrow(() -> new NotFoundException("존재하지 않는 게시글입니다."));
     }
 
 }
