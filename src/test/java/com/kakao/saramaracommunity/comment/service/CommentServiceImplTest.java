@@ -4,6 +4,7 @@ import static com.kakao.saramaracommunity.fixture.MemberFixture.NORMAL_MEMBER_LA
 import static com.kakao.saramaracommunity.fixture.MemberFixture.NORMAL_MEMBER_SONNY;
 import static com.kakao.saramaracommunity.fixture.MemberFixture.NORMAL_MEMBER_WOOGI;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.amazonaws.services.kms.model.NotFoundException;
@@ -15,6 +16,7 @@ import com.kakao.saramaracommunity.comment.entity.Comment;
 import com.kakao.saramaracommunity.comment.exception.CommentUnauthorizedException;
 import com.kakao.saramaracommunity.comment.repository.CommentRepository;
 import com.kakao.saramaracommunity.comment.service.dto.request.CommentCreateServiceRequest;
+import com.kakao.saramaracommunity.comment.service.dto.request.CommentDeleteServiceRequest;
 import com.kakao.saramaracommunity.comment.service.dto.request.CommentUpdateServiceRequest;
 import com.kakao.saramaracommunity.comment.service.dto.response.CommentCreateResponse;
 import com.kakao.saramaracommunity.member.entity.Member;
@@ -95,12 +97,13 @@ class CommentServiceImplTest extends IntegrationTestSupport {
         Comment oldComment = createComment();
         String updateContent = "2번 잠옷이 귀여워!!";
 
-        // when
         CommentUpdateServiceRequest request = CommentUpdateServiceRequest.builder()
                 .memberId(oldComment.getMember().getMemberId())
                 .boardId(oldComment.getBoard().getId())
                 .content(updateContent)
                 .build();
+
+        // when
         commentService.updateComment(oldComment.getId(), request);
         Comment result = commentRepository.findById(oldComment.getId()).orElseThrow();
 
@@ -118,15 +121,46 @@ class CommentServiceImplTest extends IntegrationTestSupport {
         Member otherMember = createMember();
         String updateContent = "2번 잠옷이 귀여워!!";
 
-        // when
         CommentUpdateServiceRequest request = CommentUpdateServiceRequest.builder()
                 .memberId(otherMember.getMemberId())
                 .boardId(oldComment.getBoard().getId())
                 .content(updateContent)
                 .build();
 
-        // then
+        // when & then
         assertThatThrownBy(() -> commentService.updateComment(oldComment.getId(), request))
+                .isInstanceOf(CommentUnauthorizedException.class)
+                .hasMessage("권한이 없는 사용자입니다.");
+    }
+
+    @DisplayName("[Success] 작성자는 등록한 댓글을 삭제할 수 있다.")
+    @Test
+    void deleteCommentTest() {
+        // given
+        Comment comment = createComment();
+        Member commentWriter = comment.getMember();
+        CommentDeleteServiceRequest request = CommentDeleteServiceRequest.builder()
+                .memberId(commentWriter.getMemberId())
+                .build();
+
+        // when & then
+        assertThatCode(() -> commentService.deleteComment(comment.getId(), request))
+                .doesNotThrowAnyException();
+        assertThat(commentRepository.findById(comment.getId())).isEmpty();
+    }
+
+    @DisplayName("[Exception] 작성자의 댓글이 아니면 작성된 댓글을 삭제할 수 없다.")
+    @Test
+    void deleteComment_Member_Exception_Test() {
+        // given
+        Comment comment = createComment();
+        Member otherMember = createMember();
+        CommentDeleteServiceRequest request = CommentDeleteServiceRequest.builder()
+                .memberId(otherMember.getMemberId())
+                .build();
+
+        // when & then
+        assertThatThrownBy(() -> commentService.deleteComment(comment.getId(), request))
                 .isInstanceOf(CommentUnauthorizedException.class)
                 .hasMessage("권한이 없는 사용자입니다.");
     }
