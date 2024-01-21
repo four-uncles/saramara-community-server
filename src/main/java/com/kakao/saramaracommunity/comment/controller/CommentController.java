@@ -1,12 +1,11 @@
 package com.kakao.saramaracommunity.comment.controller;
 
 import com.kakao.saramaracommunity.comment.controller.dto.request.CommentCreateRequest;
+import com.kakao.saramaracommunity.comment.controller.dto.request.CommentDeleteRequest;
 import com.kakao.saramaracommunity.comment.controller.dto.request.CommentUpdateRequest;
 import com.kakao.saramaracommunity.comment.service.CommentService;
 import com.kakao.saramaracommunity.common.response.ApiResponse;
 import jakarta.validation.Valid;
-import java.util.HashMap;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -60,11 +59,17 @@ public class CommentController {
 	}
 
 	@DeleteMapping("/{commentId}")
-	public ResponseEntity<Map<String, Object>> deleteComment(@Valid @PathVariable("commentId") Long commentId) {
-		Boolean deletedComment = commentService.deleteComment(commentId);
-		Map<String, Object> result = new HashMap<>();
-		result.put("result", deletedComment);
-		return ResponseEntity.ok(result);
+	public ResponseEntity<ApiResponse> deleteComment(
+			@Valid @PathVariable("commentId") Long commentId,
+			@Valid @RequestBody CommentDeleteRequest request
+    ) {
+		commentService.deleteComment(commentId, request.toServiceRequest());
+		return ResponseEntity.ok().body(
+                ApiResponse.of(
+                        HttpStatus.OK,
+                        "성공적으로 댓글을 삭제하였습니다."
+                )
+        );
 	}
 
 }

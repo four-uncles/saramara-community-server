@@ -9,6 +9,7 @@ import com.kakao.saramaracommunity.comment.exception.CommentNotFoundException;
 import com.kakao.saramaracommunity.comment.exception.CommentUnauthorizedException;
 import com.kakao.saramaracommunity.comment.repository.CommentRepository;
 import com.kakao.saramaracommunity.comment.service.dto.request.CommentCreateServiceRequest;
+import com.kakao.saramaracommunity.comment.service.dto.request.CommentDeleteServiceRequest;
 import com.kakao.saramaracommunity.comment.service.dto.request.CommentUpdateServiceRequest;
 import com.kakao.saramaracommunity.comment.service.dto.response.CommentCreateResponse;
 import com.kakao.saramaracommunity.comment.service.dto.response.CommentListDTO;
@@ -55,6 +56,7 @@ public class CommentServiceImpl implements CommentService{
      *
      * @param boardId 특정 보드에 대한 고유id 파라미터입니다.
      * @return 해당 보드에 대한 모든 댓글들을 반환해줍니다.
+     * TODO: board에 한번에 조회?
      */
     @Override
     public List<CommentListDTO> getBoardComments(Long boardId) {
@@ -84,13 +86,11 @@ public class CommentServiceImpl implements CommentService{
      * @param commentId
      */
     @Override
-    public Boolean deleteComment(Long commentId) {
-        if (commentRepository.findById(commentId).isPresent()) {
-            commentRepository.deleteById(commentId);
-            return true;
-        }
-        log.error("이미 지워진 댓글 = {}", commentRepository.findById(commentId));
-        return false;
+    public void deleteComment(Long commentId, CommentDeleteServiceRequest request) {
+        Comment savedComment = getCommentEntity(commentId);
+        verifyWriter(savedComment, request.memberId());
+        log.info("[CommentServiceImpl.class] 요청에 따라 댓글을 삭제합니다.");
+        commentRepository.delete(savedComment);
     }
 
     private void verifyWriter(Comment comment, Long memberId) {
