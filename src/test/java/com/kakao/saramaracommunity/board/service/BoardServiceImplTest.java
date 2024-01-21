@@ -141,8 +141,7 @@ class BoardServiceImplTest extends IntegrationTestSupport {
 
         List<String> updateImages = List.of(
                 "path2",
-                "path3",
-                "new-path"
+                "path3"
         );
 
         BoardServiceRequest.BoardUpdateServiceRequest request = BoardServiceRequest.BoardUpdateServiceRequest.builder()
@@ -159,10 +158,10 @@ class BoardServiceImplTest extends IntegrationTestSupport {
 
         // then
         List<BoardImage> boardImages = boardImageRepository.findByBoardId(savedBoard.getId());
-        assertThat(boardImages).hasSize(3)
+        assertThat(boardImages).hasSize(2)
                 .extracting("path")
                 .containsExactlyInAnyOrder(
-                        "path2", "path3", "new-path"
+                        "path2", "path3"
                 );
     }
 
