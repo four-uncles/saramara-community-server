@@ -1,22 +1,28 @@
 package com.kakao.saramaracommunity.comment.service;
 
-import static com.kakao.saramaracommunity.fixture.MemberEnumFixture.NORMAL_MEMBER_LANGO;
-import static com.kakao.saramaracommunity.fixture.MemberEnumFixture.NORMAL_MEMBER_SONNY;
+import static com.kakao.saramaracommunity.fixture.MemberFixture.NORMAL_MEMBER_LANGO;
+import static com.kakao.saramaracommunity.fixture.MemberFixture.NORMAL_MEMBER_SONNY;
+import static com.kakao.saramaracommunity.fixture.MemberFixture.NORMAL_MEMBER_WOOGI;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.amazonaws.services.kms.model.NotFoundException;
 import com.kakao.saramaracommunity.board.entity.Board;
 import com.kakao.saramaracommunity.board.entity.CategoryBoard;
+import com.kakao.saramaracommunity.board.repository.BoardImageRepository;
 import com.kakao.saramaracommunity.board.repository.BoardRepository;
+import com.kakao.saramaracommunity.comment.entity.Comment;
+import com.kakao.saramaracommunity.comment.exception.CommentUnauthorizedException;
 import com.kakao.saramaracommunity.comment.repository.CommentRepository;
 import com.kakao.saramaracommunity.comment.service.dto.request.CommentCreateServiceRequest;
+import com.kakao.saramaracommunity.comment.service.dto.request.CommentUpdateServiceRequest;
 import com.kakao.saramaracommunity.comment.service.dto.response.CommentCreateResponse;
 import com.kakao.saramaracommunity.member.entity.Member;
 import com.kakao.saramaracommunity.member.repository.MemberRepository;
 import com.kakao.saramaracommunity.support.IntegrationTestSupport;
 import java.time.LocalDateTime;
 import java.util.List;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -31,11 +37,21 @@ class CommentServiceImplTest extends IntegrationTestSupport {
     @Autowired
     private MemberRepository memberRepository;
     @Autowired
+    private BoardImageRepository boardImageRepository;
+    @Autowired
     private BoardRepository boardRepository;
     @Autowired
     private CommentRepository commentRepository;
     @Autowired
     private CommentService commentService;
+
+    @AfterEach
+    void tearDown() {
+        commentRepository.deleteAllInBatch();
+        boardImageRepository.deleteAllInBatch();
+        boardRepository.deleteAllInBatch();
+        memberRepository.deleteAllInBatch();
+    }
 
     @DisplayName("[Success] 댓글 정보를 입력하면, 댓글을 등록한다.")
     @Transactional
@@ -72,6 +88,62 @@ class CommentServiceImplTest extends IntegrationTestSupport {
                 .hasMessage("존재하지 않는 회원입니다.");
     }
 
+    @DisplayName("[Success] 작성자는 등록한 댓글의 내용을 수정할 수 있다.")
+    @Test
+    void updateCommentTest() {
+        // given
+        Comment oldComment = createComment();
+        String updateContent = "2번 잠옷이 귀여워!!";
+
+        // when
+        CommentUpdateServiceRequest request = CommentUpdateServiceRequest.builder()
+                .memberId(oldComment.getMember().getMemberId())
+                .boardId(oldComment.getBoard().getId())
+                .content(updateContent)
+                .build();
+        commentService.updateComment(oldComment.getId(), request);
+        Comment result = commentRepository.findById(oldComment.getId()).orElseThrow();
+
+        // then
+        assertThat(result).isNotNull();
+        assertThat(result.getContent()).isNotEqualTo("1번 잠옷이 귀여워!!");
+        assertThat(result.getContent()).isEqualTo("2번 잠옷이 귀여워!!");
+    }
+
+    @DisplayName("[Exception] 작성자의 댓글이 아니면 작성된 댓글을 수정할 수 없다.")
+    @Test
+    void updateComment_Member_Exception_Test() {
+        // given
+        Comment oldComment = createComment();
+        Member otherMember = createMember();
+        String updateContent = "2번 잠옷이 귀여워!!";
+
+        // when
+        CommentUpdateServiceRequest request = CommentUpdateServiceRequest.builder()
+                .memberId(otherMember.getMemberId())
+                .boardId(oldComment.getBoard().getId())
+                .content(updateContent)
+                .build();
+
+        // then
+        assertThatThrownBy(() -> commentService.updateComment(oldComment.getId(), request))
+                .isInstanceOf(CommentUnauthorizedException.class)
+                .hasMessage("권한이 없는 사용자입니다.");
+    }
+
+    private Comment createComment() {
+        Member COMMENT_WRITER = memberRepository.findById(createCommentWriter().getMemberId())
+                .orElseThrow();
+        Board BOARD_OBJECT = boardRepository.findById(createBoard().getId())
+                .orElseThrow();
+        Comment comment = Comment.builder()
+                .member(COMMENT_WRITER)
+                .board(BOARD_OBJECT)
+                .content("1번 잠옷이 귀여워!!")
+                .build();
+        return commentRepository.save(comment);
+    }
+
     private Board createBoard() {
         Member BOARD_WRITER_LANGO = NORMAL_MEMBER_LANGO.createMember();
         Member boardWriter = memberRepository.save(BOARD_WRITER_LANGO);
@@ -82,7 +154,7 @@ class CommentServiceImplTest extends IntegrationTestSupport {
                 .categoryBoard(CategoryBoard.VOTE)
                 .member(boardWriter)
                 .deadLine(LocalDateTime.now())
-                .attachPaths(List.of("image-1", "image-2", "image-3"))
+                .images(List.of("image-1", "image-2", "image-3"))
                 .build();
 
         return boardRepository.save(board);
@@ -91,6 +163,11 @@ class CommentServiceImplTest extends IntegrationTestSupport {
     private Member createCommentWriter() {
         Member COMMENT_WRITER_SONNY = NORMAL_MEMBER_SONNY.createMember();
         return memberRepository.save(COMMENT_WRITER_SONNY);
+    }
+
+    private Member createMember() {
+        Member member = NORMAL_MEMBER_WOOGI.createMember();
+        return memberRepository.save(member);
     }
 
 }

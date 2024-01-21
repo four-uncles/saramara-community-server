@@ -14,6 +14,11 @@ public enum MemberFixture {
             "sonnypwd1288",
             "sonny"
     ),
+    NORMAL_MEMBER_WOOGI(
+            "gitshineit@gmail.com",
+            "woogipwd1234",
+            "woogi"
+    )
     ;
 
     private final String email;
