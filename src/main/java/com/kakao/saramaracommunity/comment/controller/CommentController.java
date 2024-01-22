@@ -29,7 +29,7 @@ public class CommentController {
     /**
      * 댓글 작성 API
      *
-     * @param request - memberId: 작성자 고유 식별자, boardId: 게시글 고유 식별자, content: 내용
+     * @param request memberId: 작성자 고유 식별자, boardId: 게시글 고유 식별자, content: 내용
      * @return "code", "message", "data" : { "nickname", "content" }
      */
     @PostMapping("/register")
@@ -45,6 +45,11 @@ public class CommentController {
         );
     }
 
+    /**
+     * 댓글 조회 API
+     * @param boardId 댓글이 작성된 게시글 고유 식별자
+     * @return "code", "message", "data" : List<CommentReadDetailResponse> comments - { nickname, content, createdAt }
+     */
     @GetMapping("/{boardId}/comments")
     public ApiResponse<CommentsReadInBoardResponse> getBoardComments(
             @Valid @PathVariable("boardId") Long boardId
@@ -57,6 +62,12 @@ public class CommentController {
         );
     }
 
+    /**
+     * 댓글 수정 API
+     * @param commentId 작성된 댓글의 고유 식별자
+     * @param request memberId: 작성자 고유 식별자, content: 수정할 내용
+     * @return "code", "message", "data" : true
+     */
     @PatchMapping("/{commentId}")
     public ApiResponse updateComment(
             @Valid @PathVariable("commentId") Long commentId,
@@ -70,6 +81,12 @@ public class CommentController {
         );
     }
 
+    /**
+     * 댓글 삭제 API
+     * @param commentId 작성된 댓글의 고유 식별자
+     * @param request memberId: 작성자의 고유 식별자
+     * @return "code", "message", "data" : true
+     */
     @DeleteMapping("/{commentId}")
     public ApiResponse deleteComment(
             @Valid @PathVariable("commentId") Long commentId,
