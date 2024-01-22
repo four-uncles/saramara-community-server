@@ -4,6 +4,7 @@ import com.kakao.saramaracommunity.comment.controller.dto.request.CommentCreateR
 import com.kakao.saramaracommunity.comment.controller.dto.request.CommentDeleteRequest;
 import com.kakao.saramaracommunity.comment.controller.dto.request.CommentUpdateRequest;
 import com.kakao.saramaracommunity.comment.service.CommentService;
+import com.kakao.saramaracommunity.comment.service.dto.response.CommentCreateResponse;
 import com.kakao.saramaracommunity.common.response.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,14 +25,28 @@ public class CommentController {
 
 	private final CommentService commentService;
 
+	/**
+	 * 댓글 작성 API
+	 * @param request - memberId: 작성자 고유 식별자, boardId: 게시글 고유 식별자, content: 내용
+	 * @return
+	 * 		"code",
+	 * 		"message",
+	 * 		"data" : {
+	 * 			"nickname",
+	 * 			"content"
+	 * 		}
+	 */
 	@PostMapping("/register")
-	public ResponseEntity<ApiResponse> createComment(@Valid @RequestBody CommentCreateRequest request){
-		commentService.createComment(request.toServiceRequest());
+	public ResponseEntity<ApiResponse<CommentCreateResponse>> createComment(
+			@Valid @RequestBody CommentCreateRequest request
+	){
+		CommentCreateResponse data = commentService.createComment(request.toServiceRequest());
 
 		return ResponseEntity.ok().body(
 				ApiResponse.of(
-						HttpStatus.OK,
-						"댓글 작성이 완료 되었습니다."
+						HttpStatus.CREATED,
+						"댓글 작성이 완료 되었습니다.",
+						data
 				)
 		);
 	}

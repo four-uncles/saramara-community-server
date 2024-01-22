@@ -5,13 +5,13 @@ import lombok.Builder;
 
 @Builder
 public record CommentCreateResponse(
-        Long id,
+        String nickname,
         String content
 ) {
 
     public static CommentCreateResponse of(Comment comment) {
         return CommentCreateResponse.builder()
-                .id(comment.getId())
+                .nickname(comment.getMember().getNickname())
                 .content(comment.getContent())
                 .build();
     }
