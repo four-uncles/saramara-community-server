@@ -33,17 +33,17 @@ public class ApiResponse<T> {
     /**
      * API 요청 성공시, 응답 데이터로 사용할 successResponse 메서드입니다.
      *
-     * @param code - HttpStatus Code
+     * @param httpStatus - HttpStatus Code
      * @param message - 응답 메세지
      * @param data - 던져줄 데이터
      */
     public static <T> ApiResponse<T> successResponse(
-            final int code,
+            final HttpStatus httpStatus,
             final String message,
             final T data
     ) {
         return ApiResponse.<T>builder()
-                .code(code)
+                .code(httpStatus.value())
                 .message(message)
                 .data(data)
                 .build();

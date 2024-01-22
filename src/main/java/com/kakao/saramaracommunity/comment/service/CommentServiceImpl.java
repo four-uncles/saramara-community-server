@@ -1,6 +1,5 @@
 package com.kakao.saramaracommunity.comment.service;
 
-import com.amazonaws.services.kms.model.NotFoundException;
 import com.kakao.saramaracommunity.board.entity.Board;
 import com.kakao.saramaracommunity.board.repository.BoardRepository;
 import com.kakao.saramaracommunity.comment.entity.Comment;
@@ -12,7 +11,7 @@ import com.kakao.saramaracommunity.comment.service.dto.request.CommentCreateServ
 import com.kakao.saramaracommunity.comment.service.dto.request.CommentDeleteServiceRequest;
 import com.kakao.saramaracommunity.comment.service.dto.request.CommentUpdateServiceRequest;
 import com.kakao.saramaracommunity.comment.service.dto.response.CommentCreateResponse;
-import com.kakao.saramaracommunity.comment.service.dto.response.CommentListDTO;
+import com.kakao.saramaracommunity.comment.service.dto.response.CommentsReadInBoardResponse;
 import com.kakao.saramaracommunity.member.entity.Member;
 import com.kakao.saramaracommunity.member.repository.MemberRepository;
 import java.util.List;
@@ -59,12 +58,10 @@ public class CommentServiceImpl implements CommentService{
      * TODO: board에 한번에 조회?
      */
     @Override
-    public List<CommentListDTO> getBoardComments(Long boardId) {
-//        List<Comment> comments = commentRepository.getCommentsByBoard(boardId);
-//        return comments.stream()
-//                .map(comment -> modelMapper.map(comment, CommentListDTO.class))
-//                .collect(Collectors.toList());
-        return null;
+    public CommentsReadInBoardResponse readCommentsInBoard(Long boardId) {
+        List<Comment> comments = commentRepository.getCommentsByBoard(boardId);
+        log.info("[CommentServiceImpl.class] 요청에 따라 댓글을 조회합니다.");
+        return CommentsReadInBoardResponse.from(comments);
     }
 
     /**
@@ -80,7 +77,6 @@ public class CommentServiceImpl implements CommentService{
 
     /**
      * 단일 댓글을 삭제하는 메서드입니다.
-     *
      * 댓글이 존재하는지 먼저 확인 이후,
      * 존재한다면 delete를 실행하고 true를, 존재하지 않다면 false를 return 해줍니다.
      * @param commentId
@@ -99,16 +95,16 @@ public class CommentServiceImpl implements CommentService{
         }
     }
 
-    // TODO: refactor - NotFoundException -> Comment Exception 처리
+    // TODO: refactor - NotFoundException -> Comment Exception 구현 후 처리 예정
     private Member getMemberEntity(Long memberId) {
         return memberRepository.findById(memberId)
-                .orElseThrow(() -> new NotFoundException("존재하지 않는 회원입니다."));
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
     }
 
-    // TODO: refactor - NotFoundException -> Comment Exception 처리
+    // TODO: refactor - NotFoundException -> Comment Exception 구현 후 처리 예정
     private Board getBoardEntity(Long boardId) {
         return boardRepository.findById(boardId)
-                .orElseThrow(() -> new NotFoundException("존재하지 않는 게시글입니다."));
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다."));
     }
 
     private Comment getCommentEntity(Long commentId) {
