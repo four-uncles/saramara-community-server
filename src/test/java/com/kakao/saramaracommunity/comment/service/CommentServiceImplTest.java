@@ -99,7 +99,6 @@ class CommentServiceImplTest extends IntegrationTestSupport {
 
         CommentUpdateServiceRequest request = CommentUpdateServiceRequest.builder()
                 .memberId(oldComment.getMember().getMemberId())
-                .boardId(oldComment.getBoard().getId())
                 .content(updateContent)
                 .build();
 
@@ -123,7 +122,6 @@ class CommentServiceImplTest extends IntegrationTestSupport {
 
         CommentUpdateServiceRequest request = CommentUpdateServiceRequest.builder()
                 .memberId(otherMember.getMemberId())
-                .boardId(oldComment.getBoard().getId())
                 .content(updateContent)
                 .build();
 

@@ -1,14 +1,15 @@
 package com.kakao.saramaracommunity.comment.service.dto.request;
 
+import com.kakao.saramaracommunity.comment.entity.Comment;
+import com.kakao.saramaracommunity.member.entity.Member;
 import lombok.Builder;
 
 @Builder
-public record CommentUpdateServiceRequest(Long memberId, Long boardId, String content) {
+public record CommentUpdateServiceRequest(Long memberId, String content) {
 
-    public static CommentUpdateServiceRequest of(Long memberId, Long boardId, String content) {
-        return CommentUpdateServiceRequest.builder()
-                .memberId(memberId)
-                .boardId(boardId)
+    public Comment toEntity(Member member, String content) {
+        return Comment.builder()
+                .member(member)
                 .content(content)
                 .build();
     }

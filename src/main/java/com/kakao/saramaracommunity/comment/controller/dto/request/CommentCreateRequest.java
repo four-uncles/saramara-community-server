@@ -10,10 +10,6 @@ public record CommentCreateRequest(
         @NotBlank(message = "댓글 내용은 필수입니다.") String content
 ) {
 
-    public static CommentCreateRequest of(Long memberId, Long boardId, String content) {
-        return CommentCreateRequest.of(memberId, boardId, content);
-    }
-
     public CommentCreateServiceRequest toServiceRequest() {
         return CommentCreateServiceRequest.builder()
                 .memberId(memberId)

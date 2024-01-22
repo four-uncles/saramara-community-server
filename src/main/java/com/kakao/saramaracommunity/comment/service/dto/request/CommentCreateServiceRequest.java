@@ -8,14 +8,6 @@ import lombok.Builder;
 @Builder
 public record CommentCreateServiceRequest(Long memberId, Long boardId, String content) {
 
-    public static CommentCreateServiceRequest of(Long memberId, Long boardId, String content) {
-        return CommentCreateServiceRequest.builder()
-                .memberId(memberId)
-                .boardId(boardId)
-                .content(content)
-                .build();
-    }
-
     public Comment toEntity(Member member, Board board) {
         return Comment.builder()
                 .member(member)
