@@ -1,17 +1,14 @@
 package com.kakao.saramaracommunity.comment.service.dto.request;
 
-import com.kakao.saramaracommunity.comment.entity.Comment;
-import com.kakao.saramaracommunity.member.entity.Member;
+import java.util.Objects;
 import lombok.Builder;
 
 @Builder
 public record CommentUpdateServiceRequest(Long memberId, String content) {
 
-    public Comment toEntity(Member member, String content) {
-        return Comment.builder()
-                .member(member)
-                .content(content)
-                .build();
+    public CommentUpdateServiceRequest {
+        Objects.requireNonNull(memberId, "회원 정보는 필수 입니다.");
+        Objects.requireNonNull(content, "댓글 내용은 필수 입니다.");
     }
 
 }
