@@ -25,10 +25,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ActiveProfiles;
 
 @DisplayName("[Comment] 비즈니스 로직 - 예외 테스트")
-@ActiveProfiles("test")
 class CommentServiceImplTest extends IntegrationTestSupport {
 
     @Autowired
