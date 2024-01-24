@@ -32,11 +32,11 @@ public class LoginFilter extends OncePerRequestFilter {
 
 		if (!cachedRequest.getRequestURI().equals("/api/v1/member/login")) {
 			if (session == null || session.getAttribute("member") == null) {
-				throw new RuntimeException("NO Autheraization!");
+				throw new RuntimeException("비인가 회원접근");
 			}
 
 			if (!memberRepository.existsMemberByEmail(session.getAttribute("member").toString())) {
-				throw new RuntimeException("NO Autherization");
+				throw new RuntimeException("비인가 회원접근");
 			}
 		}
 
