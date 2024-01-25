@@ -6,14 +6,13 @@ import com.kakao.saramaracommunity.member.entity.Member;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 
-import static com.kakao.saramaracommunity.board.entity.CategoryBoard.*;
+import static com.kakao.saramaracommunity.board.entity.CategoryBoard.CHOICE;
+import static com.kakao.saramaracommunity.board.entity.CategoryBoard.VOTE;
 import static com.kakao.saramaracommunity.fixture.MemberFixture.NORMAL_MEMBER_LANGO;
 import static com.kakao.saramaracommunity.fixture.MemberFixture.NORMAL_MEMBER_SONNY;
 
 public enum BoardFixture {
-
 
     BOARD_VOTE_WRITER_LANGO(
             "집에서 입을 잠옷 어떤 것이 좋을까요?",
