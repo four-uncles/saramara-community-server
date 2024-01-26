@@ -10,6 +10,7 @@ import com.kakao.saramaracommunity.common.response.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -33,15 +34,17 @@ public class CommentController {
      * @return "code", "message", "data" : { "nickname", "content" }
      */
     @PostMapping("/register")
-    public ApiResponse<CommentCreateResponse> createComment(
+    public ResponseEntity<ApiResponse<CommentCreateResponse>> createComment(
             @Valid @RequestBody CommentCreateRequest request
     ) {
         CommentCreateResponse data = commentService.createComment(request.toServiceRequest());
 
-        return ApiResponse.successResponse(
-                HttpStatus.CREATED,
-                "댓글 작성이 완료 되었습니다.",
-                data
+        return ResponseEntity.ok().body(
+                ApiResponse.successResponse(
+                        HttpStatus.OK,
+                        "댓글 작성이 완료 되었습니다.",
+                        data
+                )
         );
     }
 
@@ -51,14 +54,16 @@ public class CommentController {
      * @return "code", "message", "data" : List<CommentReadDetailResponse> comments - { nickname, content, createdAt }
      */
     @GetMapping("/{boardId}/comments")
-    public ApiResponse<CommentsReadInBoardResponse> getBoardComments(
+    public ResponseEntity<ApiResponse<CommentsReadInBoardResponse>> getBoardComments(
             @Valid @PathVariable("boardId") Long boardId
     ) {
         CommentsReadInBoardResponse data = commentService.readCommentsInBoard(boardId);
-        return ApiResponse.successResponse(
-                HttpStatus.OK,
-                "댓글 조회가 완료 되었습니다.",
-                data
+        return ResponseEntity.ok().body(
+                ApiResponse.successResponse(
+                        HttpStatus.OK,
+                        "댓글 조회가 완료 되었습니다.",
+                        data
+                )
         );
     }
 
@@ -69,15 +74,17 @@ public class CommentController {
      * @return "code", "message", "data" : true
      */
     @PatchMapping("/{commentId}")
-    public ApiResponse updateComment(
+    public ResponseEntity<ApiResponse> updateComment(
             @Valid @PathVariable("commentId") Long commentId,
             @Valid @RequestBody CommentUpdateRequest request
     ) {
         commentService.updateComment(commentId, request.toServiceRequest());
-        return ApiResponse.successResponse(
-                HttpStatus.OK,
-                "댓글 수정이 완료 되었습니다.",
-                true
+        return ResponseEntity.ok().body(
+                ApiResponse.successResponse(
+                        HttpStatus.OK,
+                        "댓글 수정이 완료 되었습니다.",
+                        true
+                )
         );
     }
 
@@ -88,15 +95,17 @@ public class CommentController {
      * @return "code", "message", "data" : true
      */
     @DeleteMapping("/{commentId}")
-    public ApiResponse deleteComment(
+    public ResponseEntity<ApiResponse> deleteComment(
             @Valid @PathVariable("commentId") Long commentId,
             @Valid @RequestBody CommentDeleteRequest request
     ) {
         commentService.deleteComment(commentId, request.toServiceRequest());
-        return ApiResponse.successResponse(
-                HttpStatus.OK,
-                "성공적으로 댓글을 삭제하였습니다.",
-                true
+        return ResponseEntity.ok().body(
+                ApiResponse.successResponse(
+                        HttpStatus.OK,
+                        "성공적으로 댓글을 삭제하였습니다.",
+                        true
+                )
         );
     }
 
