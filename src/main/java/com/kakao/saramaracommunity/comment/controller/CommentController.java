@@ -1,60 +1,112 @@
 package com.kakao.saramaracommunity.comment.controller;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import com.kakao.saramaracommunity.comment.controller.dto.request.CommentUpdateRequset;
-import com.kakao.saramaracommunity.comment.service.dto.response.CommentListDTO;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import com.kakao.saramaracommunity.comment.controller.dto.request.CommentCreateRequset;
+import com.kakao.saramaracommunity.comment.controller.dto.request.CommentCreateRequest;
+import com.kakao.saramaracommunity.comment.controller.dto.request.CommentDeleteRequest;
+import com.kakao.saramaracommunity.comment.controller.dto.request.CommentUpdateRequest;
 import com.kakao.saramaracommunity.comment.service.CommentService;
-
+import com.kakao.saramaracommunity.comment.service.dto.response.CommentCreateResponse;
+import com.kakao.saramaracommunity.comment.service.dto.response.CommentsReadInBoardResponse;
+import com.kakao.saramaracommunity.common.response.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/comment")
 public class CommentController {
 
-	private final CommentService commentService;
+    private final CommentService commentService;
 
-	@PostMapping("/register")
-	public ResponseEntity<Map<String, Object>> createComment(@Valid @RequestBody CommentCreateRequset requset){
-		Long comment = commentService.createComment(requset.toServiceRequest());
-		Map<String, Object> result = new HashMap<>();
-		result.put("result", comment);
-		return ResponseEntity.ok(result);
-	}
+    /**
+     * 댓글 작성 API
+     *
+     * @param request memberId: 작성자 고유 식별자, boardId: 게시글 고유 식별자, content: 내용
+     * @return "code", "message", "data" : { "nickname", "content" }
+     */
+    @PostMapping("/register")
+    public ResponseEntity<ApiResponse<CommentCreateResponse>> createComment(
+            @Valid @RequestBody CommentCreateRequest request
+    ) {
+        CommentCreateResponse data = commentService.createComment(request.toServiceRequest());
 
-	@GetMapping("/{boardId}/comments")
-	public ResponseEntity<Map<String, Object>> getBoardComments(@Valid @PathVariable("boardId") Long boardId) {
-		List<CommentListDTO> boardComments = commentService.getBoardComments(boardId);
-		Map<String, Object> result = new HashMap<>();
-		result.put("result", boardComments);
-		return ResponseEntity.ok(result);
-	}
+        return ResponseEntity.ok().body(
+                ApiResponse.successResponse(
+                        HttpStatus.OK,
+                        "댓글 작성이 완료 되었습니다.",
+                        data
+                )
+        );
+    }
 
-	// 전체 리소스를 수정할 필요가 없기 때문에 PUT보다 PATCH를 사용하는 것이 좋을 수 있다.
-	@PutMapping("/{commentId}")
-	public ResponseEntity<Map<String, Object>> updateComment(
-			@Valid @PathVariable("commentId") Long commentId,
-			@Valid @RequestBody CommentUpdateRequset requset
-	){
-		Boolean updatedComment = commentService.updateComment(commentId, requset.toServiceRequest());
-		Map<String, Object> result = new HashMap<>();
-		result.put("result", updatedComment);
-		return ResponseEntity.ok(result);
-	}
+    /**
+     * 댓글 조회 API
+     * @param boardId 댓글이 작성된 게시글 고유 식별자
+     * @return "code", "message", "data" : List<CommentReadDetailResponse> comments - { nickname, content, createdAt }
+     */
+    @GetMapping("/{boardId}/comments")
+    public ResponseEntity<ApiResponse<CommentsReadInBoardResponse>> getBoardComments(
+            @Valid @PathVariable("boardId") Long boardId
+    ) {
+        CommentsReadInBoardResponse data = commentService.readCommentsInBoard(boardId);
+        return ResponseEntity.ok().body(
+                ApiResponse.successResponse(
+                        HttpStatus.OK,
+                        "댓글 조회가 완료 되었습니다.",
+                        data
+                )
+        );
+    }
 
-	@DeleteMapping("/{commentId}")
-	public ResponseEntity<Map<String, Object>> deleteComment(@Valid @PathVariable("commentId") Long commentId) {
-		Boolean deletedComment = commentService.deleteComment(commentId);
-		Map<String, Object> result = new HashMap<>();
-		result.put("result", deletedComment);
-		return ResponseEntity.ok(result);
-	}
+    /**
+     * 댓글 수정 API
+     * @param commentId 작성된 댓글의 고유 식별자
+     * @param request memberId: 작성자 고유 식별자, content: 수정할 내용
+     * @return "code", "message", "data" : true
+     */
+    @PatchMapping("/{commentId}")
+    public ResponseEntity<ApiResponse> updateComment(
+            @Valid @PathVariable("commentId") Long commentId,
+            @Valid @RequestBody CommentUpdateRequest request
+    ) {
+        commentService.updateComment(commentId, request.toServiceRequest());
+        return ResponseEntity.ok().body(
+                ApiResponse.successResponse(
+                        HttpStatus.OK,
+                        "댓글 수정이 완료 되었습니다.",
+                        true
+                )
+        );
+    }
+
+    /**
+     * 댓글 삭제 API
+     * @param commentId 작성된 댓글의 고유 식별자
+     * @param request memberId: 작성자의 고유 식별자
+     * @return "code", "message", "data" : true
+     */
+    @DeleteMapping("/{commentId}")
+    public ResponseEntity<ApiResponse> deleteComment(
+            @Valid @PathVariable("commentId") Long commentId,
+            @Valid @RequestBody CommentDeleteRequest request
+    ) {
+        commentService.deleteComment(commentId, request.toServiceRequest());
+        return ResponseEntity.ok().body(
+                ApiResponse.successResponse(
+                        HttpStatus.OK,
+                        "성공적으로 댓글을 삭제하였습니다.",
+                        true
+                )
+        );
+    }
+
 }

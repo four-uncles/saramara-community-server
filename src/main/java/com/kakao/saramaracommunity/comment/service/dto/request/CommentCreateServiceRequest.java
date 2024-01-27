@@ -1,32 +1,26 @@
 package com.kakao.saramaracommunity.comment.service.dto.request;
 
-import lombok.AccessLevel;
+import com.kakao.saramaracommunity.board.entity.Board;
+import com.kakao.saramaracommunity.comment.entity.Comment;
+import com.kakao.saramaracommunity.member.entity.Member;
+import java.util.Objects;
 import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+@Builder
+public record CommentCreateServiceRequest(Long memberId, Long boardId, String content) {
 
-@Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class CommentCreateServiceRequest {
-    private Long commentId;
-    private Long memberId;
-    private Long boardId;
-    private String content;
-    private Long pick;
-    private LocalDateTime regDate;
-    private LocalDateTime modDate;
+    public CommentCreateServiceRequest {
+        Objects.requireNonNull(memberId, "회원 정보는 필수 입니다.");
+        Objects.requireNonNull(boardId, " 게시글 정보는 필수 입니다.");
+        Objects.requireNonNull(content, " 댓글 내용은 필수 입니다.");
+    }
 
-    @Builder
-    private CommentCreateServiceRequest(Long commentId, Long memberId, Long boardId, String content, Long pick, LocalDateTime regDate, LocalDateTime modDate) {
-        this.commentId = commentId;
-        this.memberId = memberId;
-        this.boardId = boardId;
-        this.content = content;
-        this.pick = pick;
-        this.regDate = regDate;
-        this.modDate = modDate;
+    public Comment toEntity(Member member, Board board) {
+        return Comment.builder()
+                .member(member)
+                .board(board)
+                .content(content)
+                .build();
     }
 
 }

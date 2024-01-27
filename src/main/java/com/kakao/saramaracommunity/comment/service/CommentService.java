@@ -1,19 +1,19 @@
 package com.kakao.saramaracommunity.comment.service;
 
-import com.kakao.saramaracommunity.comment.service.dto.response.CommentListDTO;
 import com.kakao.saramaracommunity.comment.service.dto.request.CommentCreateServiceRequest;
-import com.kakao.saramaracommunity.comment.service.dto.request.CommentUpdateServiceRequset;
-
-import java.util.List;
+import com.kakao.saramaracommunity.comment.service.dto.request.CommentDeleteServiceRequest;
+import com.kakao.saramaracommunity.comment.service.dto.request.CommentUpdateServiceRequest;
+import com.kakao.saramaracommunity.comment.service.dto.response.CommentCreateResponse;
+import com.kakao.saramaracommunity.comment.service.dto.response.CommentsReadInBoardResponse;
 
 public interface CommentService {
 
-	Long createComment(CommentCreateServiceRequest request);
+	CommentCreateResponse createComment(CommentCreateServiceRequest request);
 
-	List<CommentListDTO> getBoardComments(Long boardId);
+	CommentsReadInBoardResponse readCommentsInBoard(Long boardId);
 
-	Boolean updateComment(Long commentId, CommentUpdateServiceRequset requset);
+	void updateComment(Long commentId, CommentUpdateServiceRequest request);
 
-	Boolean deleteComment(Long commentId);
+	void deleteComment(Long commentId, CommentDeleteServiceRequest request);
 
 }

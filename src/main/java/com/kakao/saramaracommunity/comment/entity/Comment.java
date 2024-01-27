@@ -3,7 +3,15 @@ package com.kakao.saramaracommunity.comment.entity;
 import com.kakao.saramaracommunity.board.entity.Board;
 import com.kakao.saramaracommunity.common.entity.BaseTimeEntity;
 import com.kakao.saramaracommunity.member.entity.Member;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -31,29 +39,23 @@ public class Comment extends BaseTimeEntity {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
-    private int pick;
-
-    @Column(name = "attachment_url")
-    private String attachmentUrl;
-
     @Builder
-    private Comment(Member member, Board board, String content, int pick, String attachmentUrl) {
+    private Comment(Member member, Board board, String content) {
         this.member = member;
         this.board = board;
         this.content = content;
-        this.pick = pick;
-        this.attachmentUrl = attachmentUrl;
     }
 
-    public void changeComment(String content, String attachmentUrl) {
-        this.content = content;
-        this.attachmentUrl = attachmentUrl;
+    public static Comment of(Member member, Board board, String content) {
+        return Comment.builder()
+                .member(member)
+                .board(board)
+                .content(content)
+                .build();
     }
 
-    public void changeComment(String content, int pick, String attachmentUrl) {
+    public void changeComment(String content) {
         this.content = content;
-        this.pick = pick;
-        this.attachmentUrl = attachmentUrl;
     }
 
 }
