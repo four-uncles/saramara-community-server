@@ -1,8 +1,6 @@
 package com.kakao.saramaracommunity.member.entity;
 
 import org.hibernate.annotations.DynamicUpdate;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
 
 import com.kakao.saramaracommunity.common.entity.BaseTimeEntity;
 import com.kakao.saramaracommunity.member.controller.request.MemberRegisterRequest;
@@ -26,7 +24,7 @@ public class Member extends BaseTimeEntity {
    @Id
    @Column(nullable = false)
    @GeneratedValue(strategy = GenerationType.IDENTITY)
-   private Long memberId;
+   private Long id;
 
    @Column(nullable = false, length = 100, unique = true)
    private String email;
