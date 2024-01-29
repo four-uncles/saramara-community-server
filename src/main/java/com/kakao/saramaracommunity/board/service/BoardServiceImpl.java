@@ -2,9 +2,8 @@ package com.kakao.saramaracommunity.board.service;
 
 import com.kakao.saramaracommunity.board.entity.Board;
 import com.kakao.saramaracommunity.board.entity.SortType;
+import com.kakao.saramaracommunity.board.exception.BoardBusinessException;
 import com.kakao.saramaracommunity.board.exception.BoardErrorCode;
-import com.kakao.saramaracommunity.board.exception.BoardNotFoundException;
-import com.kakao.saramaracommunity.board.exception.BoardUnauthorizedException;
 import com.kakao.saramaracommunity.board.repository.BoardRepository;
 import com.kakao.saramaracommunity.board.service.dto.request.BoardServiceRequest;
 import com.kakao.saramaracommunity.board.service.dto.response.BoardResponse;
@@ -66,6 +65,7 @@ public class BoardServiceImpl implements BoardService {
         verifyBoardOwner(savedBoard, request.getMemberId());
         log.info("[BoardServiceImpl] 요청에 따라 게시글을 수정합니다.(Update the post as requested.)");
         savedBoard.update(
+                request.getMemberId(),
                 request.getTitle(),
                 request.getContent(),
                 request.getCategoryBoard(),
@@ -85,9 +85,7 @@ public class BoardServiceImpl implements BoardService {
     }
 
     private void verifyBoardOwner(Board board, Long memberId) {
-        if (!board.getMember().getMemberId().equals(memberId)) {
-            throw new BoardUnauthorizedException(BoardErrorCode.UNAUTHORIZED_TO_UPDATE_BOARD);
-        }
+        if (!board.getMember().getMemberId().equals(memberId)) throw new BoardBusinessException(BoardErrorCode.UNAUTHORIZED_TO_UPDATE_BOARD);
     }
 
     /**
@@ -95,12 +93,12 @@ public class BoardServiceImpl implements BoardService {
      */
     private Member getMemberEntity(Long memberId) {
         return memberRepository.findById(memberId)
-                .orElseThrow(() -> new BoardNotFoundException(BoardErrorCode.UNAUTHORIZED_TO_UPDATE_BOARD));
+                .orElseThrow(() -> new BoardBusinessException(BoardErrorCode.UNAUTHORIZED_TO_UPDATE_BOARD));
     }
 
     private Board getBoardEntity(Long boardId) {
         return boardRepository.findById(boardId)
-                .orElseThrow(() -> new BoardNotFoundException(BoardErrorCode.BOARD_NOT_FOUND));
+                .orElseThrow(() -> new BoardBusinessException(BoardErrorCode.BOARD_NOT_FOUND));
     }
 
     private Long getNextCursorId(SortType sort, List<Board> boards) {

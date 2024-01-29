@@ -3,6 +3,8 @@ package com.kakao.saramaracommunity.board.service;
 import com.kakao.saramaracommunity.board.entity.Board;
 import com.kakao.saramaracommunity.board.entity.BoardImage;
 import com.kakao.saramaracommunity.board.entity.CategoryBoard;
+import com.kakao.saramaracommunity.board.exception.BoardBusinessException;
+import com.kakao.saramaracommunity.board.exception.BoardErrorCode;
 import com.kakao.saramaracommunity.board.repository.BoardImageRepository;
 import com.kakao.saramaracommunity.board.repository.BoardRepository;
 import com.kakao.saramaracommunity.board.service.dto.request.BoardServiceRequest;
@@ -10,7 +12,6 @@ import com.kakao.saramaracommunity.board.service.dto.response.BoardResponse;
 import com.kakao.saramaracommunity.member.entity.Member;
 import com.kakao.saramaracommunity.member.repository.MemberRepository;
 import com.kakao.saramaracommunity.support.IntegrationTestSupport;
-import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,10 +19,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
+import static com.kakao.saramaracommunity.board.entity.CategoryBoard.*;
+import static com.kakao.saramaracommunity.fixture.MemberFixture.NORMAL_MEMBER_LANGO;
 import static com.kakao.saramaracommunity.fixture.MemberFixture.NORMAL_MEMBER_SONNY;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+/**
+ * 게시글(Board) 관련 비즈니스 계층의 통합 테스트를 위한 테스트 클래스입니다.
+ */
 class BoardServiceImplTest extends IntegrationTestSupport {
 
     @Autowired
@@ -43,23 +53,14 @@ class BoardServiceImplTest extends IntegrationTestSupport {
         memberRepository.deleteAllInBatch();
     }
 
-    @DisplayName("게시글 이미지 3장을 업로드하여 게시글을 생성한다.")
+    @DisplayName("투표 타입의 게시글을 생성할 경우, 이미지를 2장 이상 등록해야 한다.")
     @Test
-    void createBoard() {
+    void create_Board_Category_Is_Vote() {
         // given
-        Member COMMENT_WRITER_SONNY = NORMAL_MEMBER_SONNY.createMember();
-        Member savedMember = memberRepository.save(COMMENT_WRITER_SONNY);
-
-        List<String> images = List.of("path1", "path2", "path3");
-
-        BoardServiceRequest.BoardCreateServiceRequest request = BoardServiceRequest.BoardCreateServiceRequest.builder()
-                .title("xxx")
-                .content("xxx")
-                .categoryBoard(CategoryBoard.VOTE)
-                .memberId(savedMember.getMemberId())
-                .deadLine(LocalDateTime.now())
-                .boardImages(images)
-                .build();
+        Member WRITER_SONNY = NORMAL_MEMBER_SONNY.createMember();
+        Member savedMember = memberRepository.save(WRITER_SONNY);
+        List<String> images = createImagePaths(3);
+        BoardServiceRequest.BoardCreateServiceRequest request = createSaveRequest(VOTE, savedMember, images);
 
         // when
         BoardResponse.BoardCreateResponse result = boardService.createBoard(request);
@@ -67,102 +68,298 @@ class BoardServiceImplTest extends IntegrationTestSupport {
         // then
         assertThat(result.getTitle()).isEqualTo("xxx");
         assertThat(result.getContent()).isEqualTo("xxx");
-        assertThat(result.getCategoryBoard()).isEqualTo(CategoryBoard.VOTE);
+        assertThat(result.getCategoryBoard()).isEqualTo(VOTE);
+        assertThat(result.getBoardImages()).hasSize(3);
     }
 
-    @DisplayName("게시글의 제목과 내용, 이미지 한장을 새로 추가한다. - 트랜잭션 필요")
-    @Transactional
+    @DisplayName("투표 타입의 게시글을 생성할 때, 등록한 이미지가 1장일 경우 예외가 발생한다.")
     @Test
-    void updateBoard() {
+    void create_Board_Category_Is_Vote_When_One_Images() {
         // given
-        Member COMMENT_WRITER_SONNY = NORMAL_MEMBER_SONNY.createMember();
-        Member savedMember = memberRepository.save(COMMENT_WRITER_SONNY);
-        List<String> images = List.of("path1", "path2", "path3");
+        Member WRITER_SONNY = NORMAL_MEMBER_SONNY.createMember();
+        Member savedMember = memberRepository.save(WRITER_SONNY);
+        List<String> images = createImagePaths(1);
+        BoardServiceRequest.BoardCreateServiceRequest request = createSaveRequest(VOTE, savedMember, images);
 
-        Board board = Board.builder()
-                .title("xxx")
-                .content("xxx")
-                .member(savedMember)
-                .categoryBoard(CategoryBoard.VOTE)
-                .deadLine(LocalDateTime.now())
-                .images(images)
-                .build();
+        // when & then
+        assertThatThrownBy(() -> boardService.createBoard(request))
+                .isInstanceOf(BoardBusinessException.class)
+                .hasMessage(BoardErrorCode.BOARD_VOTE_IMAGE_RANGE_OUT.getMessage());
+    }
+
+    @DisplayName("투표 타입의 게시글을 생성할 때, 등록한 이미지가 5장을 초과할 경우 예외가 발생한다.")
+    @Test
+    void create_Board_Category_Is_Vote_When_Over_Five_Images() {
+        // given
+        Member WRITER_SONNY = NORMAL_MEMBER_SONNY.createMember();
+        Member savedMember = memberRepository.save(WRITER_SONNY);
+        List<String> images = createImagePaths(6);
+        BoardServiceRequest.BoardCreateServiceRequest request = createSaveRequest(VOTE, savedMember, images);
+
+        // when & then
+        assertThatThrownBy(() -> boardService.createBoard(request))
+                .isInstanceOf(BoardBusinessException.class)
+                .hasMessage(BoardErrorCode.BOARD_VOTE_IMAGE_RANGE_OUT.getMessage());
+    }
+
+    @DisplayName("찬반 타입의 게시글을 생성할 경우, 이미지를 1장만 등록할 수 있다.")
+    @Test
+    void create_Board_Category_Is_Choice() {
+        // given
+        Member WRITER_SONNY = NORMAL_MEMBER_SONNY.createMember();
+        Member savedMember = memberRepository.save(WRITER_SONNY);
+        List<String> images = createImagePaths(1);
+        BoardServiceRequest.BoardCreateServiceRequest request = createSaveRequest(CHOICE, savedMember, images);
+
+        // when
+        BoardResponse.BoardCreateResponse result = boardService.createBoard(request);
+
+        // then
+        assertThat(result.getTitle()).isEqualTo("xxx");
+        assertThat(result.getContent()).isEqualTo("xxx");
+        assertThat(result.getCategoryBoard()).isEqualTo(CHOICE);
+        assertThat(result.getBoardImages()).hasSize(1);
+    }
+
+    @DisplayName("찬반 타입의 게시글을 생성할 때, 등록한 이미지가 1장을 초과할 경우 예외가 발생한다.")
+    @Test
+    void create_Board_Category_Is_Choice_When_Two_Images() {
+        // given
+        Member WRITER_SONNY = NORMAL_MEMBER_SONNY.createMember();
+        Member savedMember = memberRepository.save(WRITER_SONNY);
+        List<String> images = createImagePaths(2);
+        BoardServiceRequest.BoardCreateServiceRequest request = createSaveRequest(CHOICE, savedMember, images);
+
+        // when & then
+        assertThatThrownBy(() -> boardService.createBoard(request))
+                .isInstanceOf(BoardBusinessException.class)
+                .hasMessage(BoardErrorCode.BOARD_CHOICE_IMAGE_RANGE_OUT.getMessage());
+    }
+
+    @DisplayName("게시글 작성자만이 게시글을 수정할 수 있다.")
+    @Test
+    void update_Board_Only_Writer_Allow() {
+        // given
+        Member WRITER_SONNY = NORMAL_MEMBER_SONNY.createMember();
+        Member savedMember = memberRepository.save(WRITER_SONNY);
+        List<String> images = createImagePaths(3);
+        Board board = createBoard(VOTE, savedMember, images);
         Board savedBoard = boardRepository.save(board);
-
-        List<String> updateImages = List.of(
-                "path2",
-                "path3",
-                "new-path"
-        );
-
-        BoardServiceRequest.BoardUpdateServiceRequest request = BoardServiceRequest.BoardUpdateServiceRequest.builder()
-                .memberId(COMMENT_WRITER_SONNY.getMemberId())
-                .title("update-xxx")
-                .content("update-xxx")
-                .categoryBoard(CategoryBoard.VOTE)
-                .deadLine(LocalDateTime.now())
-                .boardImages(updateImages)
-                .build();
+        List<String> updateImages = createImagePaths(3);
+        BoardServiceRequest.BoardUpdateServiceRequest request = createUpdateRequest(VOTE, WRITER_SONNY, updateImages);
 
         // when
         boardService.updateBoard(savedBoard.getId(), request);
 
         // then
-        // Board를 가져온 후 getBoardImages()로 연관관계 조회를 위해 새 트랜잭션이 필요하다.
-        Board updatedBoard = boardRepository.findById(savedBoard.getId()).get();
-
-        assertThat(updatedBoard.getTitle()).isEqualTo("update-xxx");
-        assertThat(updatedBoard.getContent()).isEqualTo("update-xxx");
-        assertThat(updatedBoard.getBoardImages()).hasSize(3)
-                .extracting("path")
-                .containsExactlyInAnyOrder(
-                        "path2", "path3", "new-path"
-                );
+        assertThat(board.getMember()).isSameAs(savedMember);
     }
 
-    @DisplayName("게시글의 이미지 중 한장을 수정한다. - 트랜잭션 필요 X")
+    @DisplayName("게시글 작성자가 아닐 경우, 게시글을 수정할 수 없다.")
     @Test
-    void updateBoardFindBoardImage() {
+    void update_Board_Other_Writer_Not_Allow() {
         // given
-        Member COMMENT_WRITER_SONNY = NORMAL_MEMBER_SONNY.createMember();
-        Member savedMember = memberRepository.save(COMMENT_WRITER_SONNY);
-
-        List<String> images = List.of("path1", "path2", "path3");
-
-        Board board = Board.builder()
-                .title("xxx")
-                .content("xxx")
-                .member(savedMember)
-                .categoryBoard(CategoryBoard.VOTE)
-                .deadLine(LocalDateTime.now())
-                .images(images)
-                .build();
+        Member WRITER_SONNY = NORMAL_MEMBER_SONNY.createMember();
+        Member NOT_WRITER_LANGO = NORMAL_MEMBER_LANGO.createMember();
+        Member savedMember = memberRepository.save(WRITER_SONNY);
+        memberRepository.save(NOT_WRITER_LANGO);
+        List<String> images = createImagePaths(3);
+        Board board = createBoard(VOTE, savedMember, images);
         Board savedBoard = boardRepository.save(board);
+        List<String> updateImages = createImagePaths(3);
+        BoardServiceRequest.BoardUpdateServiceRequest request = createUpdateRequest(VOTE, NOT_WRITER_LANGO, updateImages);
 
-        List<String> updateImages = List.of(
-                "path2",
-                "path3"
-        );
+        // when & then
+        assertThatThrownBy(() -> boardService.updateBoard(savedBoard.getId(), request))
+                .isInstanceOf(BoardBusinessException.class)
+                .hasMessage(BoardErrorCode.UNAUTHORIZED_TO_UPDATE_BOARD.getMessage());
+    }
 
-        BoardServiceRequest.BoardUpdateServiceRequest request = BoardServiceRequest.BoardUpdateServiceRequest.builder()
-                .memberId(COMMENT_WRITER_SONNY.getMemberId())
-                .title("update-xxx")
-                .content("update-xxx")
-                .categoryBoard(CategoryBoard.VOTE)
-                .deadLine(LocalDateTime.now())
-                .boardImages(updateImages)
-                .build();
+    @DisplayName("투표 타입의 게시글을 수정할 경우, 이미지는 최대 5장까지 추가할 수 있다.")
+    @Test
+    void update_Board_Category_Is_Vote_Limit_Five_Images() {
+        // given
+        Member WRITER_SONNY = NORMAL_MEMBER_SONNY.createMember();
+        Member savedMember = memberRepository.save(WRITER_SONNY);
+        List<String> images = createImagePaths(3);
+        Board board = createBoard(VOTE, savedMember, images);
+        Board savedBoard = boardRepository.save(board);
+        List<String> updateImages = createImagePaths(5);
+        BoardServiceRequest.BoardUpdateServiceRequest request = createUpdateRequest(VOTE, WRITER_SONNY, updateImages);
 
         // when
         boardService.updateBoard(savedBoard.getId(), request);
 
         // then
-        List<BoardImage> boardImages = boardImageRepository.findByBoardId(savedBoard.getId());
-        assertThat(boardImages).hasSize(2)
-                .extracting("path")
-                .containsExactlyInAnyOrder(
-                        "path2", "path3"
-                );
+        List<BoardImage> result = boardImageRepository.findByBoardId(board.getId());
+        assertThat(result).hasSize(5);
+    }
+
+    @DisplayName("투표 타입의 게시글을 수정할 경우, 이미지가 5장을 초과한다면 예외가 발생한다.")
+    @Test
+    void update_Board_Category_Is_Vote_Over_Five_Images() {
+        // given
+        Member WRITER_SONNY = NORMAL_MEMBER_SONNY.createMember();
+        Member savedMember = memberRepository.save(WRITER_SONNY);
+        List<String> images = createImagePaths(3);
+        Board board = createBoard(VOTE, savedMember, images);
+        Board savedBoard = boardRepository.save(board);
+        List<String> updateImages = createImagePaths(7);
+        BoardServiceRequest.BoardUpdateServiceRequest request = createUpdateRequest(VOTE, WRITER_SONNY, updateImages);
+
+        // when & then
+        assertThatThrownBy(() -> boardService.updateBoard(savedBoard.getId(), request))
+                .isInstanceOf(BoardBusinessException.class)
+                .hasMessage(BoardErrorCode.BOARD_VOTE_IMAGE_RANGE_OUT.getMessage());
+    }
+
+    @DisplayName("투표 타입의 게시글을 수정할 경우, 이미지를 2장 미만으로 삭제하면 예외가 발생한다.")
+    @Test
+    void update_Board_Category_Is_Vote_Under_Two_Images() {
+        // given
+        Member WRITER_SONNY = NORMAL_MEMBER_SONNY.createMember();
+        Member savedMember = memberRepository.save(WRITER_SONNY);
+        List<String> images = createImagePaths(3);
+        Board board = createBoard(VOTE, savedMember, images);
+        Board savedBoard = boardRepository.save(board);
+        List<String> updateImages = createImagePaths(1);
+        BoardServiceRequest.BoardUpdateServiceRequest request = createUpdateRequest(VOTE, WRITER_SONNY, updateImages);
+
+        // when & then
+        assertThatThrownBy(() -> boardService.updateBoard(savedBoard.getId(), request))
+                .isInstanceOf(BoardBusinessException.class)
+                .hasMessage(BoardErrorCode.BOARD_VOTE_IMAGE_RANGE_OUT.getMessage());
+    }
+
+    @DisplayName("찬반 타입의 게시글을 수정할 경우, 이미지가 1장이 아니라면 예외가 발생한다.")
+    @Test
+    void update_Board_Category_Is_Choice_Over_Five_Images() {
+        // given
+        Member WRITER_SONNY = NORMAL_MEMBER_SONNY.createMember();
+        Member savedMember = memberRepository.save(WRITER_SONNY);
+        List<String> images = createImagePaths(1);
+        Board board = createBoard(CHOICE, savedMember, images);
+        Board savedBoard = boardRepository.save(board);
+        List<String> updateImages = createImagePaths(2);
+        BoardServiceRequest.BoardUpdateServiceRequest request = createUpdateRequest(CHOICE, WRITER_SONNY, updateImages);
+
+        // when & then
+        assertThatThrownBy(() -> boardService.updateBoard(savedBoard.getId(), request))
+                .isInstanceOf(BoardBusinessException.class)
+                .hasMessage(BoardErrorCode.BOARD_CHOICE_IMAGE_RANGE_OUT.getMessage());
+    }
+    
+    @DisplayName("게시글을 삭제할 경우, 등록된 게시글 이미지까지 모두 삭제된다.")
+    @Test
+    void delete_Board() {
+        // given
+        Member WRITER_SONNY = NORMAL_MEMBER_SONNY.createMember();
+        Member savedMember = memberRepository.save(WRITER_SONNY);
+        List<String> images = createImagePaths(1);
+        Board board = createBoard(CHOICE, savedMember, images);
+        Board savedBoard = boardRepository.save(board);
+
+        // when
+        boardService.deleteBoard(savedBoard.getId());
+
+        // then
+        Optional<Board> result = boardRepository.findById(savedBoard.getId());
+        List<BoardImage> deletedImages = boardImageRepository.findByBoardId(savedBoard.getId());
+        assertThat(result).isEmpty();
+        assertThat(deletedImages).isEmpty();
+    }
+
+    @DisplayName("투표 타입의 게시글 상세정보를 조회한다.")
+    @Test
+    void get_Board_Category_Is_Vote() {
+        // given
+        Member WRITER_SONNY = NORMAL_MEMBER_SONNY.createMember();
+        Member savedMember = memberRepository.save(WRITER_SONNY);
+        List<String> images = createImagePaths(3);
+        Board board = createBoard(VOTE, savedMember, images);
+        Board savedBoard = boardRepository.save(board);
+
+        // when
+        BoardResponse.BoardGetResponse result = boardService.getBoard(savedBoard.getId());
+
+        // then
+        assertThat(result.getTitle()).isEqualTo("xxx");
+        assertThat(result.getContent()).isEqualTo("xxx");
+        assertThat(result.getCategoryBoard()).isEqualTo(VOTE);
+        assertThat(result.getBoardImages()).hasSize(3);
+    }
+
+    @DisplayName("찬반 타입의 게시글 상세정보를 조회한다.")
+    @Test
+    void get_Board() {
+        // given
+        Member WRITER_SONNY = NORMAL_MEMBER_SONNY.createMember();
+        Member savedMember = memberRepository.save(WRITER_SONNY);
+        List<String> images = createImagePaths(1);
+        Board board = createBoard(CHOICE, savedMember, images);
+        Board savedBoard = boardRepository.save(board);
+
+        // when
+        BoardResponse.BoardGetResponse result = boardService.getBoard(savedBoard.getId());
+
+        // then
+        assertThat(result.getTitle()).isEqualTo("xxx");
+        assertThat(result.getContent()).isEqualTo("xxx");
+        assertThat(result.getCategoryBoard()).isEqualTo(CHOICE);
+        assertThat(result.getBoardImages()).hasSize(1);
+    }
+
+    private static Board createBoard(
+            CategoryBoard category,
+            Member savedMember,
+            List<String> images
+    ) {
+        return Board.builder()
+                .title("xxx")
+                .content("xxx")
+                .member(savedMember)
+                .categoryBoard(category)
+                .deadLine(LocalDateTime.now())
+                .images(images)
+                .build();
+    }
+
+    private static List<String> createImagePaths(
+            int size
+    ) {
+        return IntStream.range(0, size)
+                .mapToObj(i -> "s3-image-path-" + (i+1))
+                .collect(Collectors.toList());
+    }
+
+    private static BoardServiceRequest.BoardCreateServiceRequest createSaveRequest(
+            CategoryBoard category,
+            Member member,
+            List<String> images
+    ) {
+        return BoardServiceRequest.BoardCreateServiceRequest.builder()
+                .title("xxx")
+                .content("xxx")
+                .categoryBoard(category)
+                .memberId(member.getMemberId())
+                .deadLine(LocalDateTime.now())
+                .boardImages(images)
+                .build();
+    }
+
+    private static BoardServiceRequest.BoardUpdateServiceRequest createUpdateRequest(
+            CategoryBoard category,
+            Member member,
+            List<String> images
+    ) {
+        return BoardServiceRequest.BoardUpdateServiceRequest.builder()
+                .memberId(member.getMemberId())
+                .title("update-xxx")
+                .content("update-xxx")
+                .categoryBoard(category)
+                .deadLine(LocalDateTime.now())
+                .boardImages(images)
+                .build();
     }
 
 }

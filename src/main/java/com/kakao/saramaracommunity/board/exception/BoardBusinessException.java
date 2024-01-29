@@ -7,11 +7,10 @@ import lombok.Getter;
  * Unchecked Exception(RuntimeException)을 상속받기에 예외가 발생하면 롤백을 수행합니다.
  */
 @Getter
-public class BoardAttachOutOfRangeException extends RuntimeException {
-
+public class BoardBusinessException extends RuntimeException {
     private final BoardErrorCode statusWithCode;
 
-    public BoardAttachOutOfRangeException(BoardErrorCode statusWithCode) {
+    public BoardBusinessException(BoardErrorCode statusWithCode) {
         super(statusWithCode.getMessage());
         this.statusWithCode = statusWithCode;
     }

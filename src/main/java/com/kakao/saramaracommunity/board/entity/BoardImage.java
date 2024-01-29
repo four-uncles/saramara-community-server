@@ -23,13 +23,16 @@ public class BoardImage extends BaseTimeEntity {
     private String path;
 
     @Builder
-    public BoardImage(Board board, String path) {
+    private BoardImage(Board board, String path) {
         this.board = board;
         this.path = path;
     }
 
-    public void update(String path) {
-        this.path = path;
+    public static BoardImage of(Board board, String newImagePath) {
+        return BoardImage.builder()
+                .board(board)
+                .path(newImagePath)
+                .build();
     }
 
 }
