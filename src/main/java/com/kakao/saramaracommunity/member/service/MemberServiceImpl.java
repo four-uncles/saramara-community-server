@@ -1,7 +1,9 @@
 package com.kakao.saramaracommunity.member.service;
 
-import java.util.Optional;
-
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,16 +20,22 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 @RequiredArgsConstructor
 @Transactional
-public class MemberServiceImpl implements MemberService {
+public class MemberServiceImpl implements MemberService, UserDetailsService {
 
 	private final MemberRepository memberRepository;
+
+	private final PasswordEncoder passwordEncoder;
 
 	@Override
 	@Transactional
 	public void registerMember(MemberRegisterRequest request) {
-		Member newMember = Member.of(request);
-
-		memberRepository.save(newMember);
+		// Member newMember = Member.of(request);
+		Member build = Member.builder()
+			.email(request.email())
+			.password(passwordEncoder.encode(request.password()))
+			.nickname(request.nickname())
+			.build();
+		memberRepository.save(build);
 	}
 
 	@Override
@@ -46,5 +54,14 @@ public class MemberServiceImpl implements MemberService {
 		}
 
 		return member;
+	}
+
+	@Override
+	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+
+		Member member = memberRepository.findMemberByEmail(email)
+			.orElseThrow(() -> new RuntimeException("NOT FOUND MEMBER"));
+
+		return new AuthenticationDetail(email, member.getPassword());
 	}
 }

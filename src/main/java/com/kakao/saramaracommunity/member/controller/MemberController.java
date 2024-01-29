@@ -1,5 +1,6 @@
 package com.kakao.saramaracommunity.member.controller;
 
+import org.apache.catalina.manager.util.SessionUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,13 +34,22 @@ import lombok.extern.log4j.Log4j2;
 public class MemberController {
 
 	private final MemberService memberService;
-	private final HttpSession session;
 
 	@PostMapping("/login")
 	public ResponseEntity<ApiResponse> login (@RequestBody MemberLoginRequest request) {
 		Member member = memberService.login(request);
 
-		session.setAttribute("member", member.getEmail());
+		return ResponseEntity.ok().body(
+			ApiResponse.of(
+				HttpStatus.OK,
+				"로그인 성공!"
+			)
+		);
+	}
+
+	@PostMapping("/logout")
+	public ResponseEntity<ApiResponse> logout () {
+
 		return ResponseEntity.ok().body(
 			ApiResponse.of(
 				HttpStatus.OK,
