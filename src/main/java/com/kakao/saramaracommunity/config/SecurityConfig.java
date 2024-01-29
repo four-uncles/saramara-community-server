@@ -28,8 +28,11 @@ import org.springframework.security.web.context.HttpSessionSecurityContextReposi
 import org.springframework.security.web.context.RequestAttributeSecurityContextRepository;
 import org.springframework.security.web.context.SecurityContextRepository;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kakao.saramaracommunity.filter.LoginAuthenticationFilter;
 import com.kakao.saramaracommunity.handler.CustomAuthenticationSuccessHandler;
+import com.kakao.saramaracommunity.member.entity.Member;
+import com.kakao.saramaracommunity.member.service.MemberService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -39,6 +42,10 @@ import lombok.RequiredArgsConstructor;
 public class SecurityConfig {
 
 	private final UserDetailsService userDetailsService;
+
+	private final MemberService memberService;
+
+	private final ObjectMapper objectMapper;
 
 	@Bean
 	public SecurityFilterChain filterChain (HttpSecurity httpSecurity) throws Exception {
@@ -104,6 +111,6 @@ public class SecurityConfig {
 	}
 
 	public AuthenticationSuccessHandler authenticationSuccessHandler() {
-		return new CustomAuthenticationSuccessHandler();
+		return new CustomAuthenticationSuccessHandler(memberService, objectMapper);
 	}
 }
