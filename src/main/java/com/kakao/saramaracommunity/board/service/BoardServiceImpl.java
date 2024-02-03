@@ -101,23 +101,21 @@ public class BoardServiceImpl implements BoardService {
                 .orElseThrow(() -> new BoardBusinessException(BoardErrorCode.BOARD_NOT_FOUND));
     }
 
+    /**
+     * @param sort 현재는 최신순 정렬(SortType - LATEST(DEFAULT))만 사용되어 파라미터의 sort는 사용되지 않음.
+     */
     private Long getNextCursorId(SortType sort, List<Board> boards) {
-        return boards.isEmpty() ?
-                null : SortType.POPULAR.equals(sort) ?
-                boards.get(boards.size() - 1).getLikeCount() : boards.get(boards.size() - 1).getId();
+        return boards.isEmpty() ? null : boards.get(boards.size() - 1).getId();
     }
 
+    /**
+     * @param sort 현재는 최신순 정렬(SortType - LATEST(DEFAULT))만 사용되어 파라미터의 sort는 사용되지 않음.
+     */
     private List<Board> getBoards(Long cursorId, Pageable page, SortType sort) {
-        if (SortType.POPULAR.equals(sort)) {
-            log.info("[BoardServiceImpl] 인기순으로 게시글을 조회합니다.(Reading all boards by popularity)");
-            return cursorId == null ?
-                    boardRepository.findAllByOrderByLikeCountDesc(page) :
-                    boardRepository.findByLikeCountLessThanOrderByLikeCountDesc(cursorId, page);
-        } else {
-            log.info("[BoardServiceImpl] 최신순으로 게시글을 조회합니다.(Reading all boards by latest)");
-            return cursorId == null ?
-                    boardRepository.findAllByOrderByCreatedAtDesc(page) :
-                    boardRepository.findByIdLessThanOrderByCreatedAtDesc(cursorId, page);
-        }
+        log.info("[BoardServiceImpl] 최신순으로 게시글을 조회합니다.(Reading all boards by latest)");
+        return cursorId == null ?
+                boardRepository.findAllByOrderByCreatedAtDesc(page) :
+                boardRepository.findByIdLessThanOrderByCreatedAtDesc(cursorId, page);
     }
+
 }
