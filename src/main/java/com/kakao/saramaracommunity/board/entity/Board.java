@@ -41,12 +41,6 @@ public class Board extends BaseTimeEntity {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
-    @Column(columnDefinition = "integer default 0", nullable = false)
-    private Long viewCount;
-
-    @Column(columnDefinition = "integer default 0", nullable = false)
-    private Long likeCount;
-
     private LocalDateTime deadLine;
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
@@ -58,8 +52,6 @@ public class Board extends BaseTimeEntity {
             CategoryBoard categoryBoard,
             String title,
             String content,
-            Long viewCount,
-            Long likeCount,
             LocalDateTime deadLine,
             List<String> images
     ) {
@@ -67,8 +59,6 @@ public class Board extends BaseTimeEntity {
         this.categoryBoard = categoryBoard;
         this.title = title;
         this.content = content;
-        this.viewCount = viewCount;
-        this.likeCount = likeCount;
         this.deadLine = deadLine;
         this.boardImages = createBoardImages(images);
         validateImageCount(this.categoryBoard, images);
@@ -150,12 +140,6 @@ public class Board extends BaseTimeEntity {
                 throw new BoardBusinessException(BoardErrorCode.BOARD_CHOICE_IMAGE_RANGE_OUT);
             }
         }
-    }
-
-    @PrePersist
-    public void prePersist() {
-        this.viewCount = this.viewCount == null ? 0 : this.viewCount;
-        this.likeCount = this.likeCount == null ? 0 : this.likeCount;
     }
 
 }
