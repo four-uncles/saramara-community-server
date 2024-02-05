@@ -10,6 +10,7 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kakao.saramaracommunity.common.response.ApiResponse;
+import com.kakao.saramaracommunity.member.controller.response.MemberInfoResponse;
 import com.kakao.saramaracommunity.member.service.MemberService;
 
 import jakarta.servlet.ServletException;
@@ -34,7 +35,8 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 		response.setContentType("application/json");
 		response.setCharacterEncoding("utf-8");
 
-		ApiResponse<Object> bodyJson = ApiResponse.of(HttpStatus.OK, "로그인에 성공하셨습니다.");
+		MemberInfoResponse authenticatedMember = memberService.getMemberInfoByEmail(authentication.getName());
+		ApiResponse<Object> bodyJson = ApiResponse.of(HttpStatus.OK, "로그인에 성공하셨습니다.", authenticatedMember.email());
 
 		String body = objectMapper.writeValueAsString(bodyJson);
 

@@ -35,29 +35,6 @@ public class MemberController {
 
 	private final MemberService memberService;
 
-	@PostMapping("/login")
-	public ResponseEntity<ApiResponse> login (@RequestBody MemberLoginRequest request) {
-		Member member = memberService.login(request);
-
-		return ResponseEntity.ok().body(
-			ApiResponse.of(
-				HttpStatus.OK,
-				"로그인 성공!"
-			)
-		);
-	}
-
-	@PostMapping("/logout")
-	public ResponseEntity<ApiResponse> logout () {
-
-		return ResponseEntity.ok().body(
-			ApiResponse.of(
-				HttpStatus.OK,
-				"로그인 성공!"
-			)
-		);
-	}
-
 	@PostMapping("/register")
 	public ResponseEntity<ApiResponse> registerMember (@RequestBody MemberRegisterRequest request) {
 		memberService.registerMember(request);
