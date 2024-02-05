@@ -24,18 +24,4 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
      */
     List<Board> findByIdLessThanOrderByCreatedAtDesc(Long boardId, Pageable page);
 
-    /**
-     * SELECT * FROM Board
-     * ORDER BY like_cnt DESC
-     * LIMIT :pageSize OFFSET :pageNumber
-     */
-    List<Board> findAllByOrderByLikeCountDesc(Pageable page);
-
-    /**
-     * SELECT * FROM Board
-     * WHERE like_cnt < :likeCnt
-     * ORDER BY like_cnt DESC
-     * LIMIT :pageSize OFFSET :pageNumber
-     */
-    List<Board> findByLikeCountLessThanOrderByLikeCountDesc(Long LikeCnt, Pageable page);
 }
