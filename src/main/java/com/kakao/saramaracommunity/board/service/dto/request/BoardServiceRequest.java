@@ -4,7 +4,10 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.kakao.saramaracommunity.board.entity.Board;
 import com.kakao.saramaracommunity.board.entity.CategoryBoard;
 import com.kakao.saramaracommunity.member.entity.Member;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -46,13 +49,13 @@ public class BoardServiceRequest {
                     .categoryBoard(categoryBoard)
                     .member(member)
                     .deadLine(deadLine)
-                    .attachPaths(boardImages)
+                    .images(boardImages)
                     .build();
         }
     }
 
-    @NoArgsConstructor(access = AccessLevel.PROTECTED)
     @Getter
+    @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class BoardUpdateServiceRequest {
 
         private Long memberId;

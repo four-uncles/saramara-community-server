@@ -23,6 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * AWS S3 버킷과 연동하여 이미지 객체 업로드 여부를 테스트할 클래스입니다.
  * 통합 테스트를 위해 @SpringBootTest를 설정했습니다.
+ * 추후, 통합 테스트가 아닌 Mockking을 통한 단위 테스트로 수정할 예정입니다.
  */
 class AwsS3BucketUploadIntegrationTest extends IntegrationTestSupport {
 
