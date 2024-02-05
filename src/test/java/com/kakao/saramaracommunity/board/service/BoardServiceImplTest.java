@@ -341,7 +341,7 @@ class BoardServiceImplTest extends IntegrationTestSupport {
                 .title("xxx")
                 .content("xxx")
                 .categoryBoard(category)
-                .memberId(member.getMemberId())
+                .memberId(member.getId())
                 .deadLine(LocalDateTime.now())
                 .boardImages(images)
                 .build();
@@ -353,7 +353,7 @@ class BoardServiceImplTest extends IntegrationTestSupport {
             List<String> images
     ) {
         return BoardServiceRequest.BoardUpdateServiceRequest.builder()
-                .memberId(member.getMemberId())
+                .memberId(member.getId())
                 .title("update-xxx")
                 .content("update-xxx")
                 .categoryBoard(category)

@@ -3,6 +3,8 @@ package com.kakao.saramaracommunity.member.service;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
+import java.util.Optional;
+
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -33,7 +35,7 @@ class MemberServiceImplTest {
 		MemberRegisterRequest newMemberInfo = new MemberRegisterRequest("test@gmail.com", "testPwd", "testNickname");
 		Member newMember = Member.of(newMemberInfo);
 		given(memberRepository.existsMemberByEmail(anyString())).willReturn(true);
-		given(memberRepository.findMemberByEmail(anyString())).willReturn(newMember);
+		given(memberRepository.findMemberByEmail(anyString())).willReturn(Optional.ofNullable(newMember));
 		given(memberRepository.save(any())).willReturn(newMember);
 
 		// when
