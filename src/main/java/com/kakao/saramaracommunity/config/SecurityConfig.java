@@ -78,10 +78,6 @@ public class SecurityConfig {
 					.deleteCookies("JSESSONID")
 					.logoutSuccessHandler(
 						((request, response, authentication) -> SecurityContextHolder.clearContext())))
-			// .securityContext((securityContext) ->
-			// 	securityContext.securityContextRepository(delegatingSecurityContextRepository())
-			// 		.requireExplicitSave(true)
-			// )
 			.headers(
 				httpSecurityHeadersConfigurer ->
 					httpSecurityHeadersConfigurer
