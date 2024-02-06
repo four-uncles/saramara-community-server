@@ -11,5 +11,5 @@ public interface MemberService {
 
 	MemberInfoResponse getMemberInfoByEmail(String email);
 
-	Member login(MemberLoginRequest request);
+	Member localLogin(MemberLoginRequest request);
 }

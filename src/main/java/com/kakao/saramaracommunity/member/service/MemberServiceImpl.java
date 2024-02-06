@@ -1,5 +1,7 @@
 package com.kakao.saramaracommunity.member.service;
 
+import static com.kakao.saramaracommunity.member.exception.MemberErrorCode.*;
+
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -11,6 +13,8 @@ import com.kakao.saramaracommunity.member.controller.request.MemberLoginRequest;
 import com.kakao.saramaracommunity.member.controller.request.MemberRegisterRequest;
 import com.kakao.saramaracommunity.member.controller.response.MemberInfoResponse;
 import com.kakao.saramaracommunity.member.entity.Member;
+import com.kakao.saramaracommunity.member.exception.MemberErrorCode;
+import com.kakao.saramaracommunity.member.exception.MemberException;
 import com.kakao.saramaracommunity.member.repository.MemberRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -41,16 +45,16 @@ public class MemberServiceImpl implements MemberService, UserDetailsService {
 	@Override
 	@Transactional(readOnly = true)
 	public MemberInfoResponse getMemberInfoByEmail(String email) {
-		Member memberInfo = memberRepository.findMemberByEmail(email).orElseThrow(()-> new RuntimeException("NOT FOUND MEMBER"));
+		Member memberInfo = memberRepository.findMemberByEmail(email).orElseThrow(()-> new MemberException(MEMBER_NOT_FOUND));
 		return MemberInfoResponse.from(memberInfo);
 	}
 
 	@Override
-	public Member login(MemberLoginRequest request) {
-		Member member = memberRepository.findMemberByEmail(request.email()).orElseThrow(()-> new RuntimeException("NOT FOUND MEMBER"));
+	public Member localLogin(MemberLoginRequest request) {
+		Member member = memberRepository.findMemberByEmail(request.email()).orElseThrow(()-> new MemberException(MEMBER_NOT_FOUND));
 
 		if (!member.getPassword().equals(request.password())) {
-			throw new RuntimeException("비밀번호가 틀렸습니다.");
+			throw new MemberException(WRONG_PASSWORD);
 		}
 
 		return member;
@@ -60,7 +64,7 @@ public class MemberServiceImpl implements MemberService, UserDetailsService {
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
 		Member member = memberRepository.findMemberByEmail(email)
-			.orElseThrow(() -> new RuntimeException("NOT FOUND MEMBER"));
+			.orElseThrow(() -> new MemberException(MEMBER_NOT_FOUND));
 
 		return new AuthenticationDetail(email, member.getPassword());
 	}

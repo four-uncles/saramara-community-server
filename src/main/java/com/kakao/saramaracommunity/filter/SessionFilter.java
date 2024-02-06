@@ -21,8 +21,7 @@ public class SessionFilter extends OncePerRequestFilter {
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
 		FilterChain filterChain) throws ServletException, IOException {
-		ContentCachingRequestWrapper cachedRequest = new ContentCachingRequestWrapper(request);
-		Cookie[] cookies = cachedRequest.getCookies();
+		Cookie[] cookies = request.getCookies();
 		if (cookies != null) {
 			Cookie session = Arrays.stream(cookies).filter(cookie -> cookie.getName().equals("JSEESSIONID"))
 				.findFirst().orElse(null);
