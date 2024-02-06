@@ -62,7 +62,7 @@ class CommentServiceImplTest extends IntegrationTestSupport {
         Member WRITER_WOOGI = createWriter(NORMAL_MEMBER_WOOGI.createMember());
         Board REGISTED_BOARD = createBoard(NORMAL_MEMBER_LANGO.createMember());
         CommentCreateRequest request = new CommentCreateRequest(
-                WRITER_WOOGI.getMemberId(),
+                WRITER_WOOGI.getId(),
                 REGISTED_BOARD.getId(),
                 "1번 잠옷이 귀여워!!"
         );
@@ -118,7 +118,7 @@ class CommentServiceImplTest extends IntegrationTestSupport {
         String updateContent = "2번 잠옷이 귀여워!!";
 
         CommentUpdateRequest request = new CommentUpdateRequest(
-                oldComment.getMember().getMemberId(),
+                oldComment.getMember().getId(),
                 updateContent
         );
 
@@ -140,7 +140,7 @@ class CommentServiceImplTest extends IntegrationTestSupport {
         Board REGISTED_BOARD = createBoard(NORMAL_MEMBER_LANGO.createMember());
         Comment RESISTED_COMMENT = createComment(WRITER_WOOGI, REGISTED_BOARD);
 
-        CommentDeleteRequest request = new CommentDeleteRequest(WRITER_WOOGI.getMemberId());
+        CommentDeleteRequest request = new CommentDeleteRequest(WRITER_WOOGI.getId());
 
         // when & then
         assertThatCode(

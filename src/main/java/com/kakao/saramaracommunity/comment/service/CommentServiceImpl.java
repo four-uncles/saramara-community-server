@@ -67,7 +67,7 @@ public class CommentServiceImpl implements CommentService{
     }
 
     private void verifyWriter(Comment comment, Long memberId) {
-        if (!comment.getMember().getMemberId().equals(memberId)) {
+        if (!comment.getMember().getId().equals(memberId)) {
             throw new CommentUnauthorizedException(CommentErrorCode.UNAUTHORIZED_TO_UPDATE_COMMENT);
         }
     }

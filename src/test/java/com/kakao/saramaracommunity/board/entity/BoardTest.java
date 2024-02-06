@@ -294,6 +294,7 @@ class BoardTest {
                         .hasMessage(UNAUTHORIZED_TO_UPDATE_BOARD.getMessage());
             }
         }
+
     }
 
     private static Board createBoard(
