@@ -85,7 +85,7 @@ public class BoardServiceImpl implements BoardService {
     }
 
     private void verifyBoardOwner(Board board, Long memberId) {
-        if (!board.getMember().getMemberId().equals(memberId)) throw new BoardBusinessException(BoardErrorCode.UNAUTHORIZED_TO_UPDATE_BOARD);
+        if (!board.getMember().getId().equals(memberId)) throw new BoardBusinessException(BoardErrorCode.UNAUTHORIZED_TO_UPDATE_BOARD);
     }
 
     /**

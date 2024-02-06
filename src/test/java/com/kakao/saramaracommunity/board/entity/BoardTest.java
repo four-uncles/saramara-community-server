@@ -104,7 +104,7 @@ class BoardTest {
         // when
         List<String> updateImages = createImagePaths(1);
         board.update(
-                NORMAL_MEMBER.getMemberId(),
+                NORMAL_MEMBER.getId(),
                 "update-title",
                 "update-content",
                 board.getCategoryBoard(),
@@ -133,7 +133,7 @@ class BoardTest {
         // when & then
         List<String> updateImages = createImagePaths(3);
         assertThatThrownBy(() -> board.update(
-                NORMAL_MEMBER.getMemberId(),
+                NORMAL_MEMBER.getId(),
                 "update-title",
                 "update-content",
                 board.getCategoryBoard(),
@@ -156,7 +156,7 @@ class BoardTest {
         // when
         List<String> updateImages = createImagePaths(4);
         board.update(
-                NORMAL_MEMBER.getMemberId(),
+                NORMAL_MEMBER.getId(),
                 "update-title",
                 "update-content",
                 VOTE,
@@ -188,7 +188,7 @@ class BoardTest {
         // when
         List<String> updateImages = createImagePaths(5);
         board.update(
-                NORMAL_MEMBER.getMemberId(),
+                NORMAL_MEMBER.getId(),
                 "update-title",
                 "update-content",
                 VOTE,
@@ -221,7 +221,7 @@ class BoardTest {
         // when & then
         List<String> updateImages = createImagePaths(6);
         assertThatThrownBy(() -> board.update(
-                NORMAL_MEMBER.getMemberId(),
+                NORMAL_MEMBER.getId(),
                 "update-title",
                 "update-content",
                 VOTE,
@@ -244,7 +244,7 @@ class BoardTest {
         // when
         List<String> updateImages = createImagePaths(2);
         board.update(
-                NORMAL_MEMBER.getMemberId(),
+                NORMAL_MEMBER.getId(),
                 "update-title",
                 "update-content",
                 VOTE,
@@ -274,7 +274,7 @@ class BoardTest {
         // when & then
         List<String> updateImages = createImagePaths(1);
         assertThatThrownBy(() -> board.update(
-                NORMAL_MEMBER.getMemberId(),
+                NORMAL_MEMBER.getId(),
                 "update-title",
                 "update-content",
                 VOTE,
@@ -298,7 +298,7 @@ class BoardTest {
 
         // when & then
         assertThatThrownBy(() -> board.update(
-                MEMBER_SONNY.getMemberId(),
+                MEMBER_SONNY.getId(),
                 "update-title",
                 "update-content",
                 VOTE,

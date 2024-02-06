@@ -72,7 +72,7 @@ public class Board extends BaseTimeEntity {
             LocalDateTime deadLine,
             List<String> images
     ) {
-        validateWriter(this.member.getMemberId(), memberId);
+        validateWriter(this.member.getId(), memberId);
         this.title = title;
         this.content = content;
         this.categoryBoard = categoryBoard;

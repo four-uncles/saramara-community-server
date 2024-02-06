@@ -57,7 +57,7 @@ class CommentServiceImplTest extends IntegrationTestSupport {
         String content = "불법 광고 댓글";
 
         // when & then
-        assertThatThrownBy(() -> new CommentCreateRequest(UNREGISTER_GUEST.getMemberId(),
+        assertThatThrownBy(() -> new CommentCreateRequest(UNREGISTER_GUEST.getId(),
                 REGISTED_BOARD.getId(),
                 content))
                 .isInstanceOf(NullPointerException.class);
@@ -94,7 +94,7 @@ class CommentServiceImplTest extends IntegrationTestSupport {
         String updateContent = "2번 잠옷이 귀여워!!";
 
         CommentUpdateRequest request = new CommentUpdateRequest(
-                WRITER_SONNY.getMemberId(),
+                WRITER_SONNY.getId(),
                 updateContent
         );
 
@@ -113,7 +113,7 @@ class CommentServiceImplTest extends IntegrationTestSupport {
         Board REGISTED_BOARD = createBoard(NORMAL_MEMBER_LANGO.createMember());
         Comment REGISTED_COMMENT = createComment(WRITER_WOOGI, REGISTED_BOARD);
         Member WRITER_SONNY = createWriter(NORMAL_MEMBER_SONNY.createMember());
-        CommentDeleteRequest request = new CommentDeleteRequest(WRITER_SONNY.getMemberId());
+        CommentDeleteRequest request = new CommentDeleteRequest(WRITER_SONNY.getId());
 
         // when & then
         assertThatThrownBy(
