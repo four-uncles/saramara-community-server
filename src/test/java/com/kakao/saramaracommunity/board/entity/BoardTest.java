@@ -118,12 +118,12 @@ class BoardTest {
                     // given
                     List<String> images = createImagePaths(3);
                     Board board = createBoard(NORMAL_MEMBER, images, VOTE);
-                    setField(NORMAL_MEMBER, "memberId", 1L);
+                    setField(NORMAL_MEMBER, "id", 1L);
 
                     // when
                     List<String> updateImages = createImagePaths(5);
                     board.update(
-                            NORMAL_MEMBER.getMemberId(),
+                            NORMAL_MEMBER.getId(),
                             "update-title",
                             "update-content",
                             VOTE,
@@ -150,12 +150,12 @@ class BoardTest {
                     // given
                     List<String> images = createImagePaths(3);
                     Board board = createBoard(NORMAL_MEMBER, images, VOTE);
-                    setField(NORMAL_MEMBER, "memberId", 1L);
+                    setField(NORMAL_MEMBER, "id", 1L);
 
                     // when & then
                     List<String> updateImages = createImagePaths(6);
                     assertThatThrownBy(() -> board.update(
-                            NORMAL_MEMBER.getMemberId(),
+                            NORMAL_MEMBER.getId(),
                             "update-title",
                             "update-content",
                             VOTE,
@@ -171,12 +171,12 @@ class BoardTest {
                     // given
                     List<String> images = createImagePaths(3);
                     Board board = createBoard(NORMAL_MEMBER, images, VOTE);
-                    setField(NORMAL_MEMBER, "memberId", 1L);
+                    setField(NORMAL_MEMBER, "id", 1L);
 
                     // when
                     List<String> updateImages = createImagePaths(2);
                     board.update(
-                            NORMAL_MEMBER.getMemberId(),
+                            NORMAL_MEMBER.getId(),
                             "update-title",
                             "update-content",
                             VOTE,
@@ -199,12 +199,12 @@ class BoardTest {
                     // given
                     List<String> images = createImagePaths(3);
                     Board board = createBoard(NORMAL_MEMBER, images, VOTE);
-                    setField(NORMAL_MEMBER, "memberId", 1L);
+                    setField(NORMAL_MEMBER, "id", 1L);
 
                     // when & then
                     List<String> updateImages = createImagePaths(1);
                     assertThatThrownBy(() -> board.update(
-                            NORMAL_MEMBER.getMemberId(),
+                            NORMAL_MEMBER.getId(),
                             "update-title",
                             "update-content",
                             VOTE,
@@ -224,12 +224,12 @@ class BoardTest {
                     // given
                     List<String> images = createImagePaths(1);
                     Board board = createBoard(NORMAL_MEMBER, images, CHOICE);
-                    setField(NORMAL_MEMBER, "memberId", 1L);
+                    setField(NORMAL_MEMBER, "id", 1L);
 
                     // when
                     List<String> updateImages = createImagePaths(1);
                     board.update(
-                            NORMAL_MEMBER.getMemberId(),
+                            NORMAL_MEMBER.getId(),
                             "update-title",
                             "update-content",
                             board.getCategoryBoard(),
@@ -251,12 +251,12 @@ class BoardTest {
                     // given
                     List<String> images = createImagePaths(1);
                     Board board = createBoard(NORMAL_MEMBER, images, CHOICE);
-                    setField(NORMAL_MEMBER, "memberId", 1L);
+                    setField(NORMAL_MEMBER, "id", 1L);
 
                     // when & then
                     List<String> updateImages = createImagePaths(3);
                     assertThatThrownBy(() -> board.update(
-                            NORMAL_MEMBER.getMemberId(),
+                            NORMAL_MEMBER.getId(),
                             "update-title",
                             "update-content",
                             board.getCategoryBoard(),
@@ -278,12 +278,12 @@ class BoardTest {
                 Member NORMAL_MEMBER_NOT_WRITER = NORMAL_MEMBER_LANGO.createMember();
                 List<String> images = createImagePaths(3);
                 Board board = createBoard(NORMAL_MEMBER, images, VOTE);
-                setField(NORMAL_MEMBER, "memberId", 1L);
-                setField(NORMAL_MEMBER_NOT_WRITER, "memberId", 2L);
+                setField(NORMAL_MEMBER, "id", 1L);
+                setField(NORMAL_MEMBER_NOT_WRITER, "id", 2L);
 
                 // when & then
                 assertThatThrownBy(() -> board.update(
-                        NORMAL_MEMBER_NOT_WRITER.getMemberId(),
+                        NORMAL_MEMBER_NOT_WRITER.getId(),
                         "update-title",
                         "update-content",
                         VOTE,
