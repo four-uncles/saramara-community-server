@@ -39,7 +39,7 @@ public class Comment extends BaseTimeEntity {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
-    @Builder
+    @Builder(access = AccessLevel.PRIVATE)
     private Comment(Member member, Board board, String content) {
         this.member = member;
         this.board = board;

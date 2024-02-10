@@ -16,11 +16,7 @@ public record CommentCreateServiceRequest(Long memberId, Long boardId, String co
     }
 
     public Comment toEntity(Member member, Board board) {
-        return Comment.builder()
-                .member(member)
-                .board(board)
-                .content(content)
-                .build();
+        return Comment.of(member, board, content);
     }
 
 }
