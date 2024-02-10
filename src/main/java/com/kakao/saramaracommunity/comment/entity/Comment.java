@@ -1,6 +1,8 @@
 package com.kakao.saramaracommunity.comment.entity;
 
 import com.kakao.saramaracommunity.board.entity.Board;
+import com.kakao.saramaracommunity.comment.exception.CommentBusinessException;
+import com.kakao.saramaracommunity.comment.exception.CommentErrorCode;
 import com.kakao.saramaracommunity.common.entity.BaseTimeEntity;
 import com.kakao.saramaracommunity.member.entity.Member;
 import jakarta.persistence.Column;
@@ -47,6 +49,7 @@ public class Comment extends BaseTimeEntity {
     }
 
     public static Comment of(Member member, Board board, String content) {
+        validateMemberAndBoard(member, board);
         return Comment.builder()
                 .member(member)
                 .board(board)
@@ -54,8 +57,30 @@ public class Comment extends BaseTimeEntity {
                 .build();
     }
 
-    public void changeComment(String content) {
+    public void changeComment(Long memberId, String content) {
+        validateWriter(member.getId(), memberId);
         this.content = content;
+    }
+
+    /**
+     * 댓글 생성시 회원정보와 게시글 정보를 검증하기 위한 메서드입니다.
+     */
+    private static void validateMemberAndBoard(Member member, Board board) {
+        if (member == null || member.getId() == null) {
+            throw new CommentBusinessException(CommentErrorCode.MEMBER_NOT_FOUND);
+        }
+        if (board == null || board.getId() == null) {
+            throw new CommentBusinessException(CommentErrorCode.BOARD_NOT_FOUND);
+        }
+    }
+
+    /**
+     * 댓글 수정시 작성자를 검증하기 위한 메서드입니다.
+     */
+    private void validateWriter(Long originalWriter, Long requestWriter) {
+        if(!originalWriter.equals(requestWriter)){
+            throw new CommentBusinessException(CommentErrorCode.UNAUTHORIZED_TO_UPDATE_COMMENT);
+        }
     }
 
 }

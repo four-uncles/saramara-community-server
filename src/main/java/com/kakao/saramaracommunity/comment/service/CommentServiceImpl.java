@@ -5,7 +5,7 @@ import com.kakao.saramaracommunity.board.repository.BoardRepository;
 import com.kakao.saramaracommunity.comment.entity.Comment;
 import com.kakao.saramaracommunity.comment.exception.CommentErrorCode;
 import com.kakao.saramaracommunity.comment.exception.CommentNotFoundException;
-import com.kakao.saramaracommunity.comment.exception.CommentUnauthorizedException;
+import com.kakao.saramaracommunity.comment.exception.CommentBusinessException;
 import com.kakao.saramaracommunity.comment.repository.CommentRepository;
 import com.kakao.saramaracommunity.comment.service.dto.request.CommentCreateServiceRequest;
 import com.kakao.saramaracommunity.comment.service.dto.request.CommentDeleteServiceRequest;
@@ -55,7 +55,7 @@ public class CommentServiceImpl implements CommentService{
         Comment savedComment = getCommentEntity(commentId);
         verifyWriter(savedComment, request.memberId());
         log.info("[CommentServiceImpl.class] 요청에 따라 댓글을 수정합니다.");
-        savedComment.changeComment(request.content());
+        savedComment.changeComment(request.memberId(), request.content());
     }
 
     @Override
@@ -68,7 +68,7 @@ public class CommentServiceImpl implements CommentService{
 
     private void verifyWriter(Comment comment, Long memberId) {
         if (!comment.getMember().getId().equals(memberId)) {
-            throw new CommentUnauthorizedException(CommentErrorCode.UNAUTHORIZED_TO_UPDATE_COMMENT);
+            throw new CommentBusinessException(CommentErrorCode.UNAUTHORIZED_TO_UPDATE_COMMENT);
         }
     }
 
