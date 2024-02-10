@@ -1,5 +1,6 @@
 package com.kakao.saramaracommunity.member.controller;
 
+import org.apache.catalina.manager.util.SessionUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,14 +10,18 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.SessionAttribute;
 
 import com.kakao.saramaracommunity.common.response.ApiResponse;
+import com.kakao.saramaracommunity.member.controller.request.MemberLoginRequest;
 import com.kakao.saramaracommunity.member.controller.request.MemberRegisterRequest;
 import com.kakao.saramaracommunity.member.controller.response.MemberInfoResponse;
+import com.kakao.saramaracommunity.member.entity.Member;
 import com.kakao.saramaracommunity.member.service.MemberService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;

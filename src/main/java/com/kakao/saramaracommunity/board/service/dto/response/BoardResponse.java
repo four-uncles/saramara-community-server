@@ -21,8 +21,6 @@ public class BoardResponse {
         private final CategoryBoard categoryBoard;
         private final String writer;
         private final String memberEmail;
-        private final Long viewCount;
-        private final Long likeCount;
         private final LocalDateTime deadLine;
         private final List<String> boardImages;
 
@@ -34,8 +32,6 @@ public class BoardResponse {
                 CategoryBoard categoryBoard,
                 String writer,
                 String memberEmail,
-                Long viewCount,
-                Long likeCount,
                 LocalDateTime deadLine,
                 List<String> boardImages
         ) {
@@ -45,8 +41,6 @@ public class BoardResponse {
             this.categoryBoard = categoryBoard;
             this.writer = writer;
             this.memberEmail = memberEmail;
-            this.viewCount = viewCount;
-            this.likeCount = likeCount;
             this.deadLine = deadLine;
             this.boardImages = boardImages;
         }
@@ -59,8 +53,6 @@ public class BoardResponse {
                     .categoryBoard(board.getCategoryBoard())
                     .writer(board.getMember().getNickname())
                     .memberEmail(board.getMember().getEmail())
-                    .viewCount(board.getViewCount())
-                    .likeCount(board.getLikeCount())
                     .deadLine(board.getDeadLine())
                     .boardImages(board.getBoardImages().stream().
                             map(BoardImage::getPath)
@@ -103,8 +95,6 @@ public class BoardResponse {
         private final String content;
         private final CategoryBoard categoryBoard;
         private final String writer;
-        private final Long viewCount;
-        private final Long likeCount;
         private final LocalDateTime deadLine;
         private final List<String> boardImages;
 
@@ -115,8 +105,6 @@ public class BoardResponse {
                 String content,
                 CategoryBoard categoryBoard,
                 String writer,
-                Long viewCount,
-                Long likeCount,
                 LocalDateTime deadLine,
                 List<String> boardImages
         ) {
@@ -125,8 +113,6 @@ public class BoardResponse {
             this.content = content;
             this.categoryBoard = categoryBoard;
             this.writer = writer;
-            this.viewCount = viewCount;
-            this.likeCount = likeCount;
             this.deadLine = deadLine;
             this.boardImages = boardImages;
         }
@@ -138,8 +124,6 @@ public class BoardResponse {
                     .content(board.getContent())
                     .categoryBoard(board.getCategoryBoard())
                     .writer(board.getMember().getNickname())
-                    .viewCount(board.getViewCount())
-                    .likeCount(board.getLikeCount())
                     .deadLine(board.getDeadLine())
                     .boardImages(board.getBoardImages().stream()
                             .map(BoardImage::getPath)
