@@ -232,8 +232,8 @@ class CommentServiceImplTest extends IntegrationTestSupport {
 
         // when & then
         assertThatThrownBy(() -> commentService.createComment(request.toServiceRequest()))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("존재하지 않는 회원입니다.");
+                .isInstanceOf(CommentBusinessException.class)
+                .hasMessage("회원을 찾을 수 없습니다.");
     }
 
     private Comment createComment(Member writer, Board board) {
