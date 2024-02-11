@@ -43,13 +43,13 @@ public class Comment extends BaseTimeEntity {
 
     @Builder(access = AccessLevel.PRIVATE)
     private Comment(Member member, Board board, String content) {
+        validateMemberAndBoard(member, board);
         this.member = member;
         this.board = board;
         this.content = content;
     }
 
     public static Comment of(Member member, Board board, String content) {
-        validateMemberAndBoard(member, board);
         return Comment.builder()
                 .member(member)
                 .board(board)
@@ -57,15 +57,15 @@ public class Comment extends BaseTimeEntity {
                 .build();
     }
 
-    public void changeComment(Long memberId, String content) {
-        validateWriter(member.getId(), memberId);
+    public void changeComment(Long requestMemberId, String content) {
+        validateWriter(member.getId(), requestMemberId);
         this.content = content;
     }
 
     /**
      * 댓글 생성시 회원정보와 게시글 정보를 검증하기 위한 메서드입니다.
      */
-    private static void validateMemberAndBoard(Member member, Board board) {
+    private void validateMemberAndBoard(Member member, Board board) {
         if (member == null || member.getId() == null) {
             throw new CommentBusinessException(CommentErrorCode.MEMBER_NOT_FOUND);
         }
