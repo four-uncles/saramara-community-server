@@ -35,7 +35,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-@DisplayName("[통합 테스트] 게시글에 댓글은")
+@DisplayName("댓글은")
 class CommentServiceImplTest extends IntegrationTestSupport {
 
     @Autowired
