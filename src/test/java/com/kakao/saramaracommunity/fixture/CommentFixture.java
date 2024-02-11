@@ -4,6 +4,7 @@ import static com.kakao.saramaracommunity.fixture.BoardFixture.BOARD_VOTE_WRITER
 import static com.kakao.saramaracommunity.fixture.MemberFixture.NORMAL_MEMBER_LANGO;
 import static com.kakao.saramaracommunity.fixture.MemberFixture.NORMAL_MEMBER_SONNY;
 import static com.kakao.saramaracommunity.fixture.MemberFixture.NORMAL_MEMBER_WOOGI;
+import static org.springframework.test.util.ReflectionTestUtils.setField;
 
 import com.kakao.saramaracommunity.board.entity.Board;
 import com.kakao.saramaracommunity.comment.entity.Comment;
@@ -28,6 +29,8 @@ public enum CommentFixture {
     ),
     ;
 
+    private static long memberIdValue = Long.MAX_VALUE;
+    private static long boardIdValue = Long.MAX_VALUE;
     private final Member writer;
     private final Board board;
     private final String content;
@@ -55,6 +58,8 @@ public enum CommentFixture {
     }
 
     public Comment createComment() {
+        setField(getWriter(), "id", memberIdValue--);
+        setField(getBoard(), "id", boardIdValue--);
         return Comment.of(getWriter(), getBoard(), getContent());
     }
 
