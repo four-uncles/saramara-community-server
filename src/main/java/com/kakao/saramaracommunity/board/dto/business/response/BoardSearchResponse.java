@@ -1,18 +1,17 @@
 package com.kakao.saramaracommunity.board.dto.business.response;
 
-import com.kakao.saramaracommunity.board.service.dto.response.BoardResponse;
 import lombok.Builder;
 
 import java.util.List;
 
 @Builder
 public record BoardSearchResponse(
-    List<BoardResponse.BoardGetResponse> boards,
+    List<BoardGetResponse> boards,
     Boolean hasNext,
     Long cursorId
 ) {
     public static BoardSearchResponse of(
-            List<BoardResponse.BoardGetResponse> boards,
+            List<BoardGetResponse> boards,
             Boolean hasNext,
             Long cursorId
     ) {

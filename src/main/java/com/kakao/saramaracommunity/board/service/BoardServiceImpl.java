@@ -1,5 +1,7 @@
 package com.kakao.saramaracommunity.board.service;
 
+import com.kakao.saramaracommunity.board.dto.business.reqeust.BoardCreateServiceRequest;
+import com.kakao.saramaracommunity.board.dto.business.reqeust.BoardUpdateServiceRequest;
 import com.kakao.saramaracommunity.board.dto.business.response.BoardCreateResponse;
 import com.kakao.saramaracommunity.board.dto.business.response.BoardGetResponse;
 import com.kakao.saramaracommunity.board.dto.business.response.BoardSearchResponse;
@@ -8,9 +10,6 @@ import com.kakao.saramaracommunity.board.entity.SortType;
 import com.kakao.saramaracommunity.board.exception.BoardBusinessException;
 import com.kakao.saramaracommunity.board.exception.BoardErrorCode;
 import com.kakao.saramaracommunity.board.repository.BoardRepository;
-import com.kakao.saramaracommunity.board.dto.business.reqeust.BoardCreateServiceRequest;
-import com.kakao.saramaracommunity.board.dto.business.reqeust.BoardUpdateServiceRequest;
-import com.kakao.saramaracommunity.board.service.dto.response.BoardResponse;
 import com.kakao.saramaracommunity.member.entity.Member;
 import com.kakao.saramaracommunity.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -56,7 +55,7 @@ public class BoardServiceImpl implements BoardService {
         Boolean hasNext = boards.size() >= page.getPageSize();
         return BoardSearchResponse.of(
                 boards.stream()
-                        .map(BoardResponse.BoardGetResponse::of)
+                        .map(BoardGetResponse::of)
                         .collect(Collectors.toList()),
                 hasNext,
                 nextCursorId

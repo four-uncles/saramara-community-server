@@ -1,5 +1,7 @@
 package com.kakao.saramaracommunity.board.service;
 
+import com.kakao.saramaracommunity.board.dto.business.reqeust.BoardCreateServiceRequest;
+import com.kakao.saramaracommunity.board.dto.business.reqeust.BoardUpdateServiceRequest;
 import com.kakao.saramaracommunity.board.dto.business.response.BoardCreateResponse;
 import com.kakao.saramaracommunity.board.dto.business.response.BoardGetResponse;
 import com.kakao.saramaracommunity.board.entity.Board;
@@ -9,9 +11,6 @@ import com.kakao.saramaracommunity.board.exception.BoardBusinessException;
 import com.kakao.saramaracommunity.board.exception.BoardErrorCode;
 import com.kakao.saramaracommunity.board.repository.BoardImageRepository;
 import com.kakao.saramaracommunity.board.repository.BoardRepository;
-import com.kakao.saramaracommunity.board.dto.business.reqeust.BoardCreateServiceRequest;
-import com.kakao.saramaracommunity.board.dto.business.reqeust.BoardUpdateServiceRequest;
-import com.kakao.saramaracommunity.board.service.dto.response.BoardResponse;
 import com.kakao.saramaracommunity.member.entity.Member;
 import com.kakao.saramaracommunity.member.repository.MemberRepository;
 import com.kakao.saramaracommunity.support.IntegrationTestSupport;
@@ -26,7 +25,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static com.kakao.saramaracommunity.board.entity.CategoryBoard.*;
+import static com.kakao.saramaracommunity.board.entity.CategoryBoard.CHOICE;
+import static com.kakao.saramaracommunity.board.entity.CategoryBoard.VOTE;
 import static com.kakao.saramaracommunity.fixture.MemberFixture.NORMAL_MEMBER_LANGO;
 import static com.kakao.saramaracommunity.fixture.MemberFixture.NORMAL_MEMBER_SONNY;
 import static org.assertj.core.api.Assertions.assertThat;
