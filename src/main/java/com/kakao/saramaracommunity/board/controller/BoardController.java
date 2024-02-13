@@ -24,7 +24,7 @@ public class BoardController {
     private final BoardService boardService;
     private static final int DEFAULT_PAGE_SIZE = 24;
 
-    @PostMapping("/register")
+    @PostMapping
     public ResponseEntity<ApiResponse<BoardCreateResponse>> createBoard(
             @RequestBody @Valid BoardCreateRequest request
     ) {
