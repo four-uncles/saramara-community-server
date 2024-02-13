@@ -7,7 +7,6 @@ import com.kakao.saramaracommunity.board.dto.business.response.BoardGetResponse;
 import com.kakao.saramaracommunity.board.dto.business.response.BoardSearchResponse;
 import com.kakao.saramaracommunity.board.entity.SortType;
 import com.kakao.saramaracommunity.board.service.BoardService;
-import com.kakao.saramaracommunity.board.service.dto.response.BoardResponse;
 import com.kakao.saramaracommunity.common.response.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
