@@ -1,11 +1,15 @@
 package com.kakao.saramaracommunity.board.service;
 
+import com.kakao.saramaracommunity.board.dto.business.response.BoardCreateResponse;
+import com.kakao.saramaracommunity.board.dto.business.response.BoardGetResponse;
+import com.kakao.saramaracommunity.board.dto.business.response.BoardSearchResponse;
 import com.kakao.saramaracommunity.board.entity.Board;
 import com.kakao.saramaracommunity.board.entity.SortType;
 import com.kakao.saramaracommunity.board.exception.BoardBusinessException;
 import com.kakao.saramaracommunity.board.exception.BoardErrorCode;
 import com.kakao.saramaracommunity.board.repository.BoardRepository;
-import com.kakao.saramaracommunity.board.service.dto.request.BoardServiceRequest;
+import com.kakao.saramaracommunity.board.dto.business.reqeust.BoardCreateServiceRequest;
+import com.kakao.saramaracommunity.board.dto.business.reqeust.BoardUpdateServiceRequest;
 import com.kakao.saramaracommunity.board.service.dto.response.BoardResponse;
 import com.kakao.saramaracommunity.member.entity.Member;
 import com.kakao.saramaracommunity.member.repository.MemberRepository;
@@ -28,29 +32,29 @@ public class BoardServiceImpl implements BoardService {
     private final MemberRepository memberRepository;
 
     @Override
-    public BoardResponse.BoardCreateResponse createBoard(BoardServiceRequest.BoardCreateServiceRequest request) {
+    public BoardCreateResponse createBoard(BoardCreateServiceRequest request) {
         Board createdBoard = boardRepository.save(
                 request.toEntity(
-                        getMemberEntity(request.getMemberId())
+                        getMemberEntity(request.memberId())
                 )
         );
-        return BoardResponse.BoardCreateResponse.of(createdBoard);
+        return BoardCreateResponse.of(createdBoard);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public BoardResponse.BoardGetResponse getBoard(Long boardId) {
+    public BoardGetResponse getBoard(Long boardId) {
         Board board = getBoardEntity(boardId);
-        return BoardResponse.BoardGetResponse.of(board);
+        return BoardGetResponse.of(board);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public BoardResponse.BoardSearchResponse searchBoards(Long cursorId, Pageable page, SortType sort) {
+    public BoardSearchResponse searchBoards(Long cursorId, Pageable page, SortType sort) {
         List<Board> boards = getBoards(cursorId, page, sort);
         Long nextCursorId = getNextCursorId(sort, boards);
         Boolean hasNext = boards.size() >= page.getPageSize();
-        return BoardResponse.BoardSearchResponse.of(
+        return BoardSearchResponse.of(
                 boards.stream()
                         .map(BoardResponse.BoardGetResponse::of)
                         .collect(Collectors.toList()),
@@ -60,17 +64,17 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public void updateBoard(Long boardId, BoardServiceRequest.BoardUpdateServiceRequest request) {
+    public void updateBoard(Long boardId, BoardUpdateServiceRequest request) {
         Board savedBoard = getBoardEntity(boardId);
-        verifyBoardOwner(savedBoard, request.getMemberId());
-        log.info("[BoardServiceImpl] 요청에 따라 게시글을 수정합니다.(Update the post as requested.)");
+        verifyBoardOwner(savedBoard, request.memberId());
+        log.info("[BoardServiceImpl] 게시글을 수정합니다. 게시글 번호: {}", savedBoard.getId());
         savedBoard.update(
-                request.getMemberId(),
-                request.getTitle(),
-                request.getContent(),
-                request.getCategoryBoard(),
-                request.getDeadLine(),
-                request.getBoardImages()
+                request.memberId(),
+                request.title(),
+                request.content(),
+                request.categoryBoard(),
+                request.deadLine(),
+                request.boardImages()
         );
     }
 
@@ -80,7 +84,8 @@ public class BoardServiceImpl implements BoardService {
     @Override
     public void deleteBoard(Long boardId) {
         Board savedBoard = getBoardEntity(boardId);
-        log.info("[BoardServiceImpl] 요청에 따라 게시글을 삭제합니다.(Delete the post as requested.)");
+        // 추후 작성자 검증 필요
+        log.info("[BoardServiceImpl] 게시글을 삭제합니다. 게시글 번호: {}", savedBoard.getId());
         boardRepository.delete(savedBoard);
     }
 

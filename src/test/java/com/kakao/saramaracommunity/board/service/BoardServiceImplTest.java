@@ -1,5 +1,7 @@
 package com.kakao.saramaracommunity.board.service;
 
+import com.kakao.saramaracommunity.board.dto.business.response.BoardCreateResponse;
+import com.kakao.saramaracommunity.board.dto.business.response.BoardGetResponse;
 import com.kakao.saramaracommunity.board.entity.Board;
 import com.kakao.saramaracommunity.board.entity.BoardImage;
 import com.kakao.saramaracommunity.board.entity.CategoryBoard;
@@ -7,7 +9,8 @@ import com.kakao.saramaracommunity.board.exception.BoardBusinessException;
 import com.kakao.saramaracommunity.board.exception.BoardErrorCode;
 import com.kakao.saramaracommunity.board.repository.BoardImageRepository;
 import com.kakao.saramaracommunity.board.repository.BoardRepository;
-import com.kakao.saramaracommunity.board.service.dto.request.BoardServiceRequest;
+import com.kakao.saramaracommunity.board.dto.business.reqeust.BoardCreateServiceRequest;
+import com.kakao.saramaracommunity.board.dto.business.reqeust.BoardUpdateServiceRequest;
 import com.kakao.saramaracommunity.board.service.dto.response.BoardResponse;
 import com.kakao.saramaracommunity.member.entity.Member;
 import com.kakao.saramaracommunity.member.repository.MemberRepository;
@@ -60,16 +63,16 @@ class BoardServiceImplTest extends IntegrationTestSupport {
         Member WRITER_SONNY = NORMAL_MEMBER_SONNY.createMember();
         Member savedMember = memberRepository.save(WRITER_SONNY);
         List<String> images = createImagePaths(3);
-        BoardServiceRequest.BoardCreateServiceRequest request = createSaveRequest(VOTE, savedMember, images);
+        BoardCreateServiceRequest request = createSaveRequest(VOTE, savedMember, images);
 
         // when
-        BoardResponse.BoardCreateResponse result = boardService.createBoard(request);
+        BoardCreateResponse result = boardService.createBoard(request);
 
         // then
-        assertThat(result.getTitle()).isEqualTo("xxx");
-        assertThat(result.getContent()).isEqualTo("xxx");
-        assertThat(result.getCategoryBoard()).isEqualTo(VOTE);
-        assertThat(result.getBoardImages()).hasSize(3);
+        assertThat(result.title()).isEqualTo("xxx");
+        assertThat(result.content()).isEqualTo("xxx");
+        assertThat(result.categoryBoard()).isEqualTo(VOTE);
+        assertThat(result.boardImages()).hasSize(3);
     }
 
     @DisplayName("투표 타입의 게시글을 생성할 때, 등록한 이미지가 1장일 경우 예외가 발생한다.")
@@ -79,7 +82,7 @@ class BoardServiceImplTest extends IntegrationTestSupport {
         Member WRITER_SONNY = NORMAL_MEMBER_SONNY.createMember();
         Member savedMember = memberRepository.save(WRITER_SONNY);
         List<String> images = createImagePaths(1);
-        BoardServiceRequest.BoardCreateServiceRequest request = createSaveRequest(VOTE, savedMember, images);
+        BoardCreateServiceRequest request = createSaveRequest(VOTE, savedMember, images);
 
         // when & then
         assertThatThrownBy(() -> boardService.createBoard(request))
@@ -94,7 +97,7 @@ class BoardServiceImplTest extends IntegrationTestSupport {
         Member WRITER_SONNY = NORMAL_MEMBER_SONNY.createMember();
         Member savedMember = memberRepository.save(WRITER_SONNY);
         List<String> images = createImagePaths(6);
-        BoardServiceRequest.BoardCreateServiceRequest request = createSaveRequest(VOTE, savedMember, images);
+        BoardCreateServiceRequest request = createSaveRequest(VOTE, savedMember, images);
 
         // when & then
         assertThatThrownBy(() -> boardService.createBoard(request))
@@ -109,16 +112,16 @@ class BoardServiceImplTest extends IntegrationTestSupport {
         Member WRITER_SONNY = NORMAL_MEMBER_SONNY.createMember();
         Member savedMember = memberRepository.save(WRITER_SONNY);
         List<String> images = createImagePaths(1);
-        BoardServiceRequest.BoardCreateServiceRequest request = createSaveRequest(CHOICE, savedMember, images);
+        BoardCreateServiceRequest request = createSaveRequest(CHOICE, savedMember, images);
 
         // when
-        BoardResponse.BoardCreateResponse result = boardService.createBoard(request);
+        BoardCreateResponse result = boardService.createBoard(request);
 
         // then
-        assertThat(result.getTitle()).isEqualTo("xxx");
-        assertThat(result.getContent()).isEqualTo("xxx");
-        assertThat(result.getCategoryBoard()).isEqualTo(CHOICE);
-        assertThat(result.getBoardImages()).hasSize(1);
+        assertThat(result.title()).isEqualTo("xxx");
+        assertThat(result.content()).isEqualTo("xxx");
+        assertThat(result.categoryBoard()).isEqualTo(CHOICE);
+        assertThat(result.boardImages()).hasSize(1);
     }
 
     @DisplayName("찬반 타입의 게시글을 생성할 때, 등록한 이미지가 1장을 초과할 경우 예외가 발생한다.")
@@ -128,7 +131,7 @@ class BoardServiceImplTest extends IntegrationTestSupport {
         Member WRITER_SONNY = NORMAL_MEMBER_SONNY.createMember();
         Member savedMember = memberRepository.save(WRITER_SONNY);
         List<String> images = createImagePaths(2);
-        BoardServiceRequest.BoardCreateServiceRequest request = createSaveRequest(CHOICE, savedMember, images);
+        BoardCreateServiceRequest request = createSaveRequest(CHOICE, savedMember, images);
 
         // when & then
         assertThatThrownBy(() -> boardService.createBoard(request))
@@ -146,7 +149,7 @@ class BoardServiceImplTest extends IntegrationTestSupport {
         Board board = createBoard(VOTE, savedMember, images);
         Board savedBoard = boardRepository.save(board);
         List<String> updateImages = createImagePaths(3);
-        BoardServiceRequest.BoardUpdateServiceRequest request = createUpdateRequest(VOTE, WRITER_SONNY, updateImages);
+        BoardUpdateServiceRequest request = createUpdateRequest(VOTE, WRITER_SONNY, updateImages);
 
         // when
         boardService.updateBoard(savedBoard.getId(), request);
@@ -167,7 +170,7 @@ class BoardServiceImplTest extends IntegrationTestSupport {
         Board board = createBoard(VOTE, savedMember, images);
         Board savedBoard = boardRepository.save(board);
         List<String> updateImages = createImagePaths(3);
-        BoardServiceRequest.BoardUpdateServiceRequest request = createUpdateRequest(VOTE, NOT_WRITER_LANGO, updateImages);
+        BoardUpdateServiceRequest request = createUpdateRequest(VOTE, NOT_WRITER_LANGO, updateImages);
 
         // when & then
         assertThatThrownBy(() -> boardService.updateBoard(savedBoard.getId(), request))
@@ -185,7 +188,7 @@ class BoardServiceImplTest extends IntegrationTestSupport {
         Board board = createBoard(VOTE, savedMember, images);
         Board savedBoard = boardRepository.save(board);
         List<String> updateImages = createImagePaths(5);
-        BoardServiceRequest.BoardUpdateServiceRequest request = createUpdateRequest(VOTE, WRITER_SONNY, updateImages);
+        BoardUpdateServiceRequest request = createUpdateRequest(VOTE, WRITER_SONNY, updateImages);
 
         // when
         boardService.updateBoard(savedBoard.getId(), request);
@@ -205,7 +208,7 @@ class BoardServiceImplTest extends IntegrationTestSupport {
         Board board = createBoard(VOTE, savedMember, images);
         Board savedBoard = boardRepository.save(board);
         List<String> updateImages = createImagePaths(7);
-        BoardServiceRequest.BoardUpdateServiceRequest request = createUpdateRequest(VOTE, WRITER_SONNY, updateImages);
+        BoardUpdateServiceRequest request = createUpdateRequest(VOTE, WRITER_SONNY, updateImages);
 
         // when & then
         assertThatThrownBy(() -> boardService.updateBoard(savedBoard.getId(), request))
@@ -223,7 +226,7 @@ class BoardServiceImplTest extends IntegrationTestSupport {
         Board board = createBoard(VOTE, savedMember, images);
         Board savedBoard = boardRepository.save(board);
         List<String> updateImages = createImagePaths(1);
-        BoardServiceRequest.BoardUpdateServiceRequest request = createUpdateRequest(VOTE, WRITER_SONNY, updateImages);
+        BoardUpdateServiceRequest request = createUpdateRequest(VOTE, WRITER_SONNY, updateImages);
 
         // when & then
         assertThatThrownBy(() -> boardService.updateBoard(savedBoard.getId(), request))
@@ -241,7 +244,7 @@ class BoardServiceImplTest extends IntegrationTestSupport {
         Board board = createBoard(CHOICE, savedMember, images);
         Board savedBoard = boardRepository.save(board);
         List<String> updateImages = createImagePaths(2);
-        BoardServiceRequest.BoardUpdateServiceRequest request = createUpdateRequest(CHOICE, WRITER_SONNY, updateImages);
+        BoardUpdateServiceRequest request = createUpdateRequest(CHOICE, WRITER_SONNY, updateImages);
 
         // when & then
         assertThatThrownBy(() -> boardService.updateBoard(savedBoard.getId(), request))
@@ -280,13 +283,13 @@ class BoardServiceImplTest extends IntegrationTestSupport {
         Board savedBoard = boardRepository.save(board);
 
         // when
-        BoardResponse.BoardGetResponse result = boardService.getBoard(savedBoard.getId());
+        BoardGetResponse result = boardService.getBoard(savedBoard.getId());
 
         // then
-        assertThat(result.getTitle()).isEqualTo("xxx");
-        assertThat(result.getContent()).isEqualTo("xxx");
-        assertThat(result.getCategoryBoard()).isEqualTo(VOTE);
-        assertThat(result.getBoardImages()).hasSize(3);
+        assertThat(result.title()).isEqualTo("xxx");
+        assertThat(result.content()).isEqualTo("xxx");
+        assertThat(result.categoryBoard()).isEqualTo(VOTE);
+        assertThat(result.boardImages()).hasSize(3);
     }
 
     @DisplayName("찬반 타입의 게시글 상세정보를 조회한다.")
@@ -300,13 +303,13 @@ class BoardServiceImplTest extends IntegrationTestSupport {
         Board savedBoard = boardRepository.save(board);
 
         // when
-        BoardResponse.BoardGetResponse result = boardService.getBoard(savedBoard.getId());
+        BoardGetResponse result = boardService.getBoard(savedBoard.getId());
 
         // then
-        assertThat(result.getTitle()).isEqualTo("xxx");
-        assertThat(result.getContent()).isEqualTo("xxx");
-        assertThat(result.getCategoryBoard()).isEqualTo(CHOICE);
-        assertThat(result.getBoardImages()).hasSize(1);
+        assertThat(result.title()).isEqualTo("xxx");
+        assertThat(result.content()).isEqualTo("xxx");
+        assertThat(result.categoryBoard()).isEqualTo(CHOICE);
+        assertThat(result.boardImages()).hasSize(1);
     }
 
     private static Board createBoard(
@@ -332,12 +335,12 @@ class BoardServiceImplTest extends IntegrationTestSupport {
                 .collect(Collectors.toList());
     }
 
-    private static BoardServiceRequest.BoardCreateServiceRequest createSaveRequest(
+    private static BoardCreateServiceRequest createSaveRequest(
             CategoryBoard category,
             Member member,
             List<String> images
     ) {
-        return BoardServiceRequest.BoardCreateServiceRequest.builder()
+        return BoardCreateServiceRequest.builder()
                 .title("xxx")
                 .content("xxx")
                 .categoryBoard(category)
@@ -347,12 +350,12 @@ class BoardServiceImplTest extends IntegrationTestSupport {
                 .build();
     }
 
-    private static BoardServiceRequest.BoardUpdateServiceRequest createUpdateRequest(
+    private static BoardUpdateServiceRequest createUpdateRequest(
             CategoryBoard category,
             Member member,
             List<String> images
     ) {
-        return BoardServiceRequest.BoardUpdateServiceRequest.builder()
+        return BoardUpdateServiceRequest.builder()
                 .memberId(member.getId())
                 .title("update-xxx")
                 .content("update-xxx")
