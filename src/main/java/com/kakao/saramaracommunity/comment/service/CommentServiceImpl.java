@@ -3,9 +3,8 @@ package com.kakao.saramaracommunity.comment.service;
 import com.kakao.saramaracommunity.board.entity.Board;
 import com.kakao.saramaracommunity.board.repository.BoardRepository;
 import com.kakao.saramaracommunity.comment.entity.Comment;
+import com.kakao.saramaracommunity.comment.exception.CommentBusinessException;
 import com.kakao.saramaracommunity.comment.exception.CommentErrorCode;
-import com.kakao.saramaracommunity.comment.exception.CommentNotFoundException;
-import com.kakao.saramaracommunity.comment.exception.CommentUnauthorizedException;
 import com.kakao.saramaracommunity.comment.repository.CommentRepository;
 import com.kakao.saramaracommunity.comment.service.dto.request.CommentCreateServiceRequest;
 import com.kakao.saramaracommunity.comment.service.dto.request.CommentDeleteServiceRequest;
@@ -55,7 +54,7 @@ public class CommentServiceImpl implements CommentService{
         Comment savedComment = getCommentEntity(commentId);
         verifyWriter(savedComment, request.memberId());
         log.info("[CommentServiceImpl.class] 요청에 따라 댓글을 수정합니다.");
-        savedComment.changeComment(request.content());
+        savedComment.changeComment(request.memberId(), request.content());
     }
 
     @Override
@@ -67,26 +66,25 @@ public class CommentServiceImpl implements CommentService{
     }
 
     private void verifyWriter(Comment comment, Long memberId) {
-        if (!comment.getMember().getId().equals(memberId)) {
-            throw new CommentUnauthorizedException(CommentErrorCode.UNAUTHORIZED_TO_UPDATE_COMMENT);
+        Member writer = comment.getMember();
+        if (!writer.getId().equals(memberId)) {
+            throw new CommentBusinessException(CommentErrorCode.UNAUTHORIZED_TO_UPDATE_COMMENT);
         }
     }
 
-    // TODO: refactor - IllegalArgumentException -> Comment Exception 구현 후 처리 예정
     private Member getMemberEntity(Long memberId) {
         return memberRepository.findById(memberId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
+                .orElseThrow(() -> new CommentBusinessException(CommentErrorCode.MEMBER_NOT_FOUND));
     }
 
-    // TODO: refactor - IllegalArgumentException -> Comment Exception 구현 후 처리 예정
     private Board getBoardEntity(Long boardId) {
         return boardRepository.findById(boardId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게시글입니다."));
+                .orElseThrow(() -> new CommentBusinessException(CommentErrorCode.BOARD_NOT_FOUND));
     }
 
     private Comment getCommentEntity(Long commentId) {
         return commentRepository.findById(commentId).orElseThrow(() ->
-                new CommentNotFoundException(CommentErrorCode.COMMENT_NOT_FOUND)
+                new CommentBusinessException(CommentErrorCode.COMMENT_NOT_FOUND)
         );
     }
 
