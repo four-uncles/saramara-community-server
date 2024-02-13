@@ -24,6 +24,7 @@ public record BoardCreateRequest(
         @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
         @Future(message = "게시글의 마감 기한은 현재 시간 이후로 설정해야 합니다.")
         LocalDateTime deadLine,
+        @NotNull(message = "이미지는 최소 1장 이상 등록해야 합니다.")
         List<String> boardImages
 ) {
 
