@@ -19,7 +19,6 @@ import static org.springframework.test.util.ReflectionTestUtils.setField;
 
 /**
  * 게시글(Board) 관련 도메인의 단위 테스트를 진행하는 테스트 클래스입니다.
- * 추후 DCI 패턴을 통해 아래와 같은 계층구조로 테스트 코드를 작성할 계획입니다.
  */
 class BoardTest {
 
