@@ -64,9 +64,9 @@ class CommentServiceImplTest extends IntegrationTestSupport {
         memberRepository.deleteAllInBatch();
     }
 
-    @DisplayName("누구나 조회할 수 있다.")
+    @DisplayName("누구나 내용을 조회할 수 있다.")
     @Test
-    void 누구나_조회할_수_있다() {
+    void 누구나_내용을_조회할_수_있다() {
         // given
         Member MEMBER_WOOGI = createMember(NORMAL_MEMBER_WOOGI.createMember());
         Member MEMBER_SONNY = createMember(NORMAL_MEMBER_SONNY.createMember());

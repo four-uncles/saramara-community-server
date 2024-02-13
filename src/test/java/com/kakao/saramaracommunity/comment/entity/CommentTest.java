@@ -69,7 +69,7 @@ class CommentTest {
 
         @DisplayName("생성할 수 없고, MEMBER_NOT_FOUND 예외가 발생한다.")
         @Test
-        void 생성할_수_없다() {
+        void 생성할_수_없고_MEMBER_NOT_FOUND_예외가_발생한다() {
             // given
             Board REGISTED_BOARD = BOARD_VOTE_WRITER_LANGO.createBoard();
             String content = "불법 광고 댓글";
@@ -83,7 +83,7 @@ class CommentTest {
 
         @DisplayName("수정할 수 없고, MEMBER_NOT_FOUND 예외가 발생한다.")
         @Test
-        void 수정할_수_없다() {
+        void 수정할_수_없고_MEMBER_NOT_FOUND_예외가_발생한다() {
             // given
             Comment REGISTED_COMMENT = COMMENT_WRITER_WOOGI.createComment();
             String MODIFY_CONTENT = "2번 잠옷 더 기업은행!";
@@ -103,7 +103,7 @@ class CommentTest {
 
         @DisplayName("생성할 수 없고, BOARD_NOT_FOUND 예외가 발생한다.")
         @Test
-        void 생성할_수_없다() {
+        void 생성할_수_없고_BOARD_NOT_FOUND_예외가_발생한다() {
             // given
             Member MEMBER_WOOGI = NORMAL_MEMBER_WOOGI.createMember();
             String content = "1번 잠옷 귀여워!!";
