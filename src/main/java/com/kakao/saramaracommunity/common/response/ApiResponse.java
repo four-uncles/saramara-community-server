@@ -48,6 +48,15 @@ public class ApiResponse<T> {
                 .data(data)
                 .build();
     }
+    public static <T> ApiResponse<T> successResponse(
+            final HttpStatus httpStatus,
+            final String message
+    ) {
+        return ApiResponse.<T>builder()
+                .code(httpStatus.value())
+                .message(message)
+                .build();
+    }
 
     /**
      * 요청 수행 중, 예외 발생시 응답 데이터로 사용할 errorResponse 메서드입니다.
@@ -61,28 +70,6 @@ public class ApiResponse<T> {
     ) {
         return ApiResponse.<T>builder()
                 .code(code)
-                .message(message)
-                .build();
-    }
-
-    public static <T> ApiResponse<T> of(
-            final HttpStatus httpStatus,
-            final String message,
-            final T data
-    ) {
-        return ApiResponse.<T>builder()
-                .code(httpStatus.value())
-                .message(message)
-                .data(data)
-                .build();
-    }
-
-    public static <T> ApiResponse<T> of(
-            final HttpStatus httpStatus,
-            final String message
-    ) {
-        return ApiResponse.<T>builder()
-                .code(httpStatus.value())
                 .message(message)
                 .build();
     }
