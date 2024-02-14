@@ -2,6 +2,8 @@ package com.kakao.saramaracommunity.support;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kakao.saramaracommunity.board.controller.BoardController;
+import com.kakao.saramaracommunity.board.service.BoardService;
 import com.kakao.saramaracommunity.bucket.controller.BucketController;
 import com.kakao.saramaracommunity.bucket.service.BucketService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +14,8 @@ import org.springframework.test.web.servlet.MockMvc;
 
 @WithMockUser(roles = "USER")
 @WebMvcTest(controllers = {
-        BucketController.class
+        BucketController.class,
+        BoardController.class
 })
 public class ControllerTestSupport {
 
@@ -24,5 +27,8 @@ public class ControllerTestSupport {
 
     @MockBean
     protected BucketService bucketService;
+
+    @MockBean
+    protected BoardService boardService;
 
 }
