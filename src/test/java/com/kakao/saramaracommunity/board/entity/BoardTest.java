@@ -2,6 +2,7 @@ package com.kakao.saramaracommunity.board.entity;
 
 import com.kakao.saramaracommunity.board.exception.BoardBusinessException;
 import com.kakao.saramaracommunity.member.entity.Member;
+import com.kakao.saramaracommunity.member.exception.MemberBusinessException;
 import org.junit.jupiter.api.*;
 
 import java.time.LocalDateTime;
@@ -13,6 +14,7 @@ import static com.kakao.saramaracommunity.board.entity.CategoryBoard.CHOICE;
 import static com.kakao.saramaracommunity.board.entity.CategoryBoard.VOTE;
 import static com.kakao.saramaracommunity.board.exception.BoardErrorCode.*;
 import static com.kakao.saramaracommunity.fixture.MemberFixture.NORMAL_MEMBER_LANGO;
+import static com.kakao.saramaracommunity.member.exception.MemberErrorCode.UNAUTHORIZED_TO_MEMBER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
@@ -378,8 +380,8 @@ class BoardTest {
                                 LocalDateTime.now(),
                                 images
                         ))
-                        .isInstanceOf(BoardBusinessException.class)
-                        .hasMessage(UNAUTHORIZED_TO_UPDATE_BOARD.getMessage());
+                        .isInstanceOf(MemberBusinessException.class)
+                        .hasMessage(UNAUTHORIZED_TO_MEMBER.getMessage());
             }
         }
 
