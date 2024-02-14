@@ -3,6 +3,7 @@ package com.kakao.saramaracommunity.board.entity;
 import com.kakao.saramaracommunity.board.exception.BoardBusinessException;
 import com.kakao.saramaracommunity.common.entity.BaseTimeEntity;
 import com.kakao.saramaracommunity.member.entity.Member;
+import com.kakao.saramaracommunity.member.exception.MemberBusinessException;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -16,6 +17,7 @@ import java.util.stream.Collectors;
 import static com.kakao.saramaracommunity.board.entity.CategoryBoard.CHOICE;
 import static com.kakao.saramaracommunity.board.entity.CategoryBoard.VOTE;
 import static com.kakao.saramaracommunity.board.exception.BoardErrorCode.*;
+import static com.kakao.saramaracommunity.member.exception.MemberErrorCode.UNAUTHORIZED_TO_MEMBER;
 
 @Getter
 @Entity
@@ -125,7 +127,7 @@ public class Board extends BaseTimeEntity {
      */
     private void validateWriter(Long originalWriter, Long requestWriter) {
         if (!originalWriter.equals(requestWriter)) {
-            throw new BoardBusinessException(UNAUTHORIZED_TO_UPDATE_BOARD);
+            throw new MemberBusinessException(UNAUTHORIZED_TO_MEMBER);
         }
     }
 
