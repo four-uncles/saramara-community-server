@@ -1,13 +1,17 @@
 package com.kakao.saramaracommunity.board.service;
 
+import com.kakao.saramaracommunity.board.dto.business.reqeust.BoardCreateServiceRequest;
+import com.kakao.saramaracommunity.board.dto.business.reqeust.BoardDeleteServiceRequest;
+import com.kakao.saramaracommunity.board.dto.business.reqeust.BoardUpdateServiceRequest;
+import com.kakao.saramaracommunity.board.dto.business.response.BoardCreateResponse;
+import com.kakao.saramaracommunity.board.dto.business.response.BoardGetResponse;
+import com.kakao.saramaracommunity.board.dto.business.response.BoardSearchResponse;
 import com.kakao.saramaracommunity.board.entity.Board;
 import com.kakao.saramaracommunity.board.entity.SortType;
 import com.kakao.saramaracommunity.board.exception.BoardBusinessException;
-import com.kakao.saramaracommunity.board.exception.BoardErrorCode;
 import com.kakao.saramaracommunity.board.repository.BoardRepository;
-import com.kakao.saramaracommunity.board.service.dto.request.BoardServiceRequest;
-import com.kakao.saramaracommunity.board.service.dto.response.BoardResponse;
 import com.kakao.saramaracommunity.member.entity.Member;
+import com.kakao.saramaracommunity.member.exception.MemberBusinessException;
 import com.kakao.saramaracommunity.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -16,7 +20,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static com.kakao.saramaracommunity.board.exception.BoardErrorCode.BOARD_NOT_FOUND;
+import static com.kakao.saramaracommunity.member.exception.MemberErrorCode.MEMBER_NOT_FOUND;
+import static com.kakao.saramaracommunity.member.exception.MemberErrorCode.UNAUTHORIZED_TO_MEMBER;
 
 @Log4j2
 @Service
@@ -28,31 +37,14 @@ public class BoardServiceImpl implements BoardService {
     private final MemberRepository memberRepository;
 
     @Override
-    public BoardResponse.BoardCreateResponse createBoard(BoardServiceRequest.BoardCreateServiceRequest request) {
-        Board createdBoard = boardRepository.save(
-                request.toEntity(
-                        getMemberEntity(request.getMemberId())
-                )
-        );
-        return BoardResponse.BoardCreateResponse.of(createdBoard);
-    }
-
-    @Override
     @Transactional(readOnly = true)
-    public BoardResponse.BoardGetResponse getBoard(Long boardId) {
-        Board board = getBoardEntity(boardId);
-        return BoardResponse.BoardGetResponse.of(board);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public BoardResponse.BoardSearchResponse searchBoards(Long cursorId, Pageable page, SortType sort) {
+    public BoardSearchResponse searchBoards(Long cursorId, Pageable page, SortType sort) {
         List<Board> boards = getBoards(cursorId, page, sort);
         Long nextCursorId = getNextCursorId(sort, boards);
         Boolean hasNext = boards.size() >= page.getPageSize();
-        return BoardResponse.BoardSearchResponse.of(
+        return BoardSearchResponse.of(
                 boards.stream()
-                        .map(BoardResponse.BoardGetResponse::of)
+                        .map(BoardGetResponse::of)
                         .collect(Collectors.toList()),
                 hasNext,
                 nextCursorId
@@ -60,45 +52,59 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public void updateBoard(Long boardId, BoardServiceRequest.BoardUpdateServiceRequest request) {
+    @Transactional(readOnly = true)
+    public BoardGetResponse getBoard(Long boardId) {
+        Board board = getBoardEntity(boardId);
+        return BoardGetResponse.of(board);
+    }
+
+    @Override
+    public BoardCreateResponse createBoard(BoardCreateServiceRequest request) {
+        Board createdBoard = boardRepository.save(
+                request.toEntity(
+                        getMemberEntity(request.memberId())
+                )
+        );
+        log.info("[BoardServiceImpl] 게시글을 등록합니다. 게시글 번호: {}", createdBoard.getId());
+        return BoardCreateResponse.of(createdBoard);
+    }
+
+    @Override
+    public void updateBoard(Long boardId, BoardUpdateServiceRequest request) {
         Board savedBoard = getBoardEntity(boardId);
-        verifyBoardOwner(savedBoard, request.getMemberId());
-        log.info("[BoardServiceImpl] 요청에 따라 게시글을 수정합니다.(Update the post as requested.)");
+        verifyBoardOwner(savedBoard, request.memberId());
+        log.info("[BoardServiceImpl] 게시글을 수정합니다. 게시글 번호: {}", savedBoard.getId());
         savedBoard.update(
-                request.getMemberId(),
-                request.getTitle(),
-                request.getContent(),
-                request.getCategoryBoard(),
-                request.getDeadLine(),
-                request.getBoardImages()
+                request.memberId(),
+                request.title(),
+                request.content(),
+                request.categoryBoard(),
+                request.deadLine(),
+                request.boardImages()
         );
     }
 
-    /**
-     * 추후 삭제 로직 내에서 verifyBoardOwner 메소드를 활용해 게시글 작성자 여부를 함께 검사하도록 수정해야 함.
-     */
     @Override
-    public void deleteBoard(Long boardId) {
+    public void deleteBoard(Long boardId, BoardDeleteServiceRequest request) {
         Board savedBoard = getBoardEntity(boardId);
-        log.info("[BoardServiceImpl] 요청에 따라 게시글을 삭제합니다.(Delete the post as requested.)");
+        verifyBoardOwner(savedBoard, request.memberId());
+        log.info("[BoardServiceImpl] 게시글을 삭제합니다. 게시글 번호: {}", savedBoard.getId());
         boardRepository.delete(savedBoard);
     }
 
     private void verifyBoardOwner(Board board, Long memberId) {
-        if (!board.getMember().getId().equals(memberId)) throw new BoardBusinessException(BoardErrorCode.UNAUTHORIZED_TO_UPDATE_BOARD);
+        if (!board.getMember().getId().equals(memberId)) throw new MemberBusinessException(UNAUTHORIZED_TO_MEMBER);
     }
 
-    /**
-     * 추후 UNAUTHORIZED_TO_UPDATE_BOARD 예외가 아닌 MemberErrorCode.MEMBER_NOT_FOUND로 수정해야 함.
-     */
     private Member getMemberEntity(Long memberId) {
-        return memberRepository.findById(memberId)
-                .orElseThrow(() -> new BoardBusinessException(BoardErrorCode.UNAUTHORIZED_TO_UPDATE_BOARD));
+        return Optional.ofNullable(memberId)
+                .flatMap(memberRepository::findById)
+                .orElseThrow(() -> new MemberBusinessException(MEMBER_NOT_FOUND));
     }
 
     private Board getBoardEntity(Long boardId) {
         return boardRepository.findById(boardId)
-                .orElseThrow(() -> new BoardBusinessException(BoardErrorCode.BOARD_NOT_FOUND));
+                .orElseThrow(() -> new BoardBusinessException(BOARD_NOT_FOUND));
     }
 
     /**

@@ -2,6 +2,7 @@ package com.kakao.saramaracommunity.board.entity;
 
 import com.kakao.saramaracommunity.board.exception.BoardBusinessException;
 import com.kakao.saramaracommunity.member.entity.Member;
+import com.kakao.saramaracommunity.member.exception.MemberBusinessException;
 import org.junit.jupiter.api.*;
 
 import java.time.LocalDateTime;
@@ -13,13 +14,13 @@ import static com.kakao.saramaracommunity.board.entity.CategoryBoard.CHOICE;
 import static com.kakao.saramaracommunity.board.entity.CategoryBoard.VOTE;
 import static com.kakao.saramaracommunity.board.exception.BoardErrorCode.*;
 import static com.kakao.saramaracommunity.fixture.MemberFixture.NORMAL_MEMBER_LANGO;
+import static com.kakao.saramaracommunity.member.exception.MemberErrorCode.UNAUTHORIZED_TO_MEMBER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
 
 /**
  * 게시글(Board) 관련 도메인의 단위 테스트를 진행하는 테스트 클래스입니다.
- * 추후 DCI 패턴을 통해 아래와 같은 계층구조로 테스트 코드를 작성할 계획입니다.
  */
 class BoardTest {
 
@@ -105,10 +106,75 @@ class BoardTest {
         @BeforeEach
         void setUp() {
             NORMAL_MEMBER = NORMAL_MEMBER_LANGO.createMember();
+            setField(NORMAL_MEMBER, "id", 1L);
         }
         @Nested
         @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
         class 작성자_라면 {
+            @Test
+            @DisplayName("글 제목을 변경할 수 있다.")
+            void 글_제목을_변경할_수_있다() {
+                // given
+                List<String> images = createImagePaths(3);
+                Board board = createBoard(NORMAL_MEMBER, images, VOTE);
+
+                // when
+                List<String> updateImages = createImagePaths(5);
+                board.update(
+                        NORMAL_MEMBER.getId(),
+                        "update-title",
+                        "update-content",
+                        VOTE,
+                        LocalDateTime.now(),
+                        updateImages
+                );
+
+                // then
+                assertThat(board.getTitle()).isEqualTo("update-title");
+            }
+            @Test
+            @DisplayName("글 내용을 변경할 수 있다.")
+            void 글_내용을_변경할_수_있다() {
+                // given
+                List<String> images = createImagePaths(1);
+                Board board = createBoard(NORMAL_MEMBER, images, CHOICE);
+
+                // when
+                List<String> updateImages = createImagePaths(1);
+                board.update(
+                        NORMAL_MEMBER.getId(),
+                        "update-title",
+                        "update-content",
+                        CHOICE,
+                        LocalDateTime.now(),
+                        updateImages
+                );
+
+                // then
+                assertThat(board.getContent()).isEqualTo("update-content");
+            }
+            @Test
+            @DisplayName("카테고리는 변경할 수 없다.")
+            void 카테고리를_변경할_수_없다() {
+                // given
+                List<String> images = createImagePaths(1);
+                Board board = createBoard(NORMAL_MEMBER, images, CHOICE);
+
+                // when
+                List<String> updateImages = createImagePaths(1);
+                assertThatThrownBy(() ->
+                        board.update(
+                                NORMAL_MEMBER.getId(),
+                                "update-title",
+                                "update-content",
+                                VOTE,
+                                LocalDateTime.now(),
+                                updateImages
+                        ))
+                        .isInstanceOf(BoardBusinessException.class)
+                        .hasMessage(BOARD_CATEGORY_MISMATCH.getMessage());
+            }
+
             @Nested
             @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
             class 투표_카테고리의_글을_수정할_때 {
@@ -118,22 +184,19 @@ class BoardTest {
                     // given
                     List<String> images = createImagePaths(3);
                     Board board = createBoard(NORMAL_MEMBER, images, VOTE);
-                    setField(NORMAL_MEMBER, "id", 1L);
 
                     // when
                     List<String> updateImages = createImagePaths(5);
                     board.update(
                             NORMAL_MEMBER.getId(),
-                            "update-title",
-                            "update-content",
+                            "title",
+                            "content",
                             VOTE,
                             LocalDateTime.now(),
                             updateImages
                     );
 
                     // then
-                    assertThat(board.getTitle()).isEqualTo("update-title");
-                    assertThat(board.getContent()).isEqualTo("update-content");
                     assertThat(board.getBoardImages()).hasSize(5)
                             .extracting("path")
                             .containsExactlyInAnyOrder(
@@ -150,18 +213,18 @@ class BoardTest {
                     // given
                     List<String> images = createImagePaths(3);
                     Board board = createBoard(NORMAL_MEMBER, images, VOTE);
-                    setField(NORMAL_MEMBER, "id", 1L);
 
                     // when & then
                     List<String> updateImages = createImagePaths(6);
-                    assertThatThrownBy(() -> board.update(
-                            NORMAL_MEMBER.getId(),
-                            "update-title",
-                            "update-content",
-                            VOTE,
-                            LocalDateTime.now(),
-                            updateImages
-                    ))
+                    assertThatThrownBy(() ->
+                            board.update(
+                                    NORMAL_MEMBER.getId(),
+                                    "title",
+                                    "content",
+                                    VOTE,
+                                    LocalDateTime.now(),
+                                    updateImages
+                            ))
                             .isInstanceOf(BoardBusinessException.class)
                             .hasMessage(BOARD_VOTE_IMAGE_RANGE_OUT.getMessage());
                 }
@@ -171,21 +234,19 @@ class BoardTest {
                     // given
                     List<String> images = createImagePaths(3);
                     Board board = createBoard(NORMAL_MEMBER, images, VOTE);
-                    setField(NORMAL_MEMBER, "id", 1L);
 
                     // when
                     List<String> updateImages = createImagePaths(2);
                     board.update(
                             NORMAL_MEMBER.getId(),
-                            "update-title",
-                            "update-content",
+                            "title",
+                            "content",
                             VOTE,
                             LocalDateTime.now(),
                             updateImages
                     );
 
                     // then
-                    assertThat(board.getTitle()).isEqualTo("update-title");
                     assertThat(board.getBoardImages()).hasSize(2)
                             .extracting("path")
                             .containsExactlyInAnyOrder(
@@ -199,20 +260,51 @@ class BoardTest {
                     // given
                     List<String> images = createImagePaths(3);
                     Board board = createBoard(NORMAL_MEMBER, images, VOTE);
-                    setField(NORMAL_MEMBER, "id", 1L);
 
                     // when & then
                     List<String> updateImages = createImagePaths(1);
-                    assertThatThrownBy(() -> board.update(
+                    assertThatThrownBy(() ->
+                            board.update(
+                                    NORMAL_MEMBER.getId(),
+                                    "title",
+                                    "content",
+                                    VOTE,
+                                    LocalDateTime.now(),
+                                    updateImages
+                            ))
+                            .isInstanceOf(BoardBusinessException.class)
+                            .hasMessage(BOARD_VOTE_IMAGE_RANGE_OUT.getMessage());
+                }
+                @Test
+                @DisplayName("기존에 등록했던 이미지는 그대로 유지된다.")
+                void 기존에_등록한_이미지_정보는_유지된다() {
+                    // given
+                    List<String> images = createImagePaths(3);
+                    Board board = createBoard(NORMAL_MEMBER, images, VOTE);
+
+                    // when
+                    List<String> updateImages = List.of(
+                            "s3-image-path-4",
+                            "s3-image-path-2", // 해당 Path는 이미 등록된 이미지
+                            "s3-image-path-5"
+                    );
+                    board.update(
                             NORMAL_MEMBER.getId(),
-                            "update-title",
-                            "update-content",
+                            "title",
+                            "content",
                             VOTE,
                             LocalDateTime.now(),
                             updateImages
-                    ))
-                            .isInstanceOf(BoardBusinessException.class)
-                            .hasMessage(BOARD_VOTE_IMAGE_RANGE_OUT.getMessage());
+                    );
+
+                    // then
+                    assertThat(board.getBoardImages()).hasSize(3)
+                            .extracting("path")
+                            .containsExactlyInAnyOrder(
+                                    "s3-image-path-2",
+                                    "s3-image-path-4",
+                                    "s3-image-path-5"
+                            );
                 }
             }
             @Nested
@@ -224,21 +316,19 @@ class BoardTest {
                     // given
                     List<String> images = createImagePaths(1);
                     Board board = createBoard(NORMAL_MEMBER, images, CHOICE);
-                    setField(NORMAL_MEMBER, "id", 1L);
 
                     // when
                     List<String> updateImages = createImagePaths(1);
                     board.update(
                             NORMAL_MEMBER.getId(),
-                            "update-title",
-                            "update-content",
+                            "title",
+                            "content",
                             board.getCategoryBoard(),
                             LocalDateTime.now(),
                             updateImages
                     );
 
                     // then
-                    assertThat(board.getTitle()).isEqualTo("update-title");
                     assertThat(board.getBoardImages()).hasSize(1)
                             .extracting("path")
                             .containsExactlyInAnyOrder(
@@ -251,18 +341,18 @@ class BoardTest {
                     // given
                     List<String> images = createImagePaths(1);
                     Board board = createBoard(NORMAL_MEMBER, images, CHOICE);
-                    setField(NORMAL_MEMBER, "id", 1L);
 
                     // when & then
                     List<String> updateImages = createImagePaths(3);
-                    assertThatThrownBy(() -> board.update(
-                            NORMAL_MEMBER.getId(),
-                            "update-title",
-                            "update-content",
-                            board.getCategoryBoard(),
-                            LocalDateTime.now(),
-                            updateImages
-                    ))
+                    assertThatThrownBy(() ->
+                            board.update(
+                                    NORMAL_MEMBER.getId(),
+                                    "title",
+                                    "content",
+                                    board.getCategoryBoard(),
+                                    LocalDateTime.now(),
+                                    updateImages
+                            ))
                             .isInstanceOf(BoardBusinessException.class)
                             .hasMessage(BOARD_CHOICE_IMAGE_RANGE_OUT.getMessage());
                 }
@@ -278,20 +368,20 @@ class BoardTest {
                 Member NORMAL_MEMBER_NOT_WRITER = NORMAL_MEMBER_LANGO.createMember();
                 List<String> images = createImagePaths(3);
                 Board board = createBoard(NORMAL_MEMBER, images, VOTE);
-                setField(NORMAL_MEMBER, "id", 1L);
                 setField(NORMAL_MEMBER_NOT_WRITER, "id", 2L);
 
                 // when & then
-                assertThatThrownBy(() -> board.update(
-                        NORMAL_MEMBER_NOT_WRITER.getId(),
-                        "update-title",
-                        "update-content",
-                        VOTE,
-                        LocalDateTime.now(),
-                        images
-                ))
-                        .isInstanceOf(BoardBusinessException.class)
-                        .hasMessage(UNAUTHORIZED_TO_UPDATE_BOARD.getMessage());
+                assertThatThrownBy(() ->
+                        board.update(
+                                NORMAL_MEMBER_NOT_WRITER.getId(),
+                                "update-title",
+                                "update-content",
+                                VOTE,
+                                LocalDateTime.now(),
+                                images
+                        ))
+                        .isInstanceOf(MemberBusinessException.class)
+                        .hasMessage(UNAUTHORIZED_TO_MEMBER.getMessage());
             }
         }
 

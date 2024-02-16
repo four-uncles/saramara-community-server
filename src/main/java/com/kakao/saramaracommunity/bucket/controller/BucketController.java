@@ -14,6 +14,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
+import static org.springframework.http.HttpStatus.*;
+
 /**
  * 클라이언트의 요청을 받아 AWS S3 버킷에 이미지 업로드를 수행할 컨트롤러 클래스입니다.
  */
@@ -30,8 +32,8 @@ public class BucketController {
     ) {
         BucketCreateResponse response = bucketService.uploadImages(request);
         return ResponseEntity.ok().body(
-                ApiResponse.of(
-                        HttpStatus.OK,
+                ApiResponse.successResponse(
+                        OK,
                         "정상적으로 AWS S3 버킷에 이미지 등록을 완료했습니다.",
                         response
                 )
