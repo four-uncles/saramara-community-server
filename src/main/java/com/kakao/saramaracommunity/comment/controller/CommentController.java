@@ -82,8 +82,7 @@ public class CommentController {
         return ResponseEntity.ok().body(
                 ApiResponse.successResponse(
                         HttpStatus.OK,
-                        "성공적으로 댓글을 수정 하였습니다.",
-                        true
+                        "성공적으로 댓글을 수정 하였습니다."
                 )
         );
     }
@@ -103,8 +102,7 @@ public class CommentController {
         return ResponseEntity.ok().body(
                 ApiResponse.successResponse(
                         HttpStatus.OK,
-                        "성공적으로 댓글을 삭제 하였습니다.",
-                        true
+                        "성공적으로 댓글을 삭제 하였습니다."
                 )
         );
     }
