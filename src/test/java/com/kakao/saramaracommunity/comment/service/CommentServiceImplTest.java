@@ -18,6 +18,7 @@ import com.kakao.saramaracommunity.comment.dto.api.request.CommentUpdateRequest;
 import com.kakao.saramaracommunity.comment.dto.business.response.CommentCreateResponse;
 import com.kakao.saramaracommunity.comment.dto.business.response.CommentsReadInBoardResponse;
 import com.kakao.saramaracommunity.comment.entity.Comment;
+import com.kakao.saramaracommunity.comment.exception.CommentBusinessException;
 import com.kakao.saramaracommunity.comment.repository.CommentRepository;
 import com.kakao.saramaracommunity.member.entity.Member;
 import com.kakao.saramaracommunity.member.exception.MemberBusinessException;
@@ -233,6 +234,21 @@ class CommentServiceImplTest extends IntegrationTestSupport {
                 assertThatThrownBy(() -> commentService.updateComment(commentId, request.toServiceRequest()))
                         .isInstanceOf(MemberBusinessException.class)
                         .hasMessage("권한이 없는 사용자입니다.");
+            }
+
+            @DisplayName("[Exception] 작성된 댓글의 정보가 없다면 내용을 수정할 수 없다.")
+            @Test
+            void 작성된_댓글의_정보가_없다면_내용을_수정할_수_없다() {
+                // given
+                Long writer = COMMENT_WRITER_WOOGI.getId();
+                String updateContent = "2번 잠옷이 귀여워!!";
+
+                CommentUpdateRequest request = new CommentUpdateRequest(writer, updateContent);
+
+                // when & then
+                assertThatThrownBy(() -> commentService.updateComment(null, request.toServiceRequest()))
+                        .isInstanceOf(CommentBusinessException.class)
+                        .hasMessage("댓글을 찾을 수 없습니다.");
             }
 
         }
