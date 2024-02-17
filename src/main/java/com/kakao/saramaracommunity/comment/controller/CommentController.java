@@ -1,11 +1,11 @@
 package com.kakao.saramaracommunity.comment.controller;
 
-import com.kakao.saramaracommunity.comment.controller.dto.request.CommentCreateRequest;
-import com.kakao.saramaracommunity.comment.controller.dto.request.CommentDeleteRequest;
-import com.kakao.saramaracommunity.comment.controller.dto.request.CommentUpdateRequest;
+import com.kakao.saramaracommunity.comment.dto.api.request.CommentCreateRequest;
+import com.kakao.saramaracommunity.comment.dto.api.request.CommentDeleteRequest;
+import com.kakao.saramaracommunity.comment.dto.api.request.CommentUpdateRequest;
 import com.kakao.saramaracommunity.comment.service.CommentService;
-import com.kakao.saramaracommunity.comment.service.dto.response.CommentCreateResponse;
-import com.kakao.saramaracommunity.comment.service.dto.response.CommentsReadInBoardResponse;
+import com.kakao.saramaracommunity.comment.dto.business.response.CommentCreateResponse;
+import com.kakao.saramaracommunity.comment.dto.business.response.CommentsReadInBoardResponse;
 import com.kakao.saramaracommunity.common.response.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
