@@ -42,7 +42,7 @@ public class CommentController {
         return ResponseEntity.ok().body(
                 ApiResponse.successResponse(
                         HttpStatus.OK,
-                        "댓글 작성이 완료 되었습니다.",
+                        "성공적으로 댓글을 작성 하였습니다.",
                         data
                 )
         );
@@ -61,7 +61,7 @@ public class CommentController {
         return ResponseEntity.ok().body(
                 ApiResponse.successResponse(
                         HttpStatus.OK,
-                        "댓글 조회가 완료 되었습니다.",
+                        "성공적으로 게시글의 댓글을 모두 조회 하였습니다.",
                         data
                 )
         );
@@ -82,7 +82,7 @@ public class CommentController {
         return ResponseEntity.ok().body(
                 ApiResponse.successResponse(
                         HttpStatus.OK,
-                        "댓글 수정이 완료 되었습니다.",
+                        "성공적으로 댓글을 수정 하였습니다.",
                         true
                 )
         );
@@ -103,7 +103,7 @@ public class CommentController {
         return ResponseEntity.ok().body(
                 ApiResponse.successResponse(
                         HttpStatus.OK,
-                        "성공적으로 댓글을 삭제하였습니다.",
+                        "성공적으로 댓글을 삭제 하였습니다.",
                         true
                 )
         );
