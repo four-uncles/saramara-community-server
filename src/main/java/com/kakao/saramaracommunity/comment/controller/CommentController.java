@@ -33,7 +33,7 @@ public class CommentController {
      * @param request memberId: 작성자 고유 식별자, boardId: 게시글 고유 식별자, content: 내용
      * @return "code", "message", "data" : { "nickname", "content" }
      */
-    @PostMapping("/register")
+    @PostMapping
     public ResponseEntity<ApiResponse<CommentCreateResponse>> createComment(
             @Valid @RequestBody CommentCreateRequest request
     ) {
@@ -53,7 +53,7 @@ public class CommentController {
      * @param boardId 댓글이 작성된 게시글 고유 식별자
      * @return "code", "message", "data" : List<CommentReadDetailResponse> comments - { nickname, content, createdAt }
      */
-    @GetMapping("/{boardId}/comments")
+    @GetMapping("/{boardId}")
     public ResponseEntity<ApiResponse<CommentsReadInBoardResponse>> getBoardComments(
             @Valid @PathVariable("boardId") Long boardId
     ) {

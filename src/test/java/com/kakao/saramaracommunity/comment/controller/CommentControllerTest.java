@@ -34,7 +34,7 @@ class CommentControllerTest extends ControllerTestSupport {
 
             // when & then
             mockMvc.perform(
-                    post("/api/v1/comment/register")
+                    post("/api/v1/comment")
                             .content(objectMapper.writeValueAsString(request))
                             .with(SecurityMockMvcRequestPostProcessors.csrf())
                             .contentType(APPLICATION_JSON)
@@ -55,7 +55,7 @@ class CommentControllerTest extends ControllerTestSupport {
 
             // when & then
             mockMvc.perform(
-                            post("/api/v1/comment/register")
+                            post("/api/v1/comment")
                                     .content(objectMapper.writeValueAsString(request))
                                     .with(SecurityMockMvcRequestPostProcessors.csrf())
                                     .contentType(APPLICATION_JSON)
@@ -76,7 +76,7 @@ class CommentControllerTest extends ControllerTestSupport {
 
             // when & then
             mockMvc.perform(
-                            post("/api/v1/comment/register")
+                            post("/api/v1/comment")
                                     .content(objectMapper.writeValueAsString(request))
                                     .with(SecurityMockMvcRequestPostProcessors.csrf())
                                     .contentType(APPLICATION_JSON)
@@ -97,7 +97,7 @@ class CommentControllerTest extends ControllerTestSupport {
 
             // when & then
             mockMvc.perform(
-                            post("/api/v1/comment/register")
+                            post("/api/v1/comment")
                                     .content(objectMapper.writeValueAsString(request))
                                     .with(SecurityMockMvcRequestPostProcessors.csrf())
                                     .contentType(APPLICATION_JSON)
@@ -118,7 +118,7 @@ class CommentControllerTest extends ControllerTestSupport {
 
             // when & then
             mockMvc.perform(
-                            post("/api/v1/comment/register")
+                            post("/api/v1/comment")
                                     .content(objectMapper.writeValueAsString(request))
                                     .with(SecurityMockMvcRequestPostProcessors.csrf())
                                     .contentType(APPLICATION_JSON)
@@ -143,7 +143,7 @@ class CommentControllerTest extends ControllerTestSupport {
 
             // when & then
             mockMvc.perform(
-                    get("/api/v1/comment/" + boardId + "/comments")
+                    get("/api/v1/comment/" + boardId)
                             .with(SecurityMockMvcRequestPostProcessors.csrf())
                             .contentType(APPLICATION_JSON)
                     )
