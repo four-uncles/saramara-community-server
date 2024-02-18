@@ -41,14 +41,14 @@ public class CommentServiceImpl implements CommentService{
     @Override
     public CommentCreateResponse createComment(CommentCreateServiceRequest request) {
         log.info("[CommentServiceImpl.class] 요청에 따라 댓글 생성을 시도합니다.");
-        Comment register = commentRepository.save(
+        Comment comment = commentRepository.save(
                 request.toEntity(
                         getMemberEntity(request.memberId()),
                         getBoardEntity(request.boardId())
                 )
         );
         log.info("[CommentServiceImpl.class] 요청에 따라 댓글을 생성하였습니다.");
-        return CommentCreateResponse.of(register);
+        return CommentCreateResponse.of(comment);
     }
 
     @Override
