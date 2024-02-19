@@ -1,4 +1,4 @@
-package com.kakao.saramaracommunity.comment.service.dto.response;
+package com.kakao.saramaracommunity.comment.dto.business.response;
 
 import java.time.LocalDateTime;
 import lombok.Builder;

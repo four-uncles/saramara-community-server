@@ -19,7 +19,7 @@ public class MemberController {
 
 	private final MemberService memberService;
 
-	@PostMapping("/register")
+	@PostMapping
 	public ResponseEntity<ApiResponse> registerMember (
 			@RequestBody MemberRegisterRequest request
 	) {

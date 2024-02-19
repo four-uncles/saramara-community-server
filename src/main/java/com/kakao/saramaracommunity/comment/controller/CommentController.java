@@ -1,11 +1,11 @@
 package com.kakao.saramaracommunity.comment.controller;
 
-import com.kakao.saramaracommunity.comment.controller.dto.request.CommentCreateRequest;
-import com.kakao.saramaracommunity.comment.controller.dto.request.CommentDeleteRequest;
-import com.kakao.saramaracommunity.comment.controller.dto.request.CommentUpdateRequest;
+import com.kakao.saramaracommunity.comment.dto.api.request.CommentCreateRequest;
+import com.kakao.saramaracommunity.comment.dto.api.request.CommentDeleteRequest;
+import com.kakao.saramaracommunity.comment.dto.api.request.CommentUpdateRequest;
 import com.kakao.saramaracommunity.comment.service.CommentService;
-import com.kakao.saramaracommunity.comment.service.dto.response.CommentCreateResponse;
-import com.kakao.saramaracommunity.comment.service.dto.response.CommentsReadInBoardResponse;
+import com.kakao.saramaracommunity.comment.dto.business.response.CommentCreateResponse;
+import com.kakao.saramaracommunity.comment.dto.business.response.CommentsReadInBoardResponse;
 import com.kakao.saramaracommunity.common.response.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +33,7 @@ public class CommentController {
      * @param request memberId: 작성자 고유 식별자, boardId: 게시글 고유 식별자, content: 내용
      * @return "code", "message", "data" : { "nickname", "content" }
      */
-    @PostMapping("/register")
+    @PostMapping
     public ResponseEntity<ApiResponse<CommentCreateResponse>> createComment(
             @Valid @RequestBody CommentCreateRequest request
     ) {
@@ -42,7 +42,7 @@ public class CommentController {
         return ResponseEntity.ok().body(
                 ApiResponse.successResponse(
                         HttpStatus.OK,
-                        "댓글 작성이 완료 되었습니다.",
+                        "성공적으로 댓글을 작성 하였습니다.",
                         data
                 )
         );
@@ -53,7 +53,7 @@ public class CommentController {
      * @param boardId 댓글이 작성된 게시글 고유 식별자
      * @return "code", "message", "data" : List<CommentReadDetailResponse> comments - { nickname, content, createdAt }
      */
-    @GetMapping("/{boardId}/comments")
+    @GetMapping("/{boardId}")
     public ResponseEntity<ApiResponse<CommentsReadInBoardResponse>> getBoardComments(
             @Valid @PathVariable("boardId") Long boardId
     ) {
@@ -61,7 +61,7 @@ public class CommentController {
         return ResponseEntity.ok().body(
                 ApiResponse.successResponse(
                         HttpStatus.OK,
-                        "댓글 조회가 완료 되었습니다.",
+                        "성공적으로 게시글의 댓글을 모두 조회 하였습니다.",
                         data
                 )
         );
@@ -82,8 +82,7 @@ public class CommentController {
         return ResponseEntity.ok().body(
                 ApiResponse.successResponse(
                         HttpStatus.OK,
-                        "댓글 수정이 완료 되었습니다.",
-                        true
+                        "성공적으로 댓글을 수정 하였습니다."
                 )
         );
     }
@@ -103,8 +102,7 @@ public class CommentController {
         return ResponseEntity.ok().body(
                 ApiResponse.successResponse(
                         HttpStatus.OK,
-                        "성공적으로 댓글을 삭제하였습니다.",
-                        true
+                        "성공적으로 댓글을 삭제 하였습니다."
                 )
         );
     }
