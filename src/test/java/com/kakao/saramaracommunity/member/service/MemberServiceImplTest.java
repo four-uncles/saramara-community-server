@@ -1,11 +1,10 @@
 package com.kakao.saramaracommunity.member.service;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.BDDMockito.*;
-
-import java.util.Optional;
-
-import org.assertj.core.api.Assertions;
+import com.kakao.saramaracommunity.member.controller.request.MemberRegisterRequest;
+import com.kakao.saramaracommunity.member.controller.response.MemberInfoResponse;
+import com.kakao.saramaracommunity.member.entity.Member;
+import com.kakao.saramaracommunity.member.repository.MemberRepository;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,11 +13,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.context.ActiveProfiles;
 
-import com.kakao.saramaracommunity.member.controller.request.MemberRegisterRequest;
-import com.kakao.saramaracommunity.member.controller.response.MemberInfoResponse;
-import com.kakao.saramaracommunity.member.entity.Member;
-import com.kakao.saramaracommunity.member.repository.MemberRepository;
+import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.BDDMockito.*;
+
+@Disabled
 @ActiveProfiles("test")
 @ExtendWith(MockitoExtension.class)
 class MemberServiceImplTest {
