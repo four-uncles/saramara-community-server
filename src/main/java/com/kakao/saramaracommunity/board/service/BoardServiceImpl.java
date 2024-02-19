@@ -72,8 +72,8 @@ public class BoardServiceImpl implements BoardService {
     @Override
     public void updateBoard(Long boardId, BoardUpdateServiceRequest request) {
         Board savedBoard = getBoardEntity(boardId);
-        verifyBoardOwner(savedBoard, request.memberId());
         log.info("[BoardServiceImpl] 게시글을 수정합니다. 게시글 번호: {}", savedBoard.getId());
+        verifyBoardOwner(savedBoard, request.memberId());
         savedBoard.update(
                 request.memberId(),
                 request.title(),
@@ -87,8 +87,8 @@ public class BoardServiceImpl implements BoardService {
     @Override
     public void deleteBoard(Long boardId, BoardDeleteServiceRequest request) {
         Board savedBoard = getBoardEntity(boardId);
-        verifyBoardOwner(savedBoard, request.memberId());
         log.info("[BoardServiceImpl] 게시글을 삭제합니다. 게시글 번호: {}", savedBoard.getId());
+        verifyBoardOwner(savedBoard, request.memberId());
         boardRepository.delete(savedBoard);
     }
 
