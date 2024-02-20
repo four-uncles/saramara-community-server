@@ -1,6 +1,6 @@
 package com.kakao.saramaracommunity.bucket.service;
 
-import com.kakao.saramaracommunity.bucket.service.dto.response.BucketCreateResponse;
+import com.kakao.saramaracommunity.bucket.dto.business.BucketCreateResponse;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
