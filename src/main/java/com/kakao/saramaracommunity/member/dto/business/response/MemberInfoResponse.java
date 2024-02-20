@@ -1,4 +1,4 @@
-package com.kakao.saramaracommunity.member.controller.response;
+package com.kakao.saramaracommunity.member.dto.business.response;
 
 import com.kakao.saramaracommunity.member.entity.Member;
 
