@@ -3,7 +3,7 @@ package com.kakao.saramaracommunity.member.entity;
 import org.hibernate.annotations.DynamicUpdate;
 
 import com.kakao.saramaracommunity.common.entity.BaseTimeEntity;
-import com.kakao.saramaracommunity.member.controller.request.MemberRegisterRequest;
+import com.kakao.saramaracommunity.member.dto.api.request.MemberRegisterRequest;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

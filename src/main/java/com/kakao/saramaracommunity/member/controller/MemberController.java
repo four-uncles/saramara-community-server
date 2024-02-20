@@ -1,8 +1,8 @@
 package com.kakao.saramaracommunity.member.controller;
 
 import com.kakao.saramaracommunity.common.response.ApiResponse;
-import com.kakao.saramaracommunity.member.controller.request.MemberRegisterRequest;
-import com.kakao.saramaracommunity.member.controller.response.MemberInfoResponse;
+import com.kakao.saramaracommunity.member.dto.api.request.MemberRegisterRequest;
+import com.kakao.saramaracommunity.member.dto.business.response.MemberInfoResponse;
 import com.kakao.saramaracommunity.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
