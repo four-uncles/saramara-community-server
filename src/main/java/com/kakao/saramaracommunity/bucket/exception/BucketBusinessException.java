@@ -8,11 +8,9 @@ import lombok.Getter;
  * Unchecked Exception(Runtimexception)을 상속받기에 예외가 발생하면 롤백을 수행합니다.
  */
 @Getter
-public class BucketUploadException extends RuntimeException {
-
+public class BucketBusinessException extends RuntimeException {
     private final BucketErrorCode statusWithCode;
-
-    public BucketUploadException(BucketErrorCode statusWithCode) {
+    public BucketBusinessException(BucketErrorCode statusWithCode) {
         super(statusWithCode.getMessage());
         this.statusWithCode = statusWithCode;
     }
