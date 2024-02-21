@@ -1,6 +1,6 @@
 package com.kakao.saramaracommunity.bucket.service;
 
-import com.kakao.saramaracommunity.bucket.dto.business.BucketCreateResponse;
+import com.kakao.saramaracommunity.bucket.dto.business.response.BucketUploadResponse;
 import com.kakao.saramaracommunity.bucket.exception.BucketBusinessException;
 import com.kakao.saramaracommunity.util.AwsS3Uploader;
 import lombok.RequiredArgsConstructor;
@@ -30,18 +30,18 @@ public class BucketServiceImpl implements BucketService {
     private int MAX_IMAGE_COUNT;
 
     @Override
-    public BucketCreateResponse uploadImages(List<MultipartFile> images) {
-        if(checkImageIsEmpty(images)) {
+    public BucketUploadResponse uploadImages(List<MultipartFile> requestImageFiles) {
+        if(checkImageIsEmpty(requestImageFiles)) {
             log.info("[BucketServiceImpl] 이미지는 최소 1장 이상 업로드해야 합니다.");
             throw new BucketBusinessException(BUCKET_IMAGE_MIN_RANGE_OUT);
         }
-        if (checkImageCount(images.size())) {
-            log.info("[BucketServiceImpl] 업로드할 이미지 개수가 너무 많습니다. 요청으로 받은 이미지 목록 개수: {}", images.size());
+        if (checkImageCount(requestImageFiles.size())) {
+            log.info("[BucketServiceImpl] 업로드할 이미지 개수가 너무 많습니다. 요청으로 받은 이미지 목록 개수: {}", requestImageFiles.size());
             throw new BucketBusinessException(BUCKET_IMAGE_MAX_RANGE_OUT);
         }
-        List<String> imagePathList = uploadS3BucketWithGetUrls(images);
+        List<String> imagePathList = uploadS3BucketWithGetUrls(requestImageFiles);
         log.info("[BucketServiceImpl] AWS S3 버킷에 이미지를 정상적으로 등록했습니다. S3 버킷 등록 이미지 목록: {}", imagePathList);
-        return BucketCreateResponse.of(imagePathList);
+        return BucketUploadResponse.of(imagePathList);
     }
 
     private boolean checkImageIsEmpty(List<MultipartFile> images) {
@@ -52,8 +52,8 @@ public class BucketServiceImpl implements BucketService {
         return imageCount > MAX_IMAGE_COUNT;
     }
 
-    private List<String> uploadS3BucketWithGetUrls(List<MultipartFile> images) {
-        return images.stream()
+    private List<String> uploadS3BucketWithGetUrls(List<MultipartFile> imageFiles) {
+        return imageFiles.stream()
                 .map(awsS3Uploader::upload)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
