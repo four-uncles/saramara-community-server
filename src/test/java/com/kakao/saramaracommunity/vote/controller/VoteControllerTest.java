@@ -1,6 +1,7 @@
 package com.kakao.saramaracommunity.vote.controller;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -38,6 +39,32 @@ class VoteControllerTest extends ControllerTestSupport {
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.code").value("200"))
                     .andExpect(jsonPath("$.message").value("성공적으로 투표를 완료하였습니다."));
+        }
+
+    }
+
+    @Nested
+    @DisplayName("게시글에 업로드된 이미지 투표 조회 시")
+    class 게시글에_업로드된_이미지_투표_조회_시 {
+
+        @DisplayName("투표를 진행한 회원은 투표를 조회할 수 있다.")
+        @Test
+        void 투표를_진행한_회원은_투표를_조회할_수_있다() throws Exception {
+            // given
+            Long boardId = 1L;
+            Long memberId = 1L;
+
+            // when & then
+            mockMvc.perform(
+                            get("/api/v1/vote/" + boardId)
+                                    .header("memberId", memberId.toString())
+                                    .with(SecurityMockMvcRequestPostProcessors.csrf())
+                                    .contentType(APPLICATION_JSON)
+                    )
+                    .andDo(print())
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.code").value("200"))
+                    .andExpect(jsonPath("$.message").value("성공적으 게시글의 투표 상태를 조회하였습니다."));
         }
 
     }

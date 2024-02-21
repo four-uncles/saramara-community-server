@@ -1,8 +1,10 @@
 package com.kakao.saramaracommunity.vote.service;
 
 import static com.kakao.saramaracommunity.fixture.MemberFixture.NORMAL_MEMBER_LANGO;
+import static com.kakao.saramaracommunity.fixture.MemberFixture.NORMAL_MEMBER_SONNY;
 import static com.kakao.saramaracommunity.fixture.MemberFixture.NORMAL_MEMBER_WOOGI;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.kakao.saramaracommunity.board.entity.Board;
 import com.kakao.saramaracommunity.board.entity.BoardImage;
@@ -10,10 +12,13 @@ import com.kakao.saramaracommunity.board.entity.CategoryBoard;
 import com.kakao.saramaracommunity.board.repository.BoardImageRepository;
 import com.kakao.saramaracommunity.board.repository.BoardRepository;
 import com.kakao.saramaracommunity.member.entity.Member;
+import com.kakao.saramaracommunity.member.exception.MemberBusinessException;
 import com.kakao.saramaracommunity.member.repository.MemberRepository;
 import com.kakao.saramaracommunity.support.IntegrationTestSupport;
 import com.kakao.saramaracommunity.vote.dto.api.request.VoteCreateRequest;
 import com.kakao.saramaracommunity.vote.dto.business.response.VoteCreateResponse;
+import com.kakao.saramaracommunity.vote.dto.business.response.VotesReadInBoardResponse;
+import com.kakao.saramaracommunity.vote.entity.Vote;
 import com.kakao.saramaracommunity.vote.repository.VoteRepository;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -97,6 +102,84 @@ class VoteServiceImplTest extends IntegrationTestSupport {
             }
         }
 
+    }
+
+    @Nested
+    @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+    class 등록된_게시글에_투표_조회_시 {
+
+        @Nested
+        @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+        class 투표를_진행한_회원이라면 {
+
+            private Member MEMBER_WOOGI;
+
+            @BeforeEach
+            void setUp() {
+                MEMBER_WOOGI = NORMAL_MEMBER_WOOGI.createMember();
+                Vote VOTER_WOOGI = createVote(
+                        MEMBER_WOOGI,
+                        REGISTED_BOARD,
+                        REGISTED_BOARD.getBoardImages().get(0)
+                );
+            }
+
+            @DisplayName("투표 상태를 조회할 수 있다.")
+            @Test
+            void 투표_상태를_조회할_수_있다() {
+                // when
+                VotesReadInBoardResponse response = voteService.readVoteInBoard(
+                        MEMBER_WOOGI.getId(), REGISTED_BOARD.getId());
+
+                // then
+                assertThat(response).isNotNull();
+                assertThat(response.boardId()).isEqualTo(REGISTED_BOARD.getId());
+                assertThat(response.totalVotes()).isEqualTo(1);
+                assertThat(response.voteCounts())
+                        .hasSize(REGISTED_BOARD.getBoardImages().size())
+                        .containsEntry("image-1", 1L)
+                        .containsEntry("image-2", 0L)
+                        .containsEntry("image-3", 0L);
+            }
+
+        }
+
+        @Nested
+        @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+        class 투표를_진행하지_않은_회원이라면 {
+
+            private Member MEMBER_SONNY;
+
+            @BeforeEach
+            void setUp() {
+                MEMBER_SONNY = NORMAL_MEMBER_SONNY.createMember();
+            }
+
+            @DisplayName("투표 상태를 조회할 수 없다.")
+            @Test
+            void 투표_상태를_조회할_수_없다() {
+                // given
+                Long memberId = MEMBER_SONNY.getId();
+                Long boardId = REGISTED_BOARD.getId();
+
+                // when & then
+                assertThatThrownBy(() -> voteService.readVoteInBoard(memberId, boardId))
+                        .isInstanceOf(MemberBusinessException.class)
+                        .hasMessage("권한이 없는 사용자입니다.");
+            }
+
+        }
+
+    }
+
+    private Vote createVote(Member member, Board board, BoardImage boardImage) {
+        Member IMAGE_VOTER = createMember(member);
+        Vote vote = Vote.of(
+                IMAGE_VOTER,
+                board,
+                boardImage
+        );
+        return voteRepository.save(vote);
     }
 
     private Board createBoard(Member writer) {
