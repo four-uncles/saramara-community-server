@@ -16,6 +16,7 @@ import com.kakao.saramaracommunity.member.exception.MemberBusinessException;
 import com.kakao.saramaracommunity.member.repository.MemberRepository;
 import com.kakao.saramaracommunity.support.IntegrationTestSupport;
 import com.kakao.saramaracommunity.vote.dto.api.request.VoteCreateRequest;
+import com.kakao.saramaracommunity.vote.dto.api.request.VoteUpdateRequest;
 import com.kakao.saramaracommunity.vote.dto.business.response.VoteCreateResponse;
 import com.kakao.saramaracommunity.vote.dto.business.response.VotesReadInBoardResponse;
 import com.kakao.saramaracommunity.vote.entity.Vote;
@@ -66,7 +67,7 @@ class VoteServiceImplTest extends IntegrationTestSupport {
 
     @Nested
     @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
-    class 등록된_게시글에_이미지_투표_시 {
+    class 등록된_게시글에_투표_시 {
 
         @Nested
         @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
@@ -106,7 +107,7 @@ class VoteServiceImplTest extends IntegrationTestSupport {
 
     @Nested
     @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
-    class 등록된_게시글에_투표_조회_시 {
+    class 등록된_투표_조회_시 {
 
         @Nested
         @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
@@ -172,12 +173,55 @@ class VoteServiceImplTest extends IntegrationTestSupport {
 
     }
 
-    private Vote createVote(Member member, Board board, BoardImage boardImage) {
+    @Nested
+    @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+    class 등록된_투표_수정_시 {
+
+        @Nested
+        @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+        class 등록된_회원이라면 {
+
+            private Member MEMBER_WOOGI;
+            private Vote REGISTED_VOTE;
+            private BoardImage SELECT_IMAGE;
+
+            @BeforeEach
+            void setUp() {
+                MEMBER_WOOGI = createMember(NORMAL_MEMBER_WOOGI.createMember());
+                SELECT_IMAGE = REGISTED_BOARD.getBoardImages().get(0);
+                REGISTED_VOTE = createVote(MEMBER_WOOGI, REGISTED_BOARD, SELECT_IMAGE);
+            }
+
+            @DisplayName("[Green] 자신이 투표한 이미지 한장을 수정할 수 있다.")
+            @Test
+            void 자신이_투표한_이미지_한장을_수정할_수_있다() {
+                // given
+                Long voteId = REGISTED_VOTE.getId();
+                Long VOTER_ID = MEMBER_WOOGI.getId();
+                BoardImage RESELECT_IMAGE = REGISTED_BOARD.getBoardImages().get(1);
+
+                VoteUpdateRequest request = new VoteUpdateRequest(VOTER_ID, RESELECT_IMAGE);
+
+                // when
+                voteService.updateVote(voteId, request.toServiceRequest());
+                Vote result = voteRepository.findById(voteId).orElseThrow();
+
+                // then
+                assertThat(result).isNotNull();
+                assertThat(result.getBoardImage().getPath()).isNotEqualTo("image-1");
+                assertThat(result.getBoardImage().getPath()).isEqualTo("image-2");
+            }
+
+        }
+
+    }
+
+    private Vote createVote(Member member, Board board, BoardImage SELECT_IMAGE) {
         Member IMAGE_VOTER = createMember(member);
         Vote vote = Vote.of(
                 IMAGE_VOTER,
                 board,
-                boardImage
+                SELECT_IMAGE
         );
         return voteRepository.save(vote);
     }
