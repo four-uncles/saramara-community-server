@@ -1,15 +1,17 @@
 package com.kakao.saramaracommunity.bucket.controller;
 
-import com.kakao.saramaracommunity.bucket.service.dto.response.BucketCreateResponse;
 import com.kakao.saramaracommunity.support.ControllerTestSupport;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockMultipartFile;
 
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.hamcrest.Matchers.containsString;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -23,39 +25,70 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 class BucketControllerTest extends ControllerTestSupport {
 
-    @DisplayName("AWS S3 버킷에 새로운 이미지 목록을 등록한다.")
-    @Test
-    void uploadImages() throws Exception {
-        // given
-        List<MockMultipartFile> request = List.of(
-                new MockMultipartFile("request", "image1.png", "image/png", "image1".getBytes()),
-                new MockMultipartFile("request", "image2.png", "image/png", "image2".getBytes()),
-                new MockMultipartFile("request", "image3.png", "image/png", "image3".getBytes())
-        );
+    @Nested
+    @DisplayName("AWS S3 버킷에")
+    class AWS_S3_버킷에 {
+        @Test
+        @DisplayName("이미지 3장을 업로드할 수 있다.")
+        void 이미지_3장을_등록할_수_있다() throws Exception {
+            // given
+            List<MockMultipartFile> request = createImageFileList(3);
 
-        List<String> expectedUrls = List.of(
-                "https://saramara-storage.s3.ap-northeast-2.amazonaws.com/image1.png",
-                "https://saramara-storage.s3.ap-northeast-2.amazonaws.com/image2.png",
-                "https://saramara-storage.s3.ap-northeast-2.amazonaws.com/image3.png"
-        );
+            // when & then
+            mockMvc.perform(
+                            multipart("/api/v1/bucket")
+                                    .file(request.get(0))
+                                    .file(request.get(1))
+                                    .file(request.get(2))
+                                    .with(csrf())
+                    )
+                    .andDo(print())
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.code").value("200"))
+                    .andExpect(jsonPath("$.message").value("성공적으로 AWS S3 버킷에 이미지 업로드를 완료하였습니다."));
+        }
+        @Test
+        @DisplayName("이미지 파일 목록을 요청으로 보내지 않는다면 예외가 발생한다.")
+        void 요청한_이미지_파일_목록이_비어있다면_예외가_발생한다() throws Exception {
+            // when & then
+            mockMvc.perform(
+                            multipart("/api/v1/bucket")
+                                    .with(csrf())
+                    )
+                    .andDo(print())
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.code").value("400"))
+                    .andExpect(jsonPath("$.message").value(containsString("요청으로 받은 이미지 목록 필드가 누락되었습니다.")));
+        }
 
-        given(bucketService.uploadImages(any()))
-                .willReturn(BucketCreateResponse.of(expectedUrls));
+        @Test
+        @DisplayName("이미지 파일 목록이 5장을 초과한다면 예외가 발생한다.")
+        void 이미지_파일_목록이_5장을_초과한다면_예외가_발생한다() throws Exception {
+            // given
+            List<MockMultipartFile> request = createImageFileList(6);
 
-        // when & then
-        mockMvc.perform(
-                        multipart("/api/v1/bucket")
-                                .file(request.get(0))
-                                .file(request.get(1))
-                                .file(request.get(2))
-                                .with(csrf())
-                )
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.code").value("200"))
-                .andExpect(jsonPath("$.message").value("정상적으로 AWS S3 버킷에 이미지 등록을 완료했습니다."))
-                .andExpect(jsonPath("$.data").isNotEmpty())
-                .andExpect(jsonPath("$.data.images").isArray());
+            // when & then
+            mockMvc.perform(
+                            multipart("/api/v1/bucket")
+                                    .file(request.get(0))
+                                    .file(request.get(1))
+                                    .file(request.get(2))
+                                    .file(request.get(3))
+                                    .file(request.get(4))
+                                    .file(request.get(5))
+                                    .with(csrf())
+                    )
+                    .andDo(print())
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.code").value("400"))
+                    .andExpect(jsonPath("$.message").value(containsString("이미지는 최대 5장까지만 업로드할 수 있습니다.")));
+        }
+    }
+
+    private static List<MockMultipartFile> createImageFileList(int size) {
+        return IntStream.range(0, size)
+                .mapToObj(idx -> new MockMultipartFile("request", "test"+idx+".png", "image/png", "test_file".getBytes(UTF_8)))
+                .collect(Collectors.toList());
     }
 
 }
