@@ -16,6 +16,7 @@ import com.kakao.saramaracommunity.member.exception.MemberBusinessException;
 import com.kakao.saramaracommunity.member.repository.MemberRepository;
 import com.kakao.saramaracommunity.support.IntegrationTestSupport;
 import com.kakao.saramaracommunity.vote.dto.api.request.VoteCreateRequest;
+import com.kakao.saramaracommunity.vote.dto.api.request.VoteDeleteRequest;
 import com.kakao.saramaracommunity.vote.dto.api.request.VoteUpdateRequest;
 import com.kakao.saramaracommunity.vote.dto.business.response.VoteCreateResponse;
 import com.kakao.saramaracommunity.vote.dto.business.response.VotesReadInBoardResponse;
@@ -210,6 +211,43 @@ class VoteServiceImplTest extends IntegrationTestSupport {
                 assertThat(result).isNotNull();
                 assertThat(result.getBoardImage().getPath()).isNotEqualTo("image-1");
                 assertThat(result.getBoardImage().getPath()).isEqualTo("image-2");
+            }
+
+        }
+
+    }
+
+    @Nested
+    @DisplayName("게시글 이미지의 투표 삭제 시")
+    class 등록된_투표_삭제_시 {
+
+        @Nested
+        @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+        class 등록된_회원이라면 {
+
+            private Member MEMBER_WOOGI;
+            private Vote REGISTED_VOTE;
+
+            @BeforeEach
+            void setUp() {
+                MEMBER_WOOGI = createMember(NORMAL_MEMBER_WOOGI.createMember());
+                BoardImage SELECT_IMAGE = REGISTED_BOARD.getBoardImages().get(0);
+                REGISTED_VOTE = createVote(MEMBER_WOOGI, REGISTED_BOARD, SELECT_IMAGE);
+            }
+
+            @DisplayName("[Green] 자신의 투표는 삭제할 수 있다.")
+            @Test
+            void 자신의_투표는_삭제할_수_있다() {
+                // given
+                Long memberId = MEMBER_WOOGI.getId();
+                Long voteId = REGISTED_VOTE.getId();
+                VoteDeleteRequest request = new VoteDeleteRequest(memberId);
+
+                // when
+                voteService.deleteVote(voteId, request.toServiceRequest());
+
+                // then
+                assertThat(voteRepository.findById(voteId)).isEmpty();
             }
 
         }

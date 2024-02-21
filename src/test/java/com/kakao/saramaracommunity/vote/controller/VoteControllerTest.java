@@ -1,6 +1,7 @@
 package com.kakao.saramaracommunity.vote.controller;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -11,6 +12,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.kakao.saramaracommunity.board.entity.BoardImage;
 import com.kakao.saramaracommunity.support.ControllerTestSupport;
 import com.kakao.saramaracommunity.vote.dto.api.request.VoteCreateRequest;
+import com.kakao.saramaracommunity.vote.dto.api.request.VoteDeleteRequest;
 import com.kakao.saramaracommunity.vote.dto.api.request.VoteUpdateRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -100,6 +102,34 @@ class VoteControllerTest extends ControllerTestSupport {
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.code").value(200))
                     .andExpect(jsonPath("$.message").value("성공적으로 투표를 수정 하였습니다."));
+        }
+
+    }
+
+    @Nested
+    @DisplayName("투표 삭제 시")
+    class 투표_삭제_시 {
+
+        private static final Long voteId = 1L;
+
+        @DisplayName("올바른 정보는 정상적으로 삭제할 수 있다.")
+        @Test
+        void 올바른_정보는_정상적으로_삭제할_수_있다() throws Exception {
+            // given
+            VoteDeleteRequest request = new VoteDeleteRequest(1L);
+
+            // when & then
+            mockMvc.perform(
+                            delete("/api/v1/vote/" + voteId)
+                                    .content(objectMapper.writeValueAsString(request))
+                                    .with(SecurityMockMvcRequestPostProcessors.csrf())
+                                    .contentType(APPLICATION_JSON)
+                    )
+                    .andDo(print())
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.code").value(200))
+                    .andExpect(jsonPath("$.message").value("성공적으로 투표를 삭제 하였습니다."));
+
         }
 
     }
