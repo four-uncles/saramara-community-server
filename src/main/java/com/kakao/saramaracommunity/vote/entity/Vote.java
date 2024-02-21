@@ -31,18 +31,19 @@ public class Vote extends BaseTimeEntity {
     private Member member;
 
     @ManyToOne
-    @JoinColumn(name = "board_image_id")
-    private BoardImage boardImage;
-
-    @ManyToOne
     @JoinColumn(name = "board_id")
     private Board board;
 
+    @ManyToOne
+    @JoinColumn(name = "board_image_id")
+    private BoardImage boardImage;
+
+
     @Builder(access = AccessLevel.PRIVATE)
-    public Vote(Member member, BoardImage boardImage, Board board) {
+    public Vote(Member member, Board board, BoardImage boardImage) {
         this.member = member;
-        this.boardImage = boardImage;
         this.board = board;
+        this.boardImage = boardImage;
     }
 
     public static Vote of(Member member, Board board, BoardImage boardImage) {
