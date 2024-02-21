@@ -51,38 +51,40 @@ public class Board extends BaseTimeEntity {
 
     @Builder
     private Board(
-            Member member,
-            CategoryBoard categoryBoard,
-            String title,
-            String content,
-            LocalDateTime deadLine,
-            List<String> images
+            final Member member,
+            final CategoryBoard categoryBoard,
+            final String title,
+            final String content,
+            final LocalDateTime deadLine,
+            final List<String> images
     ) {
         this.member = member;
         this.categoryBoard = categoryBoard;
+        validateImageCount(images.size());
         this.title = title;
         this.content = content;
         this.deadLine = deadLine;
         this.boardImages = createBoardImages(images);
-        validateImageCount(images.size());
+
     }
 
     public void update(
-            Long memberId,
-            String title,
-            String content,
-            CategoryBoard categoryBoard,
-            LocalDateTime deadLine,
-            List<String> images
+            final Long memberId,
+            final String title,
+            final String content,
+            final CategoryBoard categoryBoard,
+            final LocalDateTime deadLine,
+            final List<String> images
     ) {
         validateWriter(this.member.getId(), memberId);
         checkCategory(categoryBoard);
         this.title = title;
         this.content = content;
         this.categoryBoard = categoryBoard;
+        validateImageCount(images.size());
         this.deadLine = deadLine;
         updateBoardImages(images);
-        validateImageCount(images.size());
+
     }
 
     private List<BoardImage> createBoardImages(List<String> requestCreateImages) {
@@ -119,25 +121,17 @@ public class Board extends BaseTimeEntity {
         }
     }
 
-    /**
-     * 게시글 수정 시 카테고리 변경 여부를 검증하는 메서드입니다.
-     */
     private void checkCategory(CategoryBoard requestCategoryBoard) {
         if(!categoryBoard.equals(requestCategoryBoard)) {
             throw new BoardBusinessException(BOARD_CATEGORY_MISMATCH);
         }
     }
 
-    /**
-     * 게시글의 카테고리(CHOICE, VOTE)별 이미지 개수를 검증하는 메서드입니다.
-     * CHOICE: boardImages 리스트의 개수가 반드시 1개 이하여야 합니다.
-     * VOTE: boardImages 리스트의 개수가 반드시 2개 이상, 5개 이하여야 합니다.
-     */
-    private void validateImageCount(int imageListSize) {
-        if (categoryBoard.equals(VOTE) && (imageListSize < 2 || imageListSize > 5)) {
+    private void validateImageCount(int imageCount) {
+        if (categoryBoard.equals(VOTE) && imageCount < 2) {
             throw new BoardBusinessException(BOARD_VOTE_IMAGE_RANGE_OUT);
         }
-        if (categoryBoard.equals(CHOICE) && imageListSize != 1) {
+        if (categoryBoard.equals(CHOICE) && imageCount != 1) {
             throw new BoardBusinessException(BOARD_CHOICE_IMAGE_RANGE_OUT);
         }
     }
