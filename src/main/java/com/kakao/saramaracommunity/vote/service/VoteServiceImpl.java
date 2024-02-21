@@ -15,6 +15,7 @@ import com.kakao.saramaracommunity.member.entity.Member;
 import com.kakao.saramaracommunity.member.exception.MemberBusinessException;
 import com.kakao.saramaracommunity.member.repository.MemberRepository;
 import com.kakao.saramaracommunity.vote.dto.business.request.VoteCreateServiceRequest;
+import com.kakao.saramaracommunity.vote.dto.business.request.VoteDeleteServiceRequest;
 import com.kakao.saramaracommunity.vote.dto.business.request.VoteUpdateServiceRequest;
 import com.kakao.saramaracommunity.vote.dto.business.response.VoteCreateResponse;
 import com.kakao.saramaracommunity.vote.dto.business.response.VotesReadInBoardResponse;
@@ -80,6 +81,15 @@ public class VoteServiceImpl implements VoteService {
         verifyVoter(savedVote, request.memberId());
         savedVote.changeVote(request.memberId(), request.boardImage());
         log.info("[VoteServiceImpl.class] 요청에 따라 투표를 수정 하였습니다.");
+    }
+
+    @Override
+    public void deleteVote(Long voteId, VoteDeleteServiceRequest request) {
+        log.info("[VoteServiceImpl.class] 요청에 따라 투표 삭제를 시도합니다.");
+        Vote savedVote = getVoteEntity(voteId);
+        verifyVoter(savedVote, request.memberId());
+        voteRepository.delete(savedVote);
+        log.info("[VoteServiceImpl.class] 요청에 따라 투표를 삭제 하였습니다.");
     }
 
     private Member getMemberEntity(Long memberId) {

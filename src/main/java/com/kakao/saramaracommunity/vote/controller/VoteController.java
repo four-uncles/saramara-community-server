@@ -2,6 +2,7 @@ package com.kakao.saramaracommunity.vote.controller;
 
 import com.kakao.saramaracommunity.common.response.ApiResponse;
 import com.kakao.saramaracommunity.vote.dto.api.request.VoteCreateRequest;
+import com.kakao.saramaracommunity.vote.dto.api.request.VoteDeleteRequest;
 import com.kakao.saramaracommunity.vote.dto.api.request.VoteUpdateRequest;
 import com.kakao.saramaracommunity.vote.dto.business.response.VoteCreateResponse;
 import com.kakao.saramaracommunity.vote.dto.business.response.VotesReadInBoardResponse;
@@ -11,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -86,6 +88,26 @@ public class VoteController {
                 ApiResponse.successResponse(
                         HttpStatus.OK,
                         "성공적으로 투표를 수정 하였습니다."
+                )
+        );
+    }
+
+    /**
+     * 투표 삭제 API
+     * @param voteId 투표 고유 식별자
+     * @param request memberId: 투표자의 고유 식별자
+     * @return "code", "message"
+     */
+    @DeleteMapping("/{voteId}")
+    public ResponseEntity<ApiResponse> deleteVote(
+            @Valid @PathVariable("voteId") Long voteId,
+            @Valid @RequestBody VoteDeleteRequest request
+    ) {
+        voteService.deleteVote(voteId, request.toServiceRequest());
+        return ResponseEntity.ok().body(
+                ApiResponse.successResponse(
+                        HttpStatus.OK,
+                        "성공적으로 투표를 삭제 하였습니다."
                 )
         );
     }
