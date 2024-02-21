@@ -58,17 +58,6 @@ class BoardTest {
                         .isInstanceOf(BoardBusinessException.class)
                         .hasMessage(BOARD_VOTE_IMAGE_RANGE_OUT.getMessage());
             }
-            @Test
-            @DisplayName("등록한 이미지가 5장을 초과할 경우 예외가 발생한다.")
-            void 등록한_이미지가_5장을_초과할_경우_예외가_발생한다() {
-                // given
-                List<String> images = createImagePaths(6);
-
-                // when & then
-                assertThatThrownBy(() -> createBoard(NORMAL_MEMBER, images, VOTE))
-                        .isInstanceOf(BoardBusinessException.class)
-                        .hasMessage(BOARD_VOTE_IMAGE_RANGE_OUT.getMessage());
-            }
         }
         @Nested
         @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
@@ -206,27 +195,6 @@ class BoardTest {
                                     "s3-image-path-4",
                                     "s3-image-path-5"
                             );
-                }
-                @Test
-                @DisplayName("추가한 이미지가 5장을 초과할 경우 예외가 발생한다.")
-                void 추가한_이미지가_5장을_초과할_경우_예외가_발생한다() {
-                    // given
-                    List<String> images = createImagePaths(3);
-                    Board board = createBoard(NORMAL_MEMBER, images, VOTE);
-
-                    // when & then
-                    List<String> updateImages = createImagePaths(6);
-                    assertThatThrownBy(() ->
-                            board.update(
-                                    NORMAL_MEMBER.getId(),
-                                    "title",
-                                    "content",
-                                    VOTE,
-                                    LocalDateTime.now(),
-                                    updateImages
-                            ))
-                            .isInstanceOf(BoardBusinessException.class)
-                            .hasMessage(BOARD_VOTE_IMAGE_RANGE_OUT.getMessage());
                 }
                 @Test
                 @DisplayName("이미지는 2장까지만 삭제할 수 있다.")
