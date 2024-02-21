@@ -4,6 +4,7 @@ import static com.kakao.saramaracommunity.board.exception.BoardErrorCode.BOARD_I
 import static com.kakao.saramaracommunity.board.exception.BoardErrorCode.BOARD_NOT_FOUND;
 import static com.kakao.saramaracommunity.member.exception.MemberErrorCode.MEMBER_NOT_FOUND;
 import static com.kakao.saramaracommunity.member.exception.MemberErrorCode.UNAUTHORIZED_TO_MEMBER;
+import static com.kakao.saramaracommunity.vote.exception.VoteErrorCode.VOTE_NOT_FOUND;
 
 import com.kakao.saramaracommunity.board.entity.Board;
 import com.kakao.saramaracommunity.board.entity.BoardImage;
@@ -14,9 +15,11 @@ import com.kakao.saramaracommunity.member.entity.Member;
 import com.kakao.saramaracommunity.member.exception.MemberBusinessException;
 import com.kakao.saramaracommunity.member.repository.MemberRepository;
 import com.kakao.saramaracommunity.vote.dto.business.request.VoteCreateServiceRequest;
+import com.kakao.saramaracommunity.vote.dto.business.request.VoteUpdateServiceRequest;
 import com.kakao.saramaracommunity.vote.dto.business.response.VoteCreateResponse;
 import com.kakao.saramaracommunity.vote.dto.business.response.VotesReadInBoardResponse;
 import com.kakao.saramaracommunity.vote.entity.Vote;
+import com.kakao.saramaracommunity.vote.exception.VoteBusinessException;
 import com.kakao.saramaracommunity.vote.repository.VoteRepository;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -70,6 +73,14 @@ public class VoteServiceImpl implements VoteService {
         return new VotesReadInBoardResponse(boardId, totalVotes, voteCounts);
     }
 
+    @Override
+    public void updateVote(Long voteId, VoteUpdateServiceRequest request) {
+        log.info("[VoteServiceImpl.class] 요청에 따라 투표 수정을 시도합니다.");
+        Vote savedVote = getVoteEntity(voteId);
+        verifyVoter(savedVote, request.memberId());
+        savedVote.changeVote(request.memberId(), request.boardImage());
+        log.info("[VoteServiceImpl.class] 요청에 따라 투표를 수정 하였습니다.");
+    }
 
     private Member getMemberEntity(Long memberId) {
         return Optional.ofNullable(memberId)
@@ -81,6 +92,12 @@ public class VoteServiceImpl implements VoteService {
         return Optional.ofNullable(boardId)
                 .flatMap(boardRepository::findById)
                 .orElseThrow(() -> new BoardBusinessException(BOARD_NOT_FOUND));
+    }
+
+    private Vote getVoteEntity(Long voteId) {
+        return Optional.ofNullable(voteId)
+                .flatMap(voteRepository::findById)
+                .orElseThrow(() -> new VoteBusinessException(VOTE_NOT_FOUND));
     }
 
     private BoardImage getBoardImageEntity(Long boardImageId) {
@@ -114,6 +131,16 @@ public class VoteServiceImpl implements VoteService {
             log.info("[VoteServiceImpl.class] 해당 게시글의 투표자 검증이 완료되었습니다.");
         } else {
             log.info("[VoteServiceImpl.class] 투표 상태를 조회할 수 있는 상태가 아닙니다. 투표를 완료해주세요.");
+            throw new MemberBusinessException(UNAUTHORIZED_TO_MEMBER);
+        }
+    }
+
+    private void verifyVoter(Vote vote, Long memberId) {
+        Member voter = vote.getMember();
+        if (memberId == null) {
+            throw new MemberBusinessException(MEMBER_NOT_FOUND);
+        }
+        if (!voter.getId().equals(memberId)) {
             throw new MemberBusinessException(UNAUTHORIZED_TO_MEMBER);
         }
     }

@@ -1,9 +1,12 @@
 package com.kakao.saramaracommunity.vote.entity;
 
+import static com.kakao.saramaracommunity.member.exception.MemberErrorCode.UNAUTHORIZED_TO_MEMBER;
+
 import com.kakao.saramaracommunity.board.entity.BoardImage;
 import com.kakao.saramaracommunity.board.entity.Board;
 import com.kakao.saramaracommunity.common.entity.BaseTimeEntity;
 import com.kakao.saramaracommunity.member.entity.Member;
+import com.kakao.saramaracommunity.member.exception.MemberBusinessException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -52,6 +55,21 @@ public class Vote extends BaseTimeEntity {
                 .board(board)
                 .boardImage(boardImage)
                 .build();
+    }
+
+    public void changeVote(Long requestMemberId, BoardImage boardImage) {
+        validateVoter(member.getId(), requestMemberId);
+        this.boardImage = boardImage;
+
+    }
+
+    /**
+     * 투표 수정시 투표자를 검증하기 위한 메서드입니다.
+     */
+    private void validateVoter(Long originalVoter, Long requestVoter) {
+        if(!originalVoter.equals(requestVoter)){
+            throw new MemberBusinessException(UNAUTHORIZED_TO_MEMBER);
+        }
     }
 
 }
