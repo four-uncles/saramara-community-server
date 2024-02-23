@@ -16,8 +16,8 @@ public interface VoteRepository extends JpaRepository<Vote, Long> {
      * @return 이미지 경로 - 투표 수의 객체 목록
      */
     @Query("SELECT i.path, COALESCE(COUNT(v), 0) " +
-            "FROM BoardImage i " +
-            "LEFT JOIN Vote v ON i.id = v.boardImage.id AND v.board.id = :boardId " +
+            "FROM Vote v " +
+            "RIGHT JOIN v.boardImage i ON v.board.id = :boardId " +
             "GROUP BY i.path")
     List<Object[]> getVotesByBoard(@Param("boardId") Long boardId);
 
