@@ -43,7 +43,7 @@ public class Vote extends BaseTimeEntity {
 
 
     @Builder(access = AccessLevel.PRIVATE)
-    public Vote(Member member, Board board, BoardImage boardImage) {
+    private Vote(Member member, Board board, BoardImage boardImage) {
         this.member = member;
         this.board = board;
         this.boardImage = boardImage;
