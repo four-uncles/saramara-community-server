@@ -22,6 +22,7 @@ import com.kakao.saramaracommunity.vote.dto.business.response.VotesReadInBoardRe
 import com.kakao.saramaracommunity.vote.entity.Vote;
 import com.kakao.saramaracommunity.vote.exception.VoteBusinessException;
 import com.kakao.saramaracommunity.vote.repository.VoteRepository;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -117,7 +118,7 @@ public class VoteServiceImpl implements VoteService {
     }
 
     private Map<String, Long> getVoteCounts(List<Object[]> votes) {
-        Map<String, Long> voteCounts = new LinkedHashMap<>();
+        Map<String, Long> voteCounts = new HashMap<>();
 
         for (Object[] vote : votes) {
             String imagePath = (String) vote[0]; // 이미지 경로
