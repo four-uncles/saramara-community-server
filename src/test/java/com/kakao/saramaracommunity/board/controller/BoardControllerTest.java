@@ -30,7 +30,7 @@ class BoardControllerTest extends ControllerTestSupport {
     class 새로운_게시글_생성_시 {
         @Test
         @DisplayName("정상적으로 등록할 수 있다.")
-        void createBoard() throws Exception {
+        void 정상적으로_등록할_수_있다() throws Exception {
             // given
             BoardCreateRequest request = BoardCreateRequest.builder()
                     .title("캠핑 제품을 구매하려는데 골라주세요.")
@@ -55,7 +55,7 @@ class BoardControllerTest extends ControllerTestSupport {
         }
         @Test
         @DisplayName("제목은 공란일 수 없다.")
-        void createBoardWhenTitleIsBlank() throws Exception {
+        void 제목은_공란일_수_없다() throws Exception {
             // given
             BoardCreateRequest request = BoardCreateRequest.builder()
                     .title("")
@@ -80,7 +80,7 @@ class BoardControllerTest extends ControllerTestSupport {
         }
         @Test
         @DisplayName("내용은 공란일 수 없다.")
-        void createBoardWhenContentIsBlank() throws Exception {
+        void 내용은_공란일_수_없다() throws Exception {
             // given
             BoardCreateRequest request = BoardCreateRequest.builder()
                     .title("캠핑 제품을 구매하려는데 골라주세요.")
@@ -105,7 +105,7 @@ class BoardControllerTest extends ControllerTestSupport {
         }
         @Test
         @DisplayName("카테고리는 반드시 입력되어야 한다.")
-        void createBoardWhenCategoryIsNull() throws Exception {
+        void 카테고리는_반드시_입력되어야_한다() throws Exception {
             // given
             BoardCreateRequest request = BoardCreateRequest.builder()
                     .title("캠핑 제품을 구매하려는데 골라주세요.")
@@ -129,7 +129,7 @@ class BoardControllerTest extends ControllerTestSupport {
         }
         @Test
         @DisplayName("작성자 정보는 반드시 입력되어야 한다.")
-        void createBoardWhenMemberIdIsNull() throws Exception {
+        void 작성자_정보는_반드시_입력되어야_한다() throws Exception {
             // given
             BoardCreateRequest request = BoardCreateRequest.builder()
                     .title("캠핑 제품을 구매하려는데 골라주세요.")
@@ -153,7 +153,7 @@ class BoardControllerTest extends ControllerTestSupport {
         }
         @Test
         @DisplayName("이미지 목록은 1장 이상 등록되어야 한다.")
-        void createBoardWhenImageListIsNull() throws Exception {
+        void 이미지_목록은_1장_이상_등록되어야_한다() throws Exception {
             // given
             BoardCreateRequest request = BoardCreateRequest.builder()
                     .title("캠핑 제품을 구매하려는데 골라주세요.")
@@ -182,7 +182,7 @@ class BoardControllerTest extends ControllerTestSupport {
     class 게시글_수정_시 {
         @Test
         @DisplayName("정상적으로 변경할 수 있다.")
-        void updateBoard() throws Exception {
+        void 정상적으로_변경할_수_있다() throws Exception {
             // given
             Long boardId = 1L;
             BoardUpdateRequest request = BoardUpdateRequest.builder()
@@ -209,7 +209,7 @@ class BoardControllerTest extends ControllerTestSupport {
         }
         @Test
         @DisplayName("제목은 공란일 수 없다.")
-        void updateBoardWhenTitleIsBlank() throws Exception {
+        void 제목은_공란일_수_없다() throws Exception {
             // given
             Long boardId = 1L;
             BoardUpdateRequest request = BoardUpdateRequest.builder()
@@ -235,7 +235,7 @@ class BoardControllerTest extends ControllerTestSupport {
         }
         @Test
         @DisplayName("내용은 공란일 수 없다.")
-        void updateBoardWhenContentIsBlank() throws Exception {
+        void 내용은_공란일_수_없다() throws Exception {
             // given
             Long boardId = 1L;
             BoardUpdateRequest request = BoardUpdateRequest.builder()
@@ -261,7 +261,7 @@ class BoardControllerTest extends ControllerTestSupport {
         }
         @Test
         @DisplayName("카테고리는 반드시 입력되어야 한다.")
-        void updateBoardWhenCategoryIsNull() throws Exception {
+        void 카테고리는_반드시_입력되어야_한다() throws Exception {
             // given
             Long boardId = 1L;
             BoardUpdateRequest request = BoardUpdateRequest.builder()
@@ -286,7 +286,7 @@ class BoardControllerTest extends ControllerTestSupport {
         }
         @Test
         @DisplayName("작성자 정보는 반드시 입력되어야 한다.")
-        void updateBoardWhenMemberIdIsNull() throws Exception {
+        void 작성자_정보는_반드시_입력되어야_한다() throws Exception {
             // given
             Long boardId = 1L;
             BoardUpdateRequest request = BoardUpdateRequest.builder()
@@ -311,7 +311,7 @@ class BoardControllerTest extends ControllerTestSupport {
         }
         @Test
         @DisplayName("이미지 목록은 1장 이상 등록되어야 한다.")
-        void updateBoardWhenImageListIsNull() throws Exception {
+        void 이미지_목록은_1장_이상_등록되어야_한다() throws Exception {
             // given
             Long boardId = 1L;
             BoardUpdateRequest request = BoardUpdateRequest.builder()
@@ -338,7 +338,7 @@ class BoardControllerTest extends ControllerTestSupport {
 
     @Test
     @DisplayName("하나의 게시글을 조회할 수 있다.")
-    void getBoard() throws Exception {
+    void 하나의_게시글을_조회할_수_있다() throws Exception {
         // given
         Long boardId = 1L;
 
@@ -356,7 +356,7 @@ class BoardControllerTest extends ControllerTestSupport {
 
     @Test
     @DisplayName("게시글 목록을 조회할 수 있다.")
-    void searchBoard() throws Exception {
+    void 게시글_목록을_조회할_수_있다() throws Exception {
         // given
         String cursorId = "1";
         String size = "24";
@@ -382,7 +382,7 @@ class BoardControllerTest extends ControllerTestSupport {
     class 게시글_삭제_시 {
         @Test
         @DisplayName("정상적으로 삭제할 수 있다.")
-        void deleteBoard() throws Exception {
+        void 정상적으로_삭제할_수_있다() throws Exception {
             // given
             Long boardId = 1L;
             BoardDeleteRequest request = BoardDeleteRequest.builder()
@@ -405,7 +405,7 @@ class BoardControllerTest extends ControllerTestSupport {
         }
         @Test
         @DisplayName("작성자 정보는 반드시 입력되어야 한다.")
-        void deleteBoardWhenMemberIdIsNull() throws Exception {
+        void 작성자_정보는_반드시_입력되어야_한다() throws Exception {
             // given
             Long boardId = 1L;
             BoardDeleteRequest request = BoardDeleteRequest.builder()

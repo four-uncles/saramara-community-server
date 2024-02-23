@@ -9,7 +9,6 @@ import lombok.Getter;
 @Getter
 public class BoardBusinessException extends RuntimeException {
     private final BoardErrorCode statusWithCode;
-
     public BoardBusinessException(BoardErrorCode statusWithCode) {
         super(statusWithCode.getMessage());
         this.statusWithCode = statusWithCode;

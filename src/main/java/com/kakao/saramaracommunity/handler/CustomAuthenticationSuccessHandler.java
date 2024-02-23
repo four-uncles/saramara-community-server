@@ -1,16 +1,14 @@
 package com.kakao.saramaracommunity.handler;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kakao.saramaracommunity.common.response.ApiResponse;
-import com.kakao.saramaracommunity.member.controller.response.MemberInfoResponse;
+import com.kakao.saramaracommunity.member.dto.business.response.MemberInfoResponse;
 import com.kakao.saramaracommunity.member.service.MemberService;
 
 import jakarta.servlet.ServletException;

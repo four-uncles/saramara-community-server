@@ -51,55 +51,48 @@ public class Board extends BaseTimeEntity {
 
     @Builder
     private Board(
-            Member member,
-            CategoryBoard categoryBoard,
-            String title,
-            String content,
-            LocalDateTime deadLine,
-            List<String> images
+            final Member member,
+            final CategoryBoard categoryBoard,
+            final String title,
+            final String content,
+            final LocalDateTime deadLine,
+            final List<String> images
     ) {
         this.member = member;
         this.categoryBoard = categoryBoard;
+        validateImageCount(images.size());
         this.title = title;
         this.content = content;
         this.deadLine = deadLine;
         this.boardImages = createBoardImages(images);
-        validateImageCount(images.size());
+
     }
 
     public void update(
-            Long memberId,
-            String title,
-            String content,
-            CategoryBoard categoryBoard,
-            LocalDateTime deadLine,
-            List<String> images
+            final Long memberId,
+            final String title,
+            final String content,
+            final CategoryBoard categoryBoard,
+            final LocalDateTime deadLine,
+            final List<String> images
     ) {
         validateWriter(this.member.getId(), memberId);
         checkCategory(categoryBoard);
         this.title = title;
         this.content = content;
         this.categoryBoard = categoryBoard;
+        validateImageCount(images.size());
         this.deadLine = deadLine;
         updateBoardImages(images);
-        validateImageCount(images.size());
+
     }
 
-    /**
-     * 게시글 이미지(BoardImage) 엔티티를 등록하는 메서드입니다.
-     */
     private List<BoardImage> createBoardImages(List<String> requestCreateImages) {
         return requestCreateImages.stream()
                 .map(image -> BoardImage.of(this, image))
                 .collect(Collectors.toList());
     }
 
-    /**
-     * 게시글 이미지 목록의 변경점을 반영하는 메서드입니다.
-     * 1. 기존 이미지를 Map 형식으로 변환히야 가져옵니다. (Key: String Path, Value: BoardImage)
-     * 2. 수정 요청으로 받은 이미지 목록과 기존 등록된 이미지 목록을 비교하여 존재하지 않는 이미지는 삭제합니다. 이때, orphanRemoval 설정으로 연관관계가 끊어진 BoardImage는 삭제 처리합니다.
-     * 3. 수정 요청으로 받은 이미지 목록에서 새롭게 추가된 이미지가 있다면, 새로운 게시글 이미지(BoardImage)를 등록합니다.
-     */
     private void updateBoardImages(List<String> reqeustUpdateImages) {
         Map<String, BoardImage> currentImagesMap = getNowImageMap();
         removeImages(reqeustUpdateImages);
@@ -122,34 +115,23 @@ public class Board extends BaseTimeEntity {
                 .forEach(boardImages::add);
     }
 
-    /**
-     * 게시글 수정 시 작성자 여부를 검증하는 메서드입니다.
-     */
     private void validateWriter(Long originalWriter, Long requestWriter) {
         if (!originalWriter.equals(requestWriter)) {
             throw new MemberBusinessException(UNAUTHORIZED_TO_MEMBER);
         }
     }
 
-    /**
-     * 게시글 수정 시 카테고리 변경 여부를 검증하는 메서드입니다.
-     */
     private void checkCategory(CategoryBoard requestCategoryBoard) {
         if(!categoryBoard.equals(requestCategoryBoard)) {
             throw new BoardBusinessException(BOARD_CATEGORY_MISMATCH);
         }
     }
 
-    /**
-     * 게시글의 카테고리(CHOICE, VOTE)별 이미지 개수를 검증하는 메서드입니다.
-     * CHOICE: boardImages 리스트의 개수가 반드시 1개 이하여야 합니다.
-     * VOTE: boardImages 리스트의 개수가 반드시 2개 이상, 5개 이하여야 합니다.
-     */
-    private void validateImageCount(int imageListSize) {
-        if (categoryBoard.equals(VOTE) && (imageListSize < 2 || imageListSize > 5)) {
+    private void validateImageCount(int imageCount) {
+        if (categoryBoard.equals(VOTE) && imageCount < 2) {
             throw new BoardBusinessException(BOARD_VOTE_IMAGE_RANGE_OUT);
         }
-        if (categoryBoard.equals(CHOICE) && imageListSize != 1) {
+        if (categoryBoard.equals(CHOICE) && imageCount != 1) {
             throw new BoardBusinessException(BOARD_CHOICE_IMAGE_RANGE_OUT);
         }
     }

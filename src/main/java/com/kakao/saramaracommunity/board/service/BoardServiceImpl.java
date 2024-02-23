@@ -7,6 +7,7 @@ import com.kakao.saramaracommunity.board.dto.business.response.BoardCreateRespon
 import com.kakao.saramaracommunity.board.dto.business.response.BoardGetResponse;
 import com.kakao.saramaracommunity.board.dto.business.response.BoardSearchResponse;
 import com.kakao.saramaracommunity.board.entity.Board;
+import com.kakao.saramaracommunity.board.entity.CategoryBoard;
 import com.kakao.saramaracommunity.board.entity.SortType;
 import com.kakao.saramaracommunity.board.exception.BoardBusinessException;
 import com.kakao.saramaracommunity.board.repository.BoardRepository;
@@ -15,6 +16,7 @@ import com.kakao.saramaracommunity.member.exception.MemberBusinessException;
 import com.kakao.saramaracommunity.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,7 +25,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.kakao.saramaracommunity.board.exception.BoardErrorCode.BOARD_NOT_FOUND;
+import static com.kakao.saramaracommunity.board.entity.CategoryBoard.CHOICE;
+import static com.kakao.saramaracommunity.board.entity.CategoryBoard.VOTE;
+import static com.kakao.saramaracommunity.board.exception.BoardErrorCode.*;
 import static com.kakao.saramaracommunity.member.exception.MemberErrorCode.MEMBER_NOT_FOUND;
 import static com.kakao.saramaracommunity.member.exception.MemberErrorCode.UNAUTHORIZED_TO_MEMBER;
 
@@ -33,7 +37,11 @@ import static com.kakao.saramaracommunity.member.exception.MemberErrorCode.UNAUT
 @RequiredArgsConstructor
 public class BoardServiceImpl implements BoardService {
 
+    @Value("${image-rule.max}")
+    private int MAX_IMAGE_COUNT;
+
     private final BoardRepository boardRepository;
+
     private final MemberRepository memberRepository;
 
     @Override
@@ -60,6 +68,7 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     public BoardCreateResponse createBoard(BoardCreateServiceRequest request) {
+        validateImageListSize(request.categoryBoard(), request.boardImages().size());
         Board createdBoard = boardRepository.save(
                 request.toEntity(
                         getMemberEntity(request.memberId())
@@ -72,8 +81,9 @@ public class BoardServiceImpl implements BoardService {
     @Override
     public void updateBoard(Long boardId, BoardUpdateServiceRequest request) {
         Board savedBoard = getBoardEntity(boardId);
-        verifyBoardOwner(savedBoard, request.memberId());
         log.info("[BoardServiceImpl] 게시글을 수정합니다. 게시글 번호: {}", savedBoard.getId());
+        verifyBoardOwner(savedBoard, request.memberId());
+        validateImageListSize(request.categoryBoard(), request.boardImages().size());
         savedBoard.update(
                 request.memberId(),
                 request.title(),
@@ -87,8 +97,8 @@ public class BoardServiceImpl implements BoardService {
     @Override
     public void deleteBoard(Long boardId, BoardDeleteServiceRequest request) {
         Board savedBoard = getBoardEntity(boardId);
-        verifyBoardOwner(savedBoard, request.memberId());
         log.info("[BoardServiceImpl] 게시글을 삭제합니다. 게시글 번호: {}", savedBoard.getId());
+        verifyBoardOwner(savedBoard, request.memberId());
         boardRepository.delete(savedBoard);
     }
 
@@ -103,8 +113,18 @@ public class BoardServiceImpl implements BoardService {
     }
 
     private Board getBoardEntity(Long boardId) {
-        return boardRepository.findById(boardId)
+        return Optional.ofNullable(boardId)
+                .flatMap(boardRepository::findById)
                 .orElseThrow(() -> new BoardBusinessException(BOARD_NOT_FOUND));
+    }
+
+    private void validateImageListSize(CategoryBoard category, int size) {
+        if (category.equals(VOTE) && (size < 2 || size > MAX_IMAGE_COUNT)) {
+            throw new BoardBusinessException(BOARD_VOTE_IMAGE_RANGE_OUT);
+        }
+        if (category.equals(CHOICE) && size != 1) {
+            throw new BoardBusinessException(BOARD_CHOICE_IMAGE_RANGE_OUT);
+        }
     }
 
     /**

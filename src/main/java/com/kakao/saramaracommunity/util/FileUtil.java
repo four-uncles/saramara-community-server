@@ -6,12 +6,8 @@ package com.kakao.saramaracommunity.util;
 public class FileUtil {
 
     private static final String FILE_EXTENSION_SEPARATOR = ".";
-
     private static final String CATEGORY_PREFIX = "/";
-
     private static final String TIME_SEPARATOR = "_";
-
-    private static final int UNDER_BAR_INDEX = 1;
 
     public static String buildFileName(String originalFileName) {
         int fileExtensionIndex = originalFileName.lastIndexOf(FILE_EXTENSION_SEPARATOR);

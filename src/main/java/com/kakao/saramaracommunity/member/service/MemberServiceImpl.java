@@ -9,9 +9,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.kakao.saramaracommunity.member.controller.request.MemberLoginRequest;
-import com.kakao.saramaracommunity.member.controller.request.MemberRegisterRequest;
-import com.kakao.saramaracommunity.member.controller.response.MemberInfoResponse;
+import com.kakao.saramaracommunity.member.dto.api.request.MemberLoginRequest;
+import com.kakao.saramaracommunity.member.dto.api.request.MemberRegisterRequest;
+import com.kakao.saramaracommunity.member.dto.business.response.MemberInfoResponse;
 import com.kakao.saramaracommunity.member.entity.Member;
 import com.kakao.saramaracommunity.member.exception.MemberBusinessException;
 import com.kakao.saramaracommunity.member.repository.MemberRepository;

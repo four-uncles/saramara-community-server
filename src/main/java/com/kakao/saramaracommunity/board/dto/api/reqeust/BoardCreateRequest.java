@@ -27,7 +27,6 @@ public record BoardCreateRequest(
         @NotNull(message = "이미지는 최소 1장 이상 등록해야 합니다.")
         List<String> boardImages
 ) {
-
     public BoardCreateServiceRequest toServiceReqeust() {
         return BoardCreateServiceRequest.builder()
                 .title(title)
@@ -38,5 +37,4 @@ public record BoardCreateRequest(
                 .boardImages(boardImages)
                 .build();
     }
-
 }
