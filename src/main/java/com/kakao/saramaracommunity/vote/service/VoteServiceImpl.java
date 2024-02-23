@@ -47,7 +47,7 @@ public class VoteServiceImpl implements VoteService {
 
     @Override
     public VoteCreateResponse createVote(VoteCreateServiceRequest request) {
-        log.info("[VoteServiceImpl.class] 요청에 따라 투표를 시도합니다.");
+        log.info("[VoteServiceImpl] 요청에 따라 투표를 시도합니다.");
         Vote vote = voteRepository.save(
                 request.toEntity(
                     getMemberEntity(request.memberId()),
@@ -55,14 +55,14 @@ public class VoteServiceImpl implements VoteService {
                     getBoardImageEntity(request.boardImageId())
                 )
         );
-        log.info("[VoteServiceImpl.class] 요청에 따라 투표를 생성하였습니다.");
+        log.info("[VoteServiceImpl] 요청에 따라 투표를 생성하였습니다.");
         return VoteCreateResponse.of(vote);
     }
 
     @Override
     @Transactional(readOnly = true)
     public VotesReadInBoardResponse readVoteInBoard(Long memberId, Long boardId) {
-        log.info("[VoteServiceImpl.class] 요청에 따라 게시글의 투표 조회를 시도합니다.");
+        log.info("[VoteServiceImpl] 요청에 따라 게시글의 투표 조회를 시도합니다.");
 
         validateVoter(memberId, boardId);
 
@@ -70,26 +70,26 @@ public class VoteServiceImpl implements VoteService {
         Map<String, Long> voteCounts = getVoteCounts(votes);
         Long totalVotes = calculateTotalVotes(voteCounts);
 
-        log.info("[VoteServiceImpl.class] 요청에 따라 게시글 투표 상황을 조회하였습니다.");
+        log.info("[VoteServiceImpl] 요청에 따라 게시글 투표 상황을 조회하였습니다.");
         return new VotesReadInBoardResponse(boardId, totalVotes, voteCounts);
     }
 
     @Override
     public void updateVote(Long voteId, VoteUpdateServiceRequest request) {
-        log.info("[VoteServiceImpl.class] 요청에 따라 투표 수정을 시도합니다.");
+        log.info("[VoteServiceImpl] 요청에 따라 투표 수정을 시도합니다.");
         Vote savedVote = getVoteEntity(voteId);
         verifyVoter(savedVote, request.memberId());
         savedVote.changeVote(request.memberId(), request.boardImage());
-        log.info("[VoteServiceImpl.class] 요청에 따라 투표를 수정 하였습니다.");
+        log.info("[VoteServiceImpl] 요청에 따라 투표를 수정 하였습니다.");
     }
 
     @Override
     public void deleteVote(Long voteId, VoteDeleteServiceRequest request) {
-        log.info("[VoteServiceImpl.class] 요청에 따라 투표 삭제를 시도합니다.");
+        log.info("[VoteServiceImpl] 요청에 따라 투표 삭제를 시도합니다.");
         Vote savedVote = getVoteEntity(voteId);
         verifyVoter(savedVote, request.memberId());
         voteRepository.delete(savedVote);
-        log.info("[VoteServiceImpl.class] 요청에 따라 투표를 삭제 하였습니다.");
+        log.info("[VoteServiceImpl] 요청에 따라 투표를 삭제 하였습니다.");
     }
 
     private Member getMemberEntity(Long memberId) {
@@ -138,9 +138,9 @@ public class VoteServiceImpl implements VoteService {
     private void validateVoter(Long memberId, Long boardId) {
         Optional<Vote> existVote = voteRepository.findByMemberIdAndBoardId(memberId, boardId);
         if (existVote.isPresent()) {
-            log.info("[VoteServiceImpl.class] 해당 게시글의 투표자 검증이 완료되었습니다.");
+            log.info("[VoteServiceImpl] 해당 게시글의 투표자 검증이 완료되었습니다.");
         } else {
-            log.info("[VoteServiceImpl.class] 투표 상태를 조회할 수 있는 상태가 아닙니다. 투표를 완료해주세요.");
+            log.info("[VoteServiceImpl] 투표 상태를 조회할 수 있는 상태가 아닙니다. 투표를 완료해주세요.");
             throw new MemberBusinessException(UNAUTHORIZED_TO_MEMBER);
         }
     }
