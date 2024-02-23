@@ -18,6 +18,7 @@ public enum BoardErrorCode implements ErrorCode {
     BOARD_VOTE_IMAGE_RANGE_OUT(BAD_REQUEST, "투표(Vote) 카테고리의 게시글은 이미지가 반드시 2장 이상, 5장 이하이어야 합니다."),
     BOARD_CHOICE_IMAGE_RANGE_OUT(BAD_REQUEST, "찬반(Choice) 카테고리의 게시글은 이미지가 반드시 1장이어야 합니다."),
     BOARD_CATEGORY_MISMATCH(BAD_REQUEST, "게시글의 카테고리는 변경할 수 없습니다."),
+    BOARD_IMAGE_NOT_FOUND(NOT_FOUND, "게시글 이미지를 찾을 수 없습니다."),
     BOARD_NOT_FOUND(NOT_FOUND, "게시글을 찾을 수 없습니다.");
 
     private final HttpStatus httpStatus;

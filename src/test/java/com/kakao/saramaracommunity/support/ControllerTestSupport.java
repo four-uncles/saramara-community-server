@@ -8,6 +8,8 @@ import com.kakao.saramaracommunity.bucket.controller.BucketController;
 import com.kakao.saramaracommunity.bucket.service.BucketService;
 import com.kakao.saramaracommunity.comment.controller.CommentController;
 import com.kakao.saramaracommunity.comment.service.CommentService;
+import com.kakao.saramaracommunity.vote.controller.VoteController;
+import com.kakao.saramaracommunity.vote.service.VoteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -18,7 +20,8 @@ import org.springframework.test.web.servlet.MockMvc;
 @WebMvcTest(controllers = {
         BucketController.class,
         BoardController.class,
-        CommentController.class
+        CommentController.class,
+        VoteController.class
 })
 public class ControllerTestSupport {
 
@@ -36,5 +39,8 @@ public class ControllerTestSupport {
 
     @MockBean
     protected CommentService commentService;
+
+    @MockBean
+    protected VoteService voteService;
 
 }

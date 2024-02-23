@@ -40,40 +40,40 @@ public class CommentServiceImpl implements CommentService{
 
     @Override
     public CommentCreateResponse createComment(CommentCreateServiceRequest request) {
-        log.info("[CommentServiceImpl.class] 요청에 따라 댓글 생성을 시도합니다.");
+        log.info("[CommentServiceImpl] 요청에 따라 댓글 생성을 시도합니다.");
         Comment comment = commentRepository.save(
                 request.toEntity(
                         getMemberEntity(request.memberId()),
                         getBoardEntity(request.boardId())
                 )
         );
-        log.info("[CommentServiceImpl.class] 요청에 따라 댓글을 생성하였습니다.");
+        log.info("[CommentServiceImpl] 요청에 따라 댓글을 생성하였습니다.");
         return CommentCreateResponse.of(comment);
     }
 
     @Override
     public CommentsReadInBoardResponse readCommentsInBoard(Long boardId) {
         List<Comment> comments = commentRepository.getCommentsByBoard(boardId);
-        log.info("[CommentServiceImpl.class] 요청에 따라 댓글을 조회합니다.");
+        log.info("[CommentServiceImpl] 요청에 따라 댓글을 조회합니다.");
         return CommentsReadInBoardResponse.from(comments);
     }
 
     @Override
     public void updateComment(Long commentId, CommentUpdateServiceRequest request) {
-        log.info("[CommentServiceImpl.class] 요청에 따라 댓글 수정을 시도합니다.");
+        log.info("[CommentServiceImpl] 요청에 따라 댓글 수정을 시도합니다.");
         Comment savedComment = getCommentEntity(commentId);
         verifyWriter(savedComment, request.memberId());
         savedComment.changeComment(request.memberId(), request.content());
-        log.info("[CommentServiceImpl.class] 요청에 따라 댓글을 수정 하였습니다.");
+        log.info("[CommentServiceImpl] 요청에 따라 댓글을 수정 하였습니다.");
     }
 
     @Override
     public void deleteComment(Long commentId, CommentDeleteServiceRequest request) {
-        log.info("[CommentServiceImpl.class] 요청에 따라 댓글 삭제를 시도합니다.");
+        log.info("[CommentServiceImpl] 요청에 따라 댓글 삭제를 시도합니다.");
         Comment savedComment = getCommentEntity(commentId);
         verifyWriter(savedComment, request.memberId());
         commentRepository.delete(savedComment);
-        log.info("[CommentServiceImpl.class] 요청에 따라 댓글을 삭제 하였습니다.");
+        log.info("[CommentServiceImpl] 요청에 따라 댓글을 삭제 하였습니다.");
     }
 
     private void verifyWriter(Comment comment, Long memberId) {
