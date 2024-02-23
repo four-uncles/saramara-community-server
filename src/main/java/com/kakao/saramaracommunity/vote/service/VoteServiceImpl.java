@@ -61,10 +61,10 @@ public class VoteServiceImpl implements VoteService {
 
     @Override
     @Transactional(readOnly = true)
-    public VotesReadInBoardResponse readVoteInBoard(Long memberId, Long boardId) {
+    public VotesReadInBoardResponse readVoteInBoard(Long boardId) {
         log.info("[VoteServiceImpl] 요청에 따라 게시글의 투표 조회를 시도합니다.");
 
-        validateVoter(memberId, boardId);
+        // validateVoter(memberId, boardId); TODO: 사용자 권한 검증을 위한 보안성 강화 관련 개발 예정
 
         List<Object[]> votes = voteRepository.getVotesByBoard(boardId);
         Map<String, Long> voteCounts = getVoteCounts(votes);
@@ -135,6 +135,10 @@ public class VoteServiceImpl implements VoteService {
         return totalVotes;
     }
 
+    /**
+     * 투표 조회시 사용될 투표자 검증 메소드
+     * TODO: 사용자 권한 검증을 위한 보안성 강화 관련 개발 예정
+     */
     private void validateVoter(Long memberId, Long boardId) {
         Optional<Vote> existVote = voteRepository.findByMemberIdAndBoardId(memberId, boardId);
         if (existVote.isEmpty()) {

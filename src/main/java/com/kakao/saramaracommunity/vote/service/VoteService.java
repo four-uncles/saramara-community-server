@@ -10,7 +10,7 @@ public interface VoteService {
 
     VoteCreateResponse createVote(VoteCreateServiceRequest request);
 
-    VotesReadInBoardResponse readVoteInBoard(Long memberId, Long boardId);
+    VotesReadInBoardResponse readVoteInBoard(Long boardId);
 
     void updateVote(Long voteId, VoteUpdateServiceRequest request);
 

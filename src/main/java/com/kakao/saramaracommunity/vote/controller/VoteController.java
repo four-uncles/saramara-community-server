@@ -53,16 +53,15 @@ public class VoteController {
 
     /**
      * 투표 조회 API
-     * @param memberId 회원 고유 식별자
+     * TODO: 사용자 권한 검증을 위한 보안성 강화 관련 개발 예정 (memberId)
      * @param boardId 투표 상태가 저장된 게시글 고유 식별자
      * @return "code", "message", "data" : { "boardId", "totalVotes", "voteCounts"}
      */
     @GetMapping("/{boardId}")
     public ResponseEntity<ApiResponse<VotesReadInBoardResponse>> getBoardVotes(
-            @RequestHeader("memberId") Long memberId,
             @Valid @PathVariable("boardId") Long boardId
     ) {
-        VotesReadInBoardResponse data = voteService.readVoteInBoard(memberId, boardId);
+        VotesReadInBoardResponse data = voteService.readVoteInBoard(boardId);
         return ResponseEntity.ok().body(
                 ApiResponse.successResponse(
                         HttpStatus.OK,
