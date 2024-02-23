@@ -137,12 +137,11 @@ public class VoteServiceImpl implements VoteService {
 
     private void validateVoter(Long memberId, Long boardId) {
         Optional<Vote> existVote = voteRepository.findByMemberIdAndBoardId(memberId, boardId);
-        if (existVote.isPresent()) {
-            log.info("[VoteServiceImpl] 해당 게시글의 투표자 검증이 완료되었습니다.");
-        } else {
+        if (existVote.isEmpty()) {
             log.info("[VoteServiceImpl] 투표 상태를 조회할 수 있는 상태가 아닙니다. 투표를 완료해주세요.");
             throw new MemberBusinessException(UNAUTHORIZED_TO_MEMBER);
         }
+        log.info("[VoteServiceImpl] 해당 게시글의 투표자 검증이 완료되었습니다.");
     }
 
     private void verifyVoter(Vote vote, Long memberId) {
