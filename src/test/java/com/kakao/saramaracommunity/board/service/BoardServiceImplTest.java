@@ -16,6 +16,7 @@ import com.kakao.saramaracommunity.member.exception.MemberBusinessException;
 import com.kakao.saramaracommunity.member.repository.MemberRepository;
 import com.kakao.saramaracommunity.support.IntegrationTestSupport;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDateTime;
@@ -68,7 +69,7 @@ class BoardServiceImplTest extends IntegrationTestSupport {
     }
 
     @Nested
-    @DisplayName("게시글 조회 시")
+    @DisplayNameGeneration(ReplaceUnderscores.class)
     class 게시글_조회_시 {
         private Board SAVED_BOARD;
         @BeforeEach
@@ -99,10 +100,10 @@ class BoardServiceImplTest extends IntegrationTestSupport {
     }
 
     @Nested
-    @DisplayName("게시글 작성 시")
+    @DisplayNameGeneration(ReplaceUnderscores.class)
     class 게시글_작성_시 {
         @Nested
-        @DisplayName("등록된 회원이라면")
+        @DisplayNameGeneration(ReplaceUnderscores.class)
         class 등록된_회원이라면 {
             @Test
             @DisplayName("[Green] 투표 카테고리의 글을 작성할 때 최소 2장 이상의 이미지를 등록해야 한다.")
@@ -178,10 +179,10 @@ class BoardServiceImplTest extends IntegrationTestSupport {
             }
         }
         @Nested
-        @DisplayName("등록되지 않은 회원이라면")
+        @DisplayNameGeneration(ReplaceUnderscores.class)
         class 등록되지_않은_회원이라면 {
             @Test
-            @DisplayName("[Exception] 작성할 수 없다.")
+            @DisplayName("[Red] 작성할 수 없다.")
             void 작성할_수_없다() {
                 // given
                 Member NOT_SAVED_MEMBER = NORMAL_MEMBER_WOOGI.createMember();
@@ -196,7 +197,7 @@ class BoardServiceImplTest extends IntegrationTestSupport {
     }
 
     @Nested
-    @DisplayName("게시글 수정 시")
+    @DisplayNameGeneration(ReplaceUnderscores.class)
     class 게시글_수정_시 {
         private Board SAVED_VOTE_BOARD;
         private Board SAVED_CHOICE_BOARD;
@@ -207,7 +208,7 @@ class BoardServiceImplTest extends IntegrationTestSupport {
             boardRepository.saveAll(List.of(SAVED_VOTE_BOARD, SAVED_CHOICE_BOARD));
         }
         @Nested
-        @DisplayName("등록된 회원이라면")
+        @DisplayNameGeneration(ReplaceUnderscores.class)
         class 등록된_회원이라면 {
             @Test
             @DisplayName("[Green] 본인의 게시글을 수정할 수 있다.")
@@ -224,7 +225,7 @@ class BoardServiceImplTest extends IntegrationTestSupport {
                 assertThat(result.get().getContent()).isEqualTo("update-content");
             }
             @Test
-            @DisplayName("[Exception] 다른 회원의 게시글은 수정할 수 없다.")
+            @DisplayName("[Red] 다른 회원의 게시글은 수정할 수 없다.")
             void 다른_회원의_게시글은_수정할_수_없다() {
                 // given
                 BoardUpdateServiceRequest request = createUpdateRequest(VOTE, MEMBER_SONNY, createImagePaths(4));
@@ -308,10 +309,10 @@ class BoardServiceImplTest extends IntegrationTestSupport {
             }
         }
         @Nested
-        @DisplayName("등록되지 않은 회원이라면")
+        @DisplayNameGeneration(ReplaceUnderscores.class)
         class 등록되지_않은_회원이라면 {
             @Test
-            @DisplayName("[Exception] 수정할 수 없다.")
+            @DisplayName("[Red] 수정할 수 없다.")
             void 수정할_수_없다() {
                 // given
                 Member NOT_SAVED_MEMBER = NORMAL_MEMBER_WOOGI.createMember();
@@ -326,7 +327,7 @@ class BoardServiceImplTest extends IntegrationTestSupport {
     }
 
     @Nested
-    @DisplayName("게시글 삭제 시")
+    @DisplayNameGeneration(ReplaceUnderscores.class)
     class 게시글_삭제_시 {
         private Board SAVED_BOARD;
         @BeforeEach
@@ -349,7 +350,7 @@ class BoardServiceImplTest extends IntegrationTestSupport {
             assertThat(deletedImages).isEmpty();
         }
         @Test
-        @DisplayName("[Exception] 다른 회원의 게시글은 삭제할 수 없다.")
+        @DisplayName("[Red] 다른 회원의 게시글은 삭제할 수 없다.")
         void 다른_회원의_게시글은_삭제할_수_없다() {
             // given
             BoardDeleteServiceRequest request = createDeleteRequest(MEMBER_SONNY.getId());
