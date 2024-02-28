@@ -21,12 +21,12 @@ import com.kakao.saramaracommunity.vote.dto.api.request.VoteUpdateRequest;
 import com.kakao.saramaracommunity.vote.dto.business.response.VoteCreateResponse;
 import com.kakao.saramaracommunity.vote.dto.business.response.VotesReadInBoardResponse;
 import com.kakao.saramaracommunity.vote.entity.Vote;
+import com.kakao.saramaracommunity.vote.exception.VoteBusinessException;
 import com.kakao.saramaracommunity.vote.repository.VoteRepository;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -51,14 +51,6 @@ class VoteServiceImplTest extends IntegrationTestSupport {
     @Autowired
     private VoteService voteService;
 
-    private Board REGISTED_BOARD;
-
-    @BeforeEach
-    void setUp() {
-        Member BOARD_WRITER = NORMAL_MEMBER_LANGO.createMember();
-        REGISTED_BOARD = createBoard(BOARD_WRITER);
-    }
-
     @AfterEach
     void tearDown() {
         voteRepository.deleteAllInBatch();
@@ -69,13 +61,21 @@ class VoteServiceImplTest extends IntegrationTestSupport {
 
     @Nested
     @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
-    class 등록된_게시글에_투표_시 {
+    class 특정_게시글에서 {
+
+        private Board REGISTED_BOARD;
+
+        @BeforeEach
+        void setUp() {
+            Member BOARD_WRITER = NORMAL_MEMBER_LANGO.createMember();
+            REGISTED_BOARD = createBoard(BOARD_WRITER);
+        }
 
         @Nested
         @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
-        class 등록된_회원이라면 {
+        class 투표를_할_경우 {
 
-            private Member MEMBER_WOOGI;
+            private Member MEMBER_WOOGI; // 투표자
 
             @BeforeEach
             void setUp() {
@@ -83,9 +83,9 @@ class VoteServiceImplTest extends IntegrationTestSupport {
                 MEMBER_WOOGI = createMember(MEMBER_INFO);
             }
 
-            @DisplayName("이미지 하나를 선택하여 투표할 수 있다.")
             @Test
-            void 이미지_하나를_선택하여_투표할_수_있다() {
+            @DisplayName("[Green] 하나의 항목을 선택해 투표할 수 있다.")
+            void 하나의_항목을_선택해_투표할_수_있다() {
                 // given
                 BoardImage SELECT_IMAGE = REGISTED_BOARD.getBoardImages().get(0);
                 VoteCreateRequest request = new VoteCreateRequest(
@@ -103,34 +103,68 @@ class VoteServiceImplTest extends IntegrationTestSupport {
                 assertThat(response.boardId()).isEqualTo(REGISTED_BOARD.getId());
                 assertThat(response.boardImageId()).isEqualTo(SELECT_IMAGE.getId());
             }
+
+            @Test
+            @DisplayName("[Red] 중복 투표는 할 수 없다.")
+            void 중복_투표는_할_수_없다() {
+                BoardImage SELECT_IMAGE = REGISTED_BOARD.getBoardImages().get(0);
+                VoteCreateRequest request = new VoteCreateRequest(
+                        MEMBER_WOOGI.getId(),
+                        REGISTED_BOARD.getId(),
+                        SELECT_IMAGE.getId()
+                );
+
+                // when
+                voteService.createVote(request.toServiceRequest());
+
+                // then
+                assertThatThrownBy(() -> voteService.createVote(request.toServiceRequest()))
+                        .isInstanceOf(VoteBusinessException.class)
+                        .hasMessage("이미 투표한 상태입니다.");
+            }
+
+            @Test
+            @DisplayName("[Red] 회원이 아닐 경우 투표할 수 없다.")
+            void 회원이_아닐_경우_투표할_수_없다() {
+                // given
+                BoardImage SELECT_IMAGE = REGISTED_BOARD.getBoardImages().get(0);
+                VoteCreateRequest request = new VoteCreateRequest(
+                        null,
+                        REGISTED_BOARD.getId(),
+                        SELECT_IMAGE.getId()
+                );
+                
+                // when & then
+                assertThatThrownBy(() -> voteService.createVote(request.toServiceRequest()))
+                        .isInstanceOf(MemberBusinessException.class)
+                        .hasMessage("존재하지 않는 사용자입니다.");
+            }
+
         }
-
-    }
-
-    @Disabled("사용자 권한 검증을 위한 보안성 강화 로직을 개발하고 테스트 예정")
-    @Nested
-    @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
-    class 등록된_투표_조회_시 {
 
         @Nested
         @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
-        class 투표를_진행한_회원이라면 {
-
-            private Member MEMBER_WOOGI;
+        class 투표를_조회할_경우 {
 
             @BeforeEach
             void setUp() {
-                MEMBER_WOOGI = NORMAL_MEMBER_WOOGI.createMember();
-                Vote VOTER_WOOGI = createVote(
+                Member MEMBER_WOOGI = NORMAL_MEMBER_WOOGI.createMember();
+                Member MEMBER_SONNY = NORMAL_MEMBER_SONNY.createMember();
+                createVote(
                         MEMBER_WOOGI,
                         REGISTED_BOARD,
                         REGISTED_BOARD.getBoardImages().get(0)
                 );
+                createVote(
+                        MEMBER_SONNY,
+                        REGISTED_BOARD,
+                        REGISTED_BOARD.getBoardImages().get(1)
+                );
             }
 
-            @DisplayName("투표 상태를 조회할 수 있다.")
             @Test
-            void 투표_상태를_조회할_수_있다() {
+            @DisplayName("[Green] 누구나 투표 현황을 알 수 있다.")
+            void 누구나_투표_현황을_알_수_있다() {
                 // when
                 VotesReadInBoardResponse response = voteService.readVoteInBoard(
                         REGISTED_BOARD.getId());
@@ -138,11 +172,11 @@ class VoteServiceImplTest extends IntegrationTestSupport {
                 // then
                 assertThat(response).isNotNull();
                 assertThat(response.boardId()).isEqualTo(REGISTED_BOARD.getId());
-                assertThat(response.totalVotes()).isEqualTo(1);
+                assertThat(response.totalVotes()).isEqualTo(2);
                 assertThat(response.voteCounts())
                         .hasSize(REGISTED_BOARD.getBoardImages().size())
                         .containsEntry("image-1", 1L)
-                        .containsEntry("image-2", 0L)
+                        .containsEntry("image-2", 1L)
                         .containsEntry("image-3", 0L);
             }
 
@@ -150,60 +184,30 @@ class VoteServiceImplTest extends IntegrationTestSupport {
 
         @Nested
         @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
-        class 투표를_진행하지_않은_회원이라면 {
-
-            private Member MEMBER_SONNY;
-
-            @BeforeEach
-            void setUp() {
-                MEMBER_SONNY = NORMAL_MEMBER_SONNY.createMember();
-            }
-
-            @DisplayName("투표 상태를 조회할 수 없다.")
-            @Test
-            void 투표_상태를_조회할_수_없다() {
-                // given
-                Long memberId = MEMBER_SONNY.getId();
-                Long boardId = REGISTED_BOARD.getId();
-
-                // when & then
-                assertThatThrownBy(() -> voteService.readVoteInBoard(boardId))
-                        .isInstanceOf(MemberBusinessException.class)
-                        .hasMessage("권한이 없는 사용자입니다.");
-            }
-
-        }
-
-    }
-
-    @Nested
-    @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
-    class 등록된_투표_수정_시 {
-
-        @Nested
-        @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
-        class 등록된_회원이라면 {
+        class 다시_재투표할_경우 {
 
             private Member MEMBER_WOOGI;
-            private Vote REGISTED_VOTE;
             private BoardImage SELECT_IMAGE;
+            private Long voteId;
 
             @BeforeEach
             void setUp() {
                 MEMBER_WOOGI = createMember(NORMAL_MEMBER_WOOGI.createMember());
                 SELECT_IMAGE = REGISTED_BOARD.getBoardImages().get(0);
-                REGISTED_VOTE = createVote(MEMBER_WOOGI, REGISTED_BOARD, SELECT_IMAGE);
+                createVote(MEMBER_WOOGI, REGISTED_BOARD, SELECT_IMAGE);
+                voteId = voteRepository.findByMemberIdAndBoardId(MEMBER_WOOGI.getId(), REGISTED_BOARD.getId())
+                        .map(Vote::getId)
+                        .orElse(null);
             }
 
-            @DisplayName("[Green] 자신이 투표한 이미지 한장을 수정할 수 있다.")
             @Test
-            void 자신이_투표한_이미지_한장을_수정할_수_있다() {
+            @DisplayName("[Green] 이미 투표를 했어도 다시 투표할 수 있다.")
+            void 이미_투표를_했어도_다시_투표할_수_있다() {
                 // given
-                Long voteId = REGISTED_VOTE.getId();
-                Long VOTER_ID = MEMBER_WOOGI.getId();
                 BoardImage RESELECT_IMAGE = REGISTED_BOARD.getBoardImages().get(1);
-
-                VoteUpdateRequest request = new VoteUpdateRequest(VOTER_ID, RESELECT_IMAGE);
+                VoteUpdateRequest request = new VoteUpdateRequest(
+                        MEMBER_WOOGI.getId(), RESELECT_IMAGE
+                );
 
                 // when
                 voteService.updateVote(voteId, request.toServiceRequest());
@@ -217,33 +221,28 @@ class VoteServiceImplTest extends IntegrationTestSupport {
 
         }
 
-    }
-
-    @Nested
-    @DisplayName("게시글 이미지의 투표 삭제 시")
-    class 등록된_투표_삭제_시 {
-
         @Nested
         @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
-        class 등록된_회원이라면 {
+        class 투표를_취소할_경우 {
 
             private Member MEMBER_WOOGI;
-            private Vote REGISTED_VOTE;
+            private Long voteId;
 
             @BeforeEach
             void setUp() {
                 MEMBER_WOOGI = createMember(NORMAL_MEMBER_WOOGI.createMember());
                 BoardImage SELECT_IMAGE = REGISTED_BOARD.getBoardImages().get(0);
-                REGISTED_VOTE = createVote(MEMBER_WOOGI, REGISTED_BOARD, SELECT_IMAGE);
+                createVote(MEMBER_WOOGI, REGISTED_BOARD, SELECT_IMAGE);
+                voteId = voteRepository.findByMemberIdAndBoardId(MEMBER_WOOGI.getId(), REGISTED_BOARD.getId())
+                        .map(Vote::getId)
+                        .orElse(null);
             }
 
-            @DisplayName("[Green] 자신의 투표는 삭제할 수 있다.")
             @Test
-            void 자신의_투표는_삭제할_수_있다() {
+            @DisplayName("[Green] 정상적으로 투표 내역이 초기화된다.")
+            void 정상적으로_투표_내역이_초기화된다() {
                 // given
-                Long memberId = MEMBER_WOOGI.getId();
-                Long voteId = REGISTED_VOTE.getId();
-                VoteDeleteRequest request = new VoteDeleteRequest(memberId);
+                VoteDeleteRequest request = new VoteDeleteRequest(MEMBER_WOOGI.getId());
 
                 // when
                 voteService.deleteVote(voteId, request.toServiceRequest());
@@ -256,14 +255,14 @@ class VoteServiceImplTest extends IntegrationTestSupport {
 
     }
 
-    private Vote createVote(Member member, Board board, BoardImage SELECT_IMAGE) {
+    private void createVote(Member member, Board board, BoardImage SELECT_IMAGE) {
         Member IMAGE_VOTER = createMember(member);
         Vote vote = Vote.of(
                 IMAGE_VOTER,
                 board,
                 SELECT_IMAGE
         );
-        return voteRepository.save(vote);
+        voteRepository.save(vote);
     }
 
     private Board createBoard(Member writer) {
