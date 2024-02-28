@@ -65,8 +65,6 @@ public class VoteServiceImpl implements VoteService {
     public VotesReadInBoardResponse readVoteInBoard(Long boardId) {
         log.info("[VoteServiceImpl] 요청에 따라 게시글의 투표 조회를 시도합니다.");
 
-        // validateVoter(memberId, boardId); TODO: 사용자 권한 검증을 위한 보안성 강화 관련 개발 예정
-
         List<Object[]> votes = voteRepository.getVotesByBoard(boardId);
         Map<String, Long> voteCounts = getVoteCounts(votes);
         Long totalVotes = calculateTotalVotes(voteCounts);
@@ -134,19 +132,6 @@ public class VoteServiceImpl implements VoteService {
             totalVotes += count;
         }
         return totalVotes;
-    }
-
-    /**
-     * 투표 조회시 사용될 투표자 검증 메소드
-     * TODO: 사용자 권한 검증을 위한 보안성 강화 관련 개발 예정
-     */
-    private void validateVoter(Long memberId, Long boardId) {
-        Optional<Vote> existVote = voteRepository.findByMemberIdAndBoardId(memberId, boardId);
-        if (existVote.isEmpty()) {
-            log.info("[VoteServiceImpl] 투표 상태를 조회할 수 있는 상태가 아닙니다. 투표를 완료해주세요.");
-            throw new MemberBusinessException(UNAUTHORIZED_TO_MEMBER);
-        }
-        log.info("[VoteServiceImpl] 해당 게시글의 투표자 검증이 완료되었습니다.");
     }
 
     private void verifyVoter(Vote vote, Long memberId) {
