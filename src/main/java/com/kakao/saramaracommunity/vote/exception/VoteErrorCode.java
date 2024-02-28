@@ -1,5 +1,6 @@
 package com.kakao.saramaracommunity.vote.exception;
 
+import static org.springframework.http.HttpStatus.CONFLICT;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 import com.kakao.saramaracommunity.common.exception.ErrorCode;
@@ -11,7 +12,8 @@ import org.springframework.http.HttpStatus;
 @Getter
 public enum VoteErrorCode implements ErrorCode {
 
-    VOTE_NOT_FOUND(NOT_FOUND, "존재하지 않는 투표입니다.");
+    VOTE_NOT_FOUND(NOT_FOUND, "존재하지 않는 투표입니다."),
+    VOTE_ALREADY_EXISTS(CONFLICT, "이미 투표한 상태입니다.");
 
     private final HttpStatus httpStatus;
 

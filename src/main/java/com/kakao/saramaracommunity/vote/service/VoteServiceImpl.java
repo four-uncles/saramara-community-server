@@ -4,6 +4,7 @@ import static com.kakao.saramaracommunity.board.exception.BoardErrorCode.BOARD_I
 import static com.kakao.saramaracommunity.board.exception.BoardErrorCode.BOARD_NOT_FOUND;
 import static com.kakao.saramaracommunity.member.exception.MemberErrorCode.MEMBER_NOT_FOUND;
 import static com.kakao.saramaracommunity.member.exception.MemberErrorCode.UNAUTHORIZED_TO_MEMBER;
+import static com.kakao.saramaracommunity.vote.exception.VoteErrorCode.VOTE_ALREADY_EXISTS;
 import static com.kakao.saramaracommunity.vote.exception.VoteErrorCode.VOTE_NOT_FOUND;
 
 import com.kakao.saramaracommunity.board.entity.Board;
@@ -23,7 +24,6 @@ import com.kakao.saramaracommunity.vote.entity.Vote;
 import com.kakao.saramaracommunity.vote.exception.VoteBusinessException;
 import com.kakao.saramaracommunity.vote.repository.VoteRepository;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -49,6 +49,7 @@ public class VoteServiceImpl implements VoteService {
     @Override
     public VoteCreateResponse createVote(VoteCreateServiceRequest request) {
         log.info("[VoteServiceImpl] 요청에 따라 투표를 시도합니다.");
+        verifyDuplicateVote(request.memberId(), request.boardId());
         Vote vote = voteRepository.save(
                 request.toEntity(
                     getMemberEntity(request.memberId()),
@@ -89,6 +90,16 @@ public class VoteServiceImpl implements VoteService {
         verifyVoter(savedVote, request.memberId());
         voteRepository.delete(savedVote);
         log.info("[VoteServiceImpl] 요청에 따라 투표를 삭제 하였습니다.");
+    }
+
+    /**
+     * 중복 투표 방지를 위한 검증 메서드
+     */
+    private void verifyDuplicateVote(Long memberId, Long boardId) {
+        Optional<Vote> existingVote = voteRepository.findByMemberIdAndBoardId(memberId, boardId);
+        if (existingVote.isPresent()) {
+            throw new VoteBusinessException(VOTE_ALREADY_EXISTS);
+        }
     }
 
     private Member getMemberEntity(Long memberId) {
