@@ -52,17 +52,15 @@ class VoteControllerTest extends ControllerTestSupport {
     @DisplayName("게시글에 업로드된 이미지 투표 조회 시")
     class 게시글에_업로드된_이미지_투표_조회_시 {
 
-        @DisplayName("투표를 진행한 회원은 투표를 조회할 수 있다.")
+        @DisplayName("투표 현황을 조회할 수 있다.")
         @Test
-        void 투표를_진행한_회원은_투표를_조회할_수_있다() throws Exception {
+        void 투표_현황을_조회할_수_있다() throws Exception {
             // given
             Long boardId = 1L;
-            Long memberId = 1L;
 
             // when & then
             mockMvc.perform(
                             get("/api/v1/vote/" + boardId)
-                                    .header("memberId", memberId.toString())
                                     .with(SecurityMockMvcRequestPostProcessors.csrf())
                                     .contentType(APPLICATION_JSON)
                     )
