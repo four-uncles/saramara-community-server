@@ -25,8 +25,8 @@ class VoteControllerTest extends ControllerTestSupport {
     @DisplayName("게시글에 업로드된 이미지 투표 시")
     class 게시글에_업로드된_이미지_투표_시 {
 
-        @DisplayName("이미지 1장을 선택하여 정상적으로 투표할 수 있다.")
         @Test
+        @DisplayName("이미지 1장을 선택하여 정상적으로 투표할 수 있다.")
         void 이미지_1장을_선택하여_정상적으로_투표할_수_있다() throws Exception {
             // given
             VoteCreateRequest request = new VoteCreateRequest(
@@ -52,8 +52,8 @@ class VoteControllerTest extends ControllerTestSupport {
     @DisplayName("게시글에 업로드된 이미지 투표 조회 시")
     class 게시글에_업로드된_이미지_투표_조회_시 {
 
-        @DisplayName("투표 현황을 조회할 수 있다.")
         @Test
+        @DisplayName("투표 현황을 조회할 수 있다.")
         void 투표_현황을_조회할_수_있다() throws Exception {
             // given
             Long boardId = 1L;
@@ -78,8 +78,8 @@ class VoteControllerTest extends ControllerTestSupport {
 
         private static final Long voteId = 1L;
 
-        @DisplayName("올바른 정보는 정상적으로 수정할 수 있다.")
         @Test
+        @DisplayName("올바른 정보는 정상적으로 수정할 수 있다.")
         void 올바른_정보는_정상적으로_수정할_수_있다() throws Exception {
             // given
             VoteUpdateRequest request = new VoteUpdateRequest(
@@ -110,8 +110,8 @@ class VoteControllerTest extends ControllerTestSupport {
 
         private static final Long voteId = 1L;
 
-        @DisplayName("올바른 정보는 정상적으로 삭제할 수 있다.")
         @Test
+        @DisplayName("올바른 정보는 정상적으로 삭제할 수 있다.")
         void 올바른_정보는_정상적으로_삭제할_수_있다() throws Exception {
             // given
             VoteDeleteRequest request = new VoteDeleteRequest(1L);
