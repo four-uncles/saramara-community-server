@@ -4,9 +4,8 @@ import com.kakao.saramaracommunity.board.dto.api.reqeust.BoardCreateRequest;
 import com.kakao.saramaracommunity.board.dto.api.reqeust.BoardDeleteRequest;
 import com.kakao.saramaracommunity.board.dto.api.reqeust.BoardUpdateRequest;
 import com.kakao.saramaracommunity.support.ControllerTestSupport;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 
 import java.time.LocalDateTime;
@@ -26,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class BoardControllerTest extends ControllerTestSupport {
 
     @Nested
-    @DisplayName("새로운 게시글 생성 시")
+    @DisplayNameGeneration(ReplaceUnderscores.class)
     class 새로운_게시글_생성_시 {
         @Test
         @DisplayName("정상적으로 등록할 수 있다.")
@@ -178,7 +177,7 @@ class BoardControllerTest extends ControllerTestSupport {
     }
     
     @Nested
-    @DisplayName("게시글 수정 시")
+    @DisplayNameGeneration(ReplaceUnderscores.class)
     class 게시글_수정_시 {
         @Test
         @DisplayName("정상적으로 변경할 수 있다.")
@@ -378,7 +377,7 @@ class BoardControllerTest extends ControllerTestSupport {
     }
 
     @Nested
-    @DisplayName("게시글 삭제 시")
+    @DisplayNameGeneration(ReplaceUnderscores.class)
     class 게시글_삭제_시 {
         @Test
         @DisplayName("정상적으로 삭제할 수 있다.")

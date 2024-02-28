@@ -4,6 +4,7 @@ import com.kakao.saramaracommunity.board.exception.BoardBusinessException;
 import com.kakao.saramaracommunity.member.entity.Member;
 import com.kakao.saramaracommunity.member.exception.MemberBusinessException;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -25,7 +26,7 @@ import static org.springframework.test.util.ReflectionTestUtils.setField;
 class BoardTest {
 
     @Nested
-    @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+    @DisplayNameGeneration(ReplaceUnderscores.class)
     class 게시글_생성_시 {
         private Member NORMAL_MEMBER;
         @BeforeEach
@@ -33,7 +34,7 @@ class BoardTest {
             NORMAL_MEMBER = NORMAL_MEMBER_LANGO.createMember();
         }
         @Nested
-        @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+        @DisplayNameGeneration(ReplaceUnderscores.class)
         class 투표_카테고리일_경우 {
             @Test
             @DisplayName("이미지는 최소 2장 이상 등록해야 한다.")
@@ -60,7 +61,7 @@ class BoardTest {
             }
         }
         @Nested
-        @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+        @DisplayNameGeneration(ReplaceUnderscores.class)
         class 찬반_카테고리일_경우 {
             @Test
             @DisplayName("이미지는 1장만 등록할 수 있다.")
@@ -89,7 +90,7 @@ class BoardTest {
     }
 
     @Nested
-    @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+    @DisplayNameGeneration(ReplaceUnderscores.class)
     class 게시글_수정_시 {
         private Member NORMAL_MEMBER;
         @BeforeEach
@@ -98,7 +99,7 @@ class BoardTest {
             setField(NORMAL_MEMBER, "id", 1L);
         }
         @Nested
-        @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+        @DisplayNameGeneration(ReplaceUnderscores.class)
         class 작성자_라면 {
             @Test
             @DisplayName("글 제목을 변경할 수 있다.")
@@ -165,7 +166,7 @@ class BoardTest {
             }
 
             @Nested
-            @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+            @DisplayNameGeneration(ReplaceUnderscores.class)
             class 투표_카테고리의_글을_수정할_때 {
                 @Test
                 @DisplayName("이미지는 최대 5장까지 추가할 수 있다.")
@@ -276,7 +277,7 @@ class BoardTest {
                 }
             }
             @Nested
-            @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+            @DisplayNameGeneration(ReplaceUnderscores.class)
             class 찬반_카테고리의_글을_수정할_때 {
                 @Test
                 @DisplayName("등록한 이미지 1장만 변경할 수 있다.")
@@ -327,7 +328,7 @@ class BoardTest {
             }
         }
         @Nested
-        @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
+        @DisplayNameGeneration(ReplaceUnderscores.class)
         class 작성자가_아니라면 {
             @Test
             @DisplayName("수정할 수 없다.")
