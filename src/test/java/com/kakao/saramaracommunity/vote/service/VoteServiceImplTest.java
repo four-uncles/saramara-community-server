@@ -186,8 +186,8 @@ class VoteServiceImplTest extends IntegrationTestSupport {
             }
 
             @Test
-            @DisplayName("[Green] 투표를 진행한 회원이라면 투표 완료 상태를 알 수 있다.")
-            void 투표를_진행한_회원이라면_투표_완료_상태를_알_수_있다() {
+            @DisplayName("[Green] 투표를 진행한 경우 투표 완료 상태를 알 수 있다.")
+            void 투표를_진행한_경우_투표_완료_상태를_알_수_있다() {
                 // given
                 Principal mockPrincipal = new Principal() {
                     @Override
@@ -206,8 +206,8 @@ class VoteServiceImplTest extends IntegrationTestSupport {
             }
 
             @Test
-            @DisplayName("[Green] 투표를 진행하지 않은 회원이라면 투표 미완료 상태를 알 수 있다.")
-            void 투표를_진행하지_않은_회원이라면_투표_미완료_상태를_알_수_있다() {
+            @DisplayName("[Green] 투표를 진행하지 않은 경우 투표 미완료 상태를 알 수 있다.")
+            void 투표를_진행하지_않은_경우_투표_미완료_상태를_알_수_있다() {
                 // given
                 Principal mockPrincipal = new Principal() {
                     @Override
