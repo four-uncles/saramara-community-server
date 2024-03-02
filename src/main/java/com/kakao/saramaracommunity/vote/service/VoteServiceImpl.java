@@ -4,6 +4,7 @@ import static com.kakao.saramaracommunity.board.exception.BoardErrorCode.BOARD_I
 import static com.kakao.saramaracommunity.board.exception.BoardErrorCode.BOARD_NOT_FOUND;
 import static com.kakao.saramaracommunity.member.exception.MemberErrorCode.MEMBER_NOT_FOUND;
 import static com.kakao.saramaracommunity.member.exception.MemberErrorCode.UNAUTHORIZED_TO_MEMBER;
+import static com.kakao.saramaracommunity.vote.exception.VoteErrorCode.VOTE_ALREADY_EXISTS;
 import static com.kakao.saramaracommunity.vote.exception.VoteErrorCode.VOTE_NOT_FOUND;
 
 import com.kakao.saramaracommunity.board.entity.Board;
@@ -22,8 +23,8 @@ import com.kakao.saramaracommunity.vote.dto.business.response.VotesReadInBoardRe
 import com.kakao.saramaracommunity.vote.entity.Vote;
 import com.kakao.saramaracommunity.vote.exception.VoteBusinessException;
 import com.kakao.saramaracommunity.vote.repository.VoteRepository;
+import java.security.Principal;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -49,6 +50,7 @@ public class VoteServiceImpl implements VoteService {
     @Override
     public VoteCreateResponse createVote(VoteCreateServiceRequest request) {
         log.info("[VoteServiceImpl] 요청에 따라 투표를 시도합니다.");
+        verifyDuplicateVote(request.memberId(), request.boardId());
         Vote vote = voteRepository.save(
                 request.toEntity(
                     getMemberEntity(request.memberId()),
@@ -62,15 +64,22 @@ public class VoteServiceImpl implements VoteService {
 
     @Override
     @Transactional(readOnly = true)
-    public VotesReadInBoardResponse readVoteInBoard(Long boardId) {
+    public VotesReadInBoardResponse readVoteInBoard(Long boardId, Principal principal) {
+        Board savedBoard = getBoardEntity(boardId);
         log.info("[VoteServiceImpl] 요청에 따라 게시글의 투표 조회를 시도합니다.");
+        boolean isVoted = false;
 
-        List<Object[]> votes = voteRepository.getVotesByBoard(boardId);
+        //  Principal 객체가 null이 아니라면, 현재 로그인한 유저가 있는 것이므로, 해당 유저의 정보를 가져온다.
+        if (principal != null) {
+            Long memberId = getMemberInfo(principal);
+            isVoted = isMemberVoted(memberId, savedBoard.getId());
+        }
+        List<Object[]> votes = voteRepository.getVotesByBoard(savedBoard.getId());
         Map<String, Long> voteCounts = getVoteCounts(votes);
         Long totalVotes = calculateTotalVotes(voteCounts);
 
         log.info("[VoteServiceImpl] 요청에 따라 게시글 투표 상황을 조회하였습니다.");
-        return new VotesReadInBoardResponse(boardId, totalVotes, voteCounts);
+        return VotesReadInBoardResponse.of(savedBoard.getId(), isVoted, totalVotes, voteCounts);
     }
 
     @Override
@@ -89,6 +98,15 @@ public class VoteServiceImpl implements VoteService {
         verifyVoter(savedVote, request.memberId());
         voteRepository.delete(savedVote);
         log.info("[VoteServiceImpl] 요청에 따라 투표를 삭제 하였습니다.");
+    }
+
+    /**
+     * 중복 투표 방지를 위한 검증 메서드
+     */
+    private void verifyDuplicateVote(Long memberId, Long boardId) {
+        if (isMemberVoted(memberId, boardId)) {
+            throw new VoteBusinessException(VOTE_ALREADY_EXISTS);
+        }
     }
 
     private Member getMemberEntity(Long memberId) {
@@ -113,6 +131,22 @@ public class VoteServiceImpl implements VoteService {
         return Optional.ofNullable(boardImageId)
                 .flatMap(boardImageRepository::findById)
                 .orElseThrow(() -> new BoardBusinessException(BOARD_IMAGE_NOT_FOUND));
+    }
+
+    /**
+     * 로그인한 회원 고유 식별자를 가져오기 위한 메서드
+     */
+    private Long getMemberInfo(Principal principal) {
+        return memberRepository.findMemberByEmail(principal.getName())
+                .orElseThrow(() -> new MemberBusinessException(MEMBER_NOT_FOUND))
+                .getId();
+    }
+
+    /**
+     * 투표를 진행한 회원인지 확인하기 위한 메서드
+     */
+    public Boolean isMemberVoted(Long memberId, Long boardId) {
+        return voteRepository.findByMemberIdAndBoardId(memberId, boardId).isPresent();
     }
 
     private Map<String, Long> getVoteCounts(List<Object[]> votes) {

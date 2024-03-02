@@ -8,6 +8,7 @@ import com.kakao.saramaracommunity.vote.dto.business.response.VoteCreateResponse
 import com.kakao.saramaracommunity.vote.dto.business.response.VotesReadInBoardResponse;
 import com.kakao.saramaracommunity.vote.service.VoteService;
 import jakarta.validation.Valid;
+import java.security.Principal;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
@@ -53,17 +54,18 @@ public class VoteController {
     /**
      * 투표 조회 API
      * @param boardId 투표 상태가 저장된 게시글 고유 식별자
-     * @return "code", "message", "data" : { "boardId", "totalVotes", "voteCounts"}
+     * @return "code", "message", "data" : { "boardId", "isVoted", "totalVotes", "voteCounts"}
      */
     @GetMapping("/{boardId}")
     public ResponseEntity<ApiResponse<VotesReadInBoardResponse>> getBoardVotes(
-            @Valid @PathVariable("boardId") Long boardId
+            @PathVariable("boardId") Long boardId,
+            Principal principal
     ) {
-        VotesReadInBoardResponse data = voteService.readVoteInBoard(boardId);
+        VotesReadInBoardResponse data = voteService.readVoteInBoard(boardId, principal);
         return ResponseEntity.ok().body(
                 ApiResponse.successResponse(
                         HttpStatus.OK,
-                        "성공적으 게시글의 투표 상태를 조회하였습니다.",
+                        "성공적으로 게시글의 투표 상태를 조회하였습니다.",
                         data
                 )
         );
@@ -77,7 +79,7 @@ public class VoteController {
      */
     @PatchMapping("/{voteId}")
     public ResponseEntity<ApiResponse> updateVote(
-            @Valid @PathVariable("voteId") Long voteId,
+            @PathVariable("voteId") Long voteId,
             @Valid @RequestBody VoteUpdateRequest request
     ) {
         voteService.updateVote(voteId, request.toServiceRequest());
@@ -97,7 +99,7 @@ public class VoteController {
      */
     @DeleteMapping("/{voteId}")
     public ResponseEntity<ApiResponse> deleteVote(
-            @Valid @PathVariable("voteId") Long voteId,
+            @PathVariable("voteId") Long voteId,
             @Valid @RequestBody VoteDeleteRequest request
     ) {
         voteService.deleteVote(voteId, request.toServiceRequest());
