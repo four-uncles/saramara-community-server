@@ -23,6 +23,7 @@ import com.kakao.saramaracommunity.vote.dto.business.response.VotesReadInBoardRe
 import com.kakao.saramaracommunity.vote.entity.Vote;
 import com.kakao.saramaracommunity.vote.exception.VoteBusinessException;
 import com.kakao.saramaracommunity.vote.repository.VoteRepository;
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -63,15 +64,21 @@ public class VoteServiceImpl implements VoteService {
 
     @Override
     @Transactional(readOnly = true)
-    public VotesReadInBoardResponse readVoteInBoard(Long boardId) {
+    public VotesReadInBoardResponse readVoteInBoard(Long boardId, Principal principal) {
         log.info("[VoteServiceImpl] 요청에 따라 게시글의 투표 조회를 시도합니다.");
+        boolean isVoted = false;
 
+        //  Principal 객체가 null이 아니라면, 현재 로그인한 유저가 있는 것이므로, 해당 유저의 정보를 가져온다.
+        if (principal != null) {
+            Long memberId = getMemberInfo(principal);
+            isVoted = isMemberVoted(memberId, boardId);
+        }
         List<Object[]> votes = voteRepository.getVotesByBoard(boardId);
         Map<String, Long> voteCounts = getVoteCounts(votes);
         Long totalVotes = calculateTotalVotes(voteCounts);
 
         log.info("[VoteServiceImpl] 요청에 따라 게시글 투표 상황을 조회하였습니다.");
-        return new VotesReadInBoardResponse(boardId, totalVotes, voteCounts);
+        return new VotesReadInBoardResponse(boardId, isVoted, totalVotes, voteCounts);
     }
 
     @Override
@@ -96,8 +103,7 @@ public class VoteServiceImpl implements VoteService {
      * 중복 투표 방지를 위한 검증 메서드
      */
     private void verifyDuplicateVote(Long memberId, Long boardId) {
-        Optional<Vote> existingVote = voteRepository.findByMemberIdAndBoardId(memberId, boardId);
-        if (existingVote.isPresent()) {
+        if (isMemberVoted(memberId, boardId)) {
             throw new VoteBusinessException(VOTE_ALREADY_EXISTS);
         }
     }
@@ -124,6 +130,22 @@ public class VoteServiceImpl implements VoteService {
         return Optional.ofNullable(boardImageId)
                 .flatMap(boardImageRepository::findById)
                 .orElseThrow(() -> new BoardBusinessException(BOARD_IMAGE_NOT_FOUND));
+    }
+
+    /**
+     * 로그인한 회원 고유 식별자를 가져오기 위한 메서드
+     */
+    private Long getMemberInfo(Principal principal) {
+        return memberRepository.findMemberByEmail(principal.getName())
+                .orElseThrow(() -> new MemberBusinessException(MEMBER_NOT_FOUND))
+                .getId();
+    }
+
+    /**
+     * 투표를 진행한 회원인지 확인하기 위한 메서드
+     */
+    public Boolean isMemberVoted(Long memberId, Long boardId) {
+        return voteRepository.findByMemberIdAndBoardId(memberId, boardId).isPresent();
     }
 
     private Map<String, Long> getVoteCounts(List<Object[]> votes) {

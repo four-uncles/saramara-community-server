@@ -5,12 +5,13 @@ import com.kakao.saramaracommunity.vote.dto.business.request.VoteDeleteServiceRe
 import com.kakao.saramaracommunity.vote.dto.business.request.VoteUpdateServiceRequest;
 import com.kakao.saramaracommunity.vote.dto.business.response.VoteCreateResponse;
 import com.kakao.saramaracommunity.vote.dto.business.response.VotesReadInBoardResponse;
+import java.security.Principal;
 
 public interface VoteService {
 
     VoteCreateResponse createVote(VoteCreateServiceRequest request);
 
-    VotesReadInBoardResponse readVoteInBoard(Long boardId);
+    VotesReadInBoardResponse readVoteInBoard(Long boardId, Principal principal);
 
     void updateVote(Long voteId, VoteUpdateServiceRequest request);
 
