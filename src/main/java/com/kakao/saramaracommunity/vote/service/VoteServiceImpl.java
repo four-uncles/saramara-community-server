@@ -65,20 +65,21 @@ public class VoteServiceImpl implements VoteService {
     @Override
     @Transactional(readOnly = true)
     public VotesReadInBoardResponse readVoteInBoard(Long boardId, Principal principal) {
+        Board savedBoard = getBoardEntity(boardId);
         log.info("[VoteServiceImpl] 요청에 따라 게시글의 투표 조회를 시도합니다.");
         boolean isVoted = false;
 
         //  Principal 객체가 null이 아니라면, 현재 로그인한 유저가 있는 것이므로, 해당 유저의 정보를 가져온다.
         if (principal != null) {
             Long memberId = getMemberInfo(principal);
-            isVoted = isMemberVoted(memberId, boardId);
+            isVoted = isMemberVoted(memberId, savedBoard.getId());
         }
-        List<Object[]> votes = voteRepository.getVotesByBoard(boardId);
+        List<Object[]> votes = voteRepository.getVotesByBoard(savedBoard.getId());
         Map<String, Long> voteCounts = getVoteCounts(votes);
         Long totalVotes = calculateTotalVotes(voteCounts);
 
         log.info("[VoteServiceImpl] 요청에 따라 게시글 투표 상황을 조회하였습니다.");
-        return new VotesReadInBoardResponse(boardId, isVoted, totalVotes, voteCounts);
+        return VotesReadInBoardResponse.of(savedBoard.getId(), isVoted, totalVotes, voteCounts);
     }
 
     @Override

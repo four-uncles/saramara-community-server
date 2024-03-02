@@ -58,7 +58,7 @@ public class VoteController {
      */
     @GetMapping("/{boardId}")
     public ResponseEntity<ApiResponse<VotesReadInBoardResponse>> getBoardVotes(
-            @Valid @PathVariable("boardId") Long boardId,
+            @PathVariable("boardId") Long boardId,
             Principal principal
     ) {
         VotesReadInBoardResponse data = voteService.readVoteInBoard(boardId, principal);

@@ -9,7 +9,7 @@ public record VotesReadInBoardResponse(
         Map<String, Long> voteCounts // 이미지 경로, 투표수
 ) {
 
-    public static VotesReadInBoardResponse from(
+    public static VotesReadInBoardResponse of(
             Long boardId,
             Boolean isVoted,
             Long totalVotes,
