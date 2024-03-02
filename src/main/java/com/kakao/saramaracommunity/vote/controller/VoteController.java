@@ -79,7 +79,7 @@ public class VoteController {
      */
     @PatchMapping("/{voteId}")
     public ResponseEntity<ApiResponse> updateVote(
-            @Valid @PathVariable("voteId") Long voteId,
+            @PathVariable("voteId") Long voteId,
             @Valid @RequestBody VoteUpdateRequest request
     ) {
         voteService.updateVote(voteId, request.toServiceRequest());
@@ -99,7 +99,7 @@ public class VoteController {
      */
     @DeleteMapping("/{voteId}")
     public ResponseEntity<ApiResponse> deleteVote(
-            @Valid @PathVariable("voteId") Long voteId,
+            @PathVariable("voteId") Long voteId,
             @Valid @RequestBody VoteDeleteRequest request
     ) {
         voteService.deleteVote(voteId, request.toServiceRequest());
