@@ -23,6 +23,7 @@ import com.kakao.saramaracommunity.vote.dto.business.response.VotesReadInBoardRe
 import com.kakao.saramaracommunity.vote.entity.Vote;
 import com.kakao.saramaracommunity.vote.exception.VoteBusinessException;
 import com.kakao.saramaracommunity.vote.repository.VoteRepository;
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.junit.jupiter.api.AfterEach;
@@ -146,10 +147,13 @@ class VoteServiceImplTest extends IntegrationTestSupport {
         @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
         class 투표를_조회할_경우 {
 
+            private Member MEMBER_WOOGI;
+            private Member MEMBER_SONNY;
+
             @BeforeEach
             void setUp() {
-                Member MEMBER_WOOGI = NORMAL_MEMBER_WOOGI.createMember();
-                Member MEMBER_SONNY = NORMAL_MEMBER_SONNY.createMember();
+                MEMBER_WOOGI = NORMAL_MEMBER_WOOGI.createMember();
+                MEMBER_SONNY = NORMAL_MEMBER_SONNY.createMember();
                 createVote(
                         MEMBER_WOOGI,
                         REGISTED_BOARD,
@@ -163,21 +167,62 @@ class VoteServiceImplTest extends IntegrationTestSupport {
             }
 
             @Test
-            @DisplayName("[Green] 누구나 투표 현황을 알 수 있다.")
-            void 누구나_투표_현황을_알_수_있다() {
+            @DisplayName("[Green] 비회원이라도 투표 현황을 알 수 있다.")
+            void 비회원이라도_투표_현황을_알_수_있다() {
                 // when
                 VotesReadInBoardResponse response = voteService.readVoteInBoard(
-                        REGISTED_BOARD.getId());
+                        REGISTED_BOARD.getId(), null);
 
                 // then
                 assertThat(response).isNotNull();
                 assertThat(response.boardId()).isEqualTo(REGISTED_BOARD.getId());
+                assertThat(response.isVoted()).isEqualTo(false);
                 assertThat(response.totalVotes()).isEqualTo(2);
                 assertThat(response.voteCounts())
                         .hasSize(REGISTED_BOARD.getBoardImages().size())
                         .containsEntry("image-1", 1L)
                         .containsEntry("image-2", 1L)
                         .containsEntry("image-3", 0L);
+            }
+
+            @Test
+            @DisplayName("[Green] 투표를 진행한 회원이라면 투표 완료 상태를 알 수 있다.")
+            void 투표를_진행한_회원이라면_투표_완료_상태를_알_수_있다() {
+                // given
+                Principal mockPrincipal = new Principal() {
+                    @Override
+                    public String getName() {
+                        return "gitshineit@gmail.com"; // 투표 완료 회원
+                    }
+                };
+
+                // when
+                VotesReadInBoardResponse response = voteService.readVoteInBoard(
+                        REGISTED_BOARD.getId(), mockPrincipal);
+
+                // then
+                assertThat(response.boardId()).isEqualTo(REGISTED_BOARD.getId());
+                assertThat(response.isVoted()).isEqualTo(true);
+            }
+
+            @Test
+            @DisplayName("[Green] 투표를 진행하지 않은 회원이라면 투표 미완료 상태를 알 수 있다.")
+            void 투표를_진행하지_않은_회원이라면_투표_미완료_상태를_알_수_있다() {
+                // given
+                Principal mockPrincipal = new Principal() {
+                    @Override
+                    public String getName() {
+                        return "lango@gmail.com"; // 투표 미완료 회원
+                    }
+                };
+
+                // when
+                VotesReadInBoardResponse response = voteService.readVoteInBoard(
+                        REGISTED_BOARD.getId(), mockPrincipal);
+
+                // then
+                assertThat(response.boardId()).isEqualTo(REGISTED_BOARD.getId());
+                assertThat(response.isVoted()).isEqualTo(false);
             }
 
         }
