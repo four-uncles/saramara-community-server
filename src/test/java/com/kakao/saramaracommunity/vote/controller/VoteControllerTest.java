@@ -15,6 +15,8 @@ import com.kakao.saramaracommunity.vote.dto.api.request.VoteCreateRequest;
 import com.kakao.saramaracommunity.vote.dto.api.request.VoteDeleteRequest;
 import com.kakao.saramaracommunity.vote.dto.api.request.VoteUpdateRequest;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.DisplayNameGeneration;
+import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
@@ -22,7 +24,7 @@ import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequ
 class VoteControllerTest extends ControllerTestSupport {
 
     @Nested
-    @DisplayName("신규 투표 시")
+    @DisplayNameGeneration(ReplaceUnderscores.class)
     class 신규_투표_시 {
 
         @Test
@@ -112,7 +114,7 @@ class VoteControllerTest extends ControllerTestSupport {
     }
 
     @Nested
-    @DisplayName("투표 여부 조회 시")
+    @DisplayNameGeneration(ReplaceUnderscores.class)
     class 투표_여부_조회_시 {
 
         @Test
@@ -136,7 +138,7 @@ class VoteControllerTest extends ControllerTestSupport {
     }
 
     @Nested
-    @DisplayName("재투표 시")
+    @DisplayNameGeneration(ReplaceUnderscores.class)
     class 재투표_시 {
 
         private static final Long voteId = 1L;
@@ -214,7 +216,7 @@ class VoteControllerTest extends ControllerTestSupport {
     }
 
     @Nested
-    @DisplayName("투표 취소 시")
+    @DisplayNameGeneration(ReplaceUnderscores.class)
     class 투표_취소_시 {
 
         private static final Long voteId = 1L;
