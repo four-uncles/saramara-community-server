@@ -75,7 +75,7 @@ public class SecurityConfig {
 			.logout(out -> // 로그아웃 정책 적용
 				out.logoutUrl("/api/v1/member/logout")
 					.invalidateHttpSession(true)
-					.deleteCookies("JSESSONID")
+					.deleteCookies("JSESSIONID")
 					.logoutSuccessHandler(
 						((request, response, authentication) -> SecurityContextHolder.clearContext())))
 			.headers(
