@@ -1,50 +1,65 @@
 package com.kakao.saramaracommunity.member.service;
 
-import com.kakao.saramaracommunity.member.dto.api.request.MemberRegisterRequest;
+import com.kakao.saramaracommunity.member.dto.business.request.MemberCreateServiceRequest;
 import com.kakao.saramaracommunity.member.dto.business.response.MemberInfoResponse;
 import com.kakao.saramaracommunity.member.entity.Member;
 import com.kakao.saramaracommunity.member.repository.MemberRepository;
-import org.junit.jupiter.api.Disabled;
+import com.kakao.saramaracommunity.support.IntegrationTestSupport;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.context.ActiveProfiles;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Optional;
 
+import static com.kakao.saramaracommunity.fixture.MemberFixture.*;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.BDDMockito.*;
 
-@Disabled
-@ActiveProfiles("test")
-@ExtendWith(MockitoExtension.class)
-class MemberServiceImplTest {
-	@InjectMocks
-	private MemberServiceImpl memberService;
+class MemberServiceImplTest extends IntegrationTestSupport {
 
-	@Mock
+	@Autowired
 	private MemberRepository memberRepository;
 
+	@Autowired
+	private MemberService memberService;
+
+	@AfterEach
+	void tearDown() {
+		memberRepository.deleteAllInBatch();
+	}
+
 	@Test
-	@DisplayName("한 명의 멤버를 가입시킨다.")
-	void registerMember() {
-		// given
-		MemberRegisterRequest newMemberInfo = new MemberRegisterRequest("test@gmail.com", "testPwd", "testNickname");
-		Member newMember = Member.of(newMemberInfo);
-		given(memberRepository.existsMemberByEmail(anyString())).willReturn(true);
-		given(memberRepository.findMemberByEmail(anyString())).willReturn(Optional.ofNullable(newMember));
-		given(memberRepository.save(any())).willReturn(newMember);
+	@DisplayName("회원가입을 통해 새로운 회원을 등록한다.")
+	void 회원가입을_통해_새로운_회원을_등록한다() {
+	    // given
+		MemberCreateServiceRequest request = MemberCreateServiceRequest.of(
+				NORMAL_MEMBER_LANGO.getEmail(),
+				NORMAL_MEMBER_LANGO.getPassword(),
+				NORMAL_MEMBER_LANGO.getNickname()
+		);
+
+	    // when
+		memberService.createMember(request);
+
+	    // then
+		Optional<Member> result = memberRepository.findByEmail(NORMAL_MEMBER_LANGO.getEmail());
+		assertThat(result.get().getEmail()).isEqualTo(NORMAL_MEMBER_LANGO.getEmail());
+		assertThat(result.get().getNickname()).isEqualTo(NORMAL_MEMBER_LANGO.getNickname());
+	}
+
+	@Test
+	@DisplayName("가입한 회원이라면 프로필 정보를 조회할 수 있다.")
+	void 회원_프로필_정보를_조회할_수_있다() {
+	    // given
+		Member member = NORMAL_MEMBER_LANGO.createMember();
+		memberRepository.save(member);
 
 		// when
-		memberService.registerMember(newMemberInfo);
-		MemberInfoResponse registeredMember = memberService.getMemberInfoByEmail(newMemberInfo.email());
+		MemberInfoResponse result = memberService.getMemberInfo(member.getEmail());
 
 		// then
-		assertThat(registeredMember.email()).isEqualTo("test@gmail.com");
-		assertThat(registeredMember.password()).isEqualTo("testPwd");
-		assertThat(registeredMember.nickname()).isEqualTo("testNickname");
+		assertThat(result.email()).isEqualTo(member.getEmail());
+		assertThat(result.nickname()).isEqualTo(member.getNickname());
 	}
+
 }

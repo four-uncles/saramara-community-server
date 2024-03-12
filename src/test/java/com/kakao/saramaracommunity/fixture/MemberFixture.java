@@ -5,18 +5,18 @@ import com.kakao.saramaracommunity.member.entity.Member;
 public enum MemberFixture {
 
     NORMAL_MEMBER_LANGO(
-            "lango@gmail.com",
-            "langopwd1234",
+            "lango@test.com",
+            "Lango1234!@",
             "lango"
     ),
     NORMAL_MEMBER_SONNY(
-            "sonny@gmail.com",
-            "sonnypwd1288",
+            "sonny@test.com",
+            "Sonny1234@",
             "sonny"
     ),
     NORMAL_MEMBER_WOOGI(
-            "gitshineit@gmail.com",
-            "woogipwd1234",
+            "gitshineit@test.com",
+            "Woogi999##",
             "woogi"
     )
     ;
