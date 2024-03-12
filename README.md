@@ -1,51 +1,19 @@
-# saramara-community-server
-무언가를 구매할 때 사야할지 말아야할지 고민되는 것들을 공유하며 구매와 관련된 고민들을 덜어낼 수 있는 커뮤니티 프로젝트입니다.
-
-<br><hr><br>
-
-## Project packaging
-
-```
-com.kakao.saramaracommunity
- ┣ 📂 config
- ┣ 📂 common
- ┣ 📂 util
- ┣ 📂 security
- ┣ 📂 domain
- ┃ ┣ 📂 entity
- ┃ ┣ 📂 dto
- ┃ ┗ 📂 controller
- ┃ ┣ 📂 service
- ┃ ┣ 📂 repository
- ┃ ┗ 📂 exception
-```
-
-<br><hr><br>
-
-## API specification
-
-### 기능 명세 목록
-
-|분류|기능|담당자|완료여부|
-|:--:|:--:|:--:|:--:|
-|게시글 및 댓글|이미지 투표 기능|-|💬|
-|게시글|페이지네이션 기능|-|💬|
-|댓글|댓글 이미지 기능|-|💬|
-|댓글|댓글 좋아요 기능|-|💬|
-|로그인|Oauth2 소셜 로그인(네이버, 구글, 카카오)|-|💬|
-|마이페이지|회원 탈퇴|-|💬|
-
-> 미진행 개발사항에 대해서만 기록, 갱신합니다.
-
-* API 명세서의 경우 [노션 링크](https://www.notion.so/API-bbd684c73e4d41c3b27a5872a4717060?pvs=4)에서 자세한 내용을 확인할 수 있습니다.
-
-<br><hr><br>
-
-## DB ERD
-
-
-<img width="1033" alt="image" src="https://github.com/four-uncles/saramara-community-server/assets/59594946/914328c0-4691-4f43-925f-f47837a8968b">
+# 사라마라 프로젝트는요.
+어떤 물건이나 제품을 구매하기 전 고민하고 계시나요? 사라마라에서 살까, 말까 망설이던 고민을 다른 사람들에게 공유해보세요. <br>
+사라마라 프로젝트는 구매와 관련된 고민을 덜어줄 수 있는 목적이 있으시다면 누구든지 사용하실 수 있습니다.
 
 <br>
 
-> 상세 설계 내용은 [ERD Cloud](https://www.erdcloud.com/d/ZYW5N9CJiSYWQbPap)에서 확인 가능합니다.
+### 사라마라 서버(backend) 저장소
+본 저장소는 사라마라 프로젝트의 서버 저장소입니다.
+
+<br><hr><br>
+
+### 개발한 사람들은요.
+|개발자|-|-|-|
+|:--:|:--:|:--:|:--:|
+|**문태준**|-|-|-|
+|**손병주**|-|-|-|
+|**송헌욱**|-|-|-|
+
+
