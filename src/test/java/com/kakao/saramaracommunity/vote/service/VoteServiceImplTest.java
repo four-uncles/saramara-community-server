@@ -192,7 +192,7 @@ class VoteServiceImplTest extends IntegrationTestSupport {
                 Principal mockPrincipal = new Principal() {
                     @Override
                     public String getName() {
-                        return "gitshineit@gmail.com"; // 투표 완료 회원
+                        return "gitshineit@test.com"; // 투표 완료 회원
                     }
                 };
 
@@ -202,7 +202,7 @@ class VoteServiceImplTest extends IntegrationTestSupport {
 
                 // then
                 assertThat(response.boardId()).isEqualTo(REGISTED_BOARD.getId());
-                assertThat(response.isVoted()).isEqualTo(true);
+                assertThat(response.isVoted()).isTrue();
             }
 
             @Test
@@ -212,7 +212,7 @@ class VoteServiceImplTest extends IntegrationTestSupport {
                 Principal mockPrincipal = new Principal() {
                     @Override
                     public String getName() {
-                        return "lango@gmail.com"; // 투표 미완료 회원
+                        return "lango@test.com"; // 투표 미완료 회원
                     }
                 };
 
@@ -222,7 +222,7 @@ class VoteServiceImplTest extends IntegrationTestSupport {
 
                 // then
                 assertThat(response.boardId()).isEqualTo(REGISTED_BOARD.getId());
-                assertThat(response.isVoted()).isEqualTo(false);
+                assertThat(response.isVoted()).isFalse();
             }
 
         }
