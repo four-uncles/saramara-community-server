@@ -44,25 +44,17 @@ public class LoginAuthenticationFilter extends AbstractAuthenticationProcessingF
 	public Authentication attemptAuthentication(HttpServletRequest request,
 		HttpServletResponse response) throws AuthenticationException, ServletException, IOException {
 		log.info("로그인 시도합니다.");
-
 		String method = request.getMethod();
-
 		if (!method.equals("POST")) {
 			throw new AuthenticationServiceException("인증 요청에 대해서는 POST HTTP METHOD 사용이 필수입니다.");
 		}
-
 		try {
-		ServletInputStream inputStream = request.getInputStream();
-
-		MemberLoginRequest memberLoginRequest = new ObjectMapper().readValue(inputStream, MemberLoginRequest.class);
-
-		log.info(memberLoginRequest);
-
-		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(memberLoginRequest.email(), memberLoginRequest.password());
-
-		log.info(authenticationToken);
-
-		return this.getAuthenticationManager().authenticate(authenticationToken);
+			ServletInputStream inputStream = request.getInputStream();
+			MemberLoginRequest memberLoginRequest = new ObjectMapper().readValue(inputStream, MemberLoginRequest.class);
+			log.info(memberLoginRequest);
+			UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(memberLoginRequest.email(), memberLoginRequest.password());
+			log.info(authenticationToken);
+			return this.getAuthenticationManager().authenticate(authenticationToken);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}

@@ -1,9 +1,10 @@
 package com.kakao.saramaracommunity.member.controller;
 
 import com.kakao.saramaracommunity.common.response.ApiResponse;
-import com.kakao.saramaracommunity.member.dto.api.request.MemberRegisterRequest;
+import com.kakao.saramaracommunity.member.dto.api.request.MemberCreateRequest;
 import com.kakao.saramaracommunity.member.dto.business.response.MemberInfoResponse;
 import com.kakao.saramaracommunity.member.service.MemberService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
@@ -21,13 +22,13 @@ public class MemberController {
 
 	@PostMapping
 	public ResponseEntity<ApiResponse> registerMember (
-			@RequestBody MemberRegisterRequest request
+			@RequestBody @Valid MemberCreateRequest request
 	) {
-		memberService.registerMember(request);
+		memberService.createMember(request.toServiceRequest());
 		return ResponseEntity.ok().body(
 			ApiResponse.successResponse(
 				OK,
-				"성공적으로 회원가입이 되었습니다."
+				"성공적으로 회원가입을 완료하였습니다."
 			)
 		);
 	}
@@ -36,11 +37,11 @@ public class MemberController {
 	public ResponseEntity<ApiResponse> getMemberInfo (
 			@PathVariable("email") String email
 	) {
-		MemberInfoResponse response = memberService.getMemberInfoByEmail(email);
+		MemberInfoResponse response = memberService.getMemberInfo(email);
 		return ResponseEntity.ok().body(
 			ApiResponse.successResponse(
 				OK,
-				"해당 이메일에 대한 회원정보가 성공적으로 조회되었습니다.",
+				"성공적으로 회원의 프로필 정보를 조회하였습니다.",
 				response
 			)
 		);
