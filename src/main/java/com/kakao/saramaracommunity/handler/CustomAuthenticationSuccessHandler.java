@@ -33,7 +33,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 		response.setContentType("application/json");
 		response.setCharacterEncoding("utf-8");
 
-		MemberInfoResponse authenticatedMember = memberService.getMemberInfoByEmail(authentication.getName());
+		MemberInfoResponse authenticatedMember = memberService.getMemberInfo(authentication.getName());
 		ApiResponse<Object> bodyJson = ApiResponse.successResponse(HttpStatus.OK, "로그인에 성공하셨습니다.", authenticatedMember.email());
 
 		String body = objectMapper.writeValueAsString(bodyJson);

@@ -137,7 +137,7 @@ public class VoteServiceImpl implements VoteService {
      * 로그인한 회원 고유 식별자를 가져오기 위한 메서드
      */
     private Long getMemberInfo(Principal principal) {
-        return memberRepository.findMemberByEmail(principal.getName())
+        return memberRepository.findByEmail(principal.getName())
                 .orElseThrow(() -> new MemberBusinessException(MEMBER_NOT_FOUND))
                 .getId();
     }
