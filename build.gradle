@@ -53,6 +53,10 @@ dependencies {
 	implementation 'io.awspring.cloud:spring-cloud-starter-aws:2.3.1'
 	testImplementation 'io.findify:s3mock_2.12:0.2.4'
 
+	// Testcontainers for Java: JUnit5
+	testImplementation "org.testcontainers:junit-jupiter:1.19.7"
+	testImplementation "org.testcontainers:mariadb:1.19.7"
+
 }
 
 tasks.named('test') {
