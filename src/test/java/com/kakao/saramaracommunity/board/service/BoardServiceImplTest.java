@@ -52,13 +52,6 @@ class BoardServiceImplTest extends IntegrationTestSupport {
     @Autowired
     private BoardService boardService;
 
-    @AfterEach
-    void tearDown() {
-        boardImageRepository.deleteAllInBatch();
-        boardRepository.deleteAllInBatch();
-        memberRepository.deleteAllInBatch();
-    }
-
     private Member MEMBER_LANGO;
     private Member MEMBER_SONNY;
 
@@ -66,6 +59,13 @@ class BoardServiceImplTest extends IntegrationTestSupport {
     void setUp() {
         MEMBER_LANGO = memberRepository.save(NORMAL_MEMBER_LANGO.createMember());
         MEMBER_SONNY = memberRepository.save(NORMAL_MEMBER_SONNY.createMember());
+    }
+
+    @AfterEach
+    void tearDown() {
+        boardImageRepository.deleteAllInBatch();
+        boardRepository.deleteAllInBatch();
+        memberRepository.deleteAllInBatch();
     }
 
     @Nested
