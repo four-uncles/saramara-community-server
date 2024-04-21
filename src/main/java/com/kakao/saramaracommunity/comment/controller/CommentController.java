@@ -7,6 +7,7 @@ import com.kakao.saramaracommunity.comment.service.CommentService;
 import com.kakao.saramaracommunity.comment.dto.business.response.CommentCreateResponse;
 import com.kakao.saramaracommunity.comment.dto.business.response.CommentsReadInBoardResponse;
 import com.kakao.saramaracommunity.common.response.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -33,6 +34,7 @@ public class CommentController {
      * @param request memberId: 작성자 고유 식별자, boardId: 게시글 고유 식별자, content: 내용
      * @return "code", "message", "data" : { "nickname", "content" }
      */
+    @Operation(summary = "댓글 작성")
     @PostMapping
     public ResponseEntity<ApiResponse<CommentCreateResponse>> createComment(
             @Valid @RequestBody CommentCreateRequest request
@@ -53,6 +55,7 @@ public class CommentController {
      * @param boardId 댓글이 작성된 게시글 고유 식별자
      * @return "code", "message", "data" : List<CommentReadDetailResponse> comments - { nickname, content, createdAt }
      */
+    @Operation(summary = "댓글 조회")
     @GetMapping("/{boardId}")
     public ResponseEntity<ApiResponse<CommentsReadInBoardResponse>> getBoardComments(
             @Valid @PathVariable("boardId") Long boardId
@@ -73,6 +76,7 @@ public class CommentController {
      * @param request memberId: 작성자 고유 식별자, content: 수정할 내용
      * @return "code", "message", "data" : true
      */
+    @Operation(summary = "댓글 수정")
     @PatchMapping("/{commentId}")
     public ResponseEntity<ApiResponse> updateComment(
             @Valid @PathVariable("commentId") Long commentId,
@@ -93,6 +97,7 @@ public class CommentController {
      * @param request memberId: 작성자의 고유 식별자
      * @return "code", "message", "data" : true
      */
+    @Operation(summary = "댓글 삭제")
     @DeleteMapping("/{commentId}")
     public ResponseEntity<ApiResponse> deleteComment(
             @Valid @PathVariable("commentId") Long commentId,

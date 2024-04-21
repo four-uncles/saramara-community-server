@@ -4,6 +4,7 @@ import com.kakao.saramaracommunity.bucket.dto.business.response.BucketUploadResp
 import com.kakao.saramaracommunity.bucket.service.BucketService;
 import com.kakao.saramaracommunity.common.response.ApiResponse;
 import com.kakao.saramaracommunity.util.ValidFileList;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -28,6 +29,7 @@ public class BucketController {
 
     private final BucketService bucketService;
 
+    @Operation(summary = "이미지 파일 목록 업로드")
     @PostMapping
     public ResponseEntity<ApiResponse<BucketUploadResponse>> uploadImages(
             @RequestPart(required = false)

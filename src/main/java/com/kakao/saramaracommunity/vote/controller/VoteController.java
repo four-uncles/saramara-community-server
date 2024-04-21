@@ -7,6 +7,7 @@ import com.kakao.saramaracommunity.vote.dto.api.request.VoteUpdateRequest;
 import com.kakao.saramaracommunity.vote.dto.business.response.VoteCreateResponse;
 import com.kakao.saramaracommunity.vote.dto.business.response.VotesReadInBoardResponse;
 import com.kakao.saramaracommunity.vote.service.VoteService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import java.security.Principal;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +36,7 @@ public class VoteController {
      * @param request memberId: 투표자 고유 식별자, boardId: 게시글 고유 식별자, boardImage: 투표할 이미지 고유 식별자
      * @return "code", "message", "data": { "voter", "boardId", "boardImageId"}
      */
+    @Operation(summary = "투표 생성")
     @PostMapping
     public ResponseEntity<ApiResponse<VoteCreateResponse>> createVote(
             @Valid @RequestBody VoteCreateRequest request
@@ -56,6 +58,7 @@ public class VoteController {
      * @param boardId 투표 상태가 저장된 게시글 고유 식별자
      * @return "code", "message", "data" : { "boardId", "isVoted", "totalVotes", "voteCounts"}
      */
+    @Operation(summary = "투표 조회")
     @GetMapping("/{boardId}")
     public ResponseEntity<ApiResponse<VotesReadInBoardResponse>> getBoardVotes(
             @PathVariable("boardId") Long boardId,
@@ -77,6 +80,7 @@ public class VoteController {
      * @param request memberId: 작성자 고유 식별자, boardImage: 재선택 이미지
      * @return "code", "message"
      */
+    @Operation(summary = "투표 수정")
     @PatchMapping("/{voteId}")
     public ResponseEntity<ApiResponse> updateVote(
             @PathVariable("voteId") Long voteId,
@@ -97,6 +101,7 @@ public class VoteController {
      * @param request memberId: 투표자의 고유 식별자
      * @return "code", "message"
      */
+    @Operation(summary = "투표 삭제")
     @DeleteMapping("/{voteId}")
     public ResponseEntity<ApiResponse> deleteVote(
             @PathVariable("voteId") Long voteId,
