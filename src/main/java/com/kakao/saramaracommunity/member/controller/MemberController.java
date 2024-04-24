@@ -4,6 +4,7 @@ import com.kakao.saramaracommunity.common.response.ApiResponse;
 import com.kakao.saramaracommunity.member.dto.api.request.MemberCreateRequest;
 import com.kakao.saramaracommunity.member.dto.business.response.MemberInfoResponse;
 import com.kakao.saramaracommunity.member.service.MemberService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -20,6 +21,7 @@ public class MemberController {
 
 	private final MemberService memberService;
 
+	@Operation(summary = "회원 가입")
 	@PostMapping
 	public ResponseEntity<ApiResponse> registerMember (
 			@RequestBody @Valid MemberCreateRequest request
@@ -33,6 +35,7 @@ public class MemberController {
 		);
 	}
 
+	@Operation(summary = "회원 조회")
 	@GetMapping("/{email}")
 	public ResponseEntity<ApiResponse> getMemberInfo (
 			@PathVariable("email") String email

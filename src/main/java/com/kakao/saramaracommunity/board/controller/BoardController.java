@@ -9,6 +9,7 @@ import com.kakao.saramaracommunity.board.dto.business.response.BoardSearchRespon
 import com.kakao.saramaracommunity.board.entity.SortType;
 import com.kakao.saramaracommunity.board.service.BoardService;
 import com.kakao.saramaracommunity.common.response.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -32,6 +33,7 @@ public class BoardController {
      * @param size     페이지 크기
      * @param sort     정렬 방식 - 최신순(latest), 인기순(popular)
      */
+    @Operation(summary = "모든 게시글 조회")
     @GetMapping
     public ResponseEntity<ApiResponse<BoardSearchResponse>> searchBoards(
             @RequestParam(name = "cursorId", required = false) Long cursorId,
@@ -49,6 +51,7 @@ public class BoardController {
         );
     }
 
+    @Operation(summary = "단일 게시글 조회")
     @GetMapping("/{boardId}")
     public ResponseEntity<ApiResponse<BoardGetResponse>> getBoard(
             @PathVariable("boardId") Long boardId
@@ -63,6 +66,7 @@ public class BoardController {
         );
     }
 
+    @Operation(summary = "게시글 작성")
     @PostMapping
     public ResponseEntity<ApiResponse<BoardCreateResponse>> createBoard(
             @RequestBody @Valid BoardCreateRequest request
@@ -77,6 +81,7 @@ public class BoardController {
         );
     }
 
+    @Operation(summary = "게시글 수정")
     @PatchMapping("/{boardId}")
     public ResponseEntity<ApiResponse> updateBoard(
             @PathVariable("boardId") Long boardId,
@@ -92,6 +97,7 @@ public class BoardController {
         );
     }
 
+    @Operation(summary = "게시글 삭제")
     @DeleteMapping("/{boardId}")
     public ResponseEntity<ApiResponse> deleteBoard(
             @PathVariable("boardId") Long boardId,

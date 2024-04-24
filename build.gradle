@@ -35,6 +35,9 @@ dependencies {
 	// Spring Validaion: @Valid 등의 유효성 검사를 위한 검증 어노테이션을 사용할 수 있다.
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 
+	// Springdoc Swagger
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2'
+
 	// Spring Security
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	testImplementation 'org.springframework.security:spring-security-test'
