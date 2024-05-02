@@ -1,0 +1,29 @@
+version: "3.2"
+services:
+  database:
+    container_name: mariadb-db
+    image: mariadb
+    # TODO: 추후 볼륨 마운트 필요할 수 있음.
+#    volumes:
+#      - ~/docker/mariadb/etc/mysql/conf.d:/etc/mysql/conf.d:ro
+#      - ~/docker/mariadb/var/lib/mysql:/var/lib/mysql
+#      - ~/docker/mariadb/var/log/maria:/var/log/maria
+    environment:
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_ROOT_HOST=${MYSQL_ROOT_HOST}
+    command: ['--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci']
+    ports:
+      - 3306:3306
+
+  application:
+    container_name: saramara-backend-api
+    build: .
+    environment:
+      SPRING_DATASOURCE_URL: ${DATASOURCE_URL}
+      SPRING_DATASOURCE_USERNAME: ${MYSQL_ROOT_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    ports:
+      - 8080:8080
+    depends_on:
+      - database
