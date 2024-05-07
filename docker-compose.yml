@@ -1,8 +1,8 @@
-version: "3.2"
+version: "3"
 services:
   database:
-    container_name: mariadb-db
-    image: mariadb
+    container_name: mariadb
+    image: mariadb:10.11
     # TODO: 추후 볼륨 마운트 필요할 수 있음.
 #    volumes:
 #      - ~/docker/mariadb/etc/mysql/conf.d:/etc/mysql/conf.d:ro
@@ -15,15 +15,36 @@ services:
     command: ['--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci']
     ports:
       - 3306:3306
+    healthcheck:
+      test: [ 'CMD', 'mysqladmin', 'ping', '-h', 'localhost', '-u', 'root', '-p$$MYSQL_ROOT_PASSWORD' ]
+      timeout: 10s
+      retries: 5
 
   application:
     container_name: saramara-backend-api
     build: .
     environment:
+      SPRING_PROFILES_ACTIVE: dev
       SPRING_DATASOURCE_URL: ${DATASOURCE_URL}
       SPRING_DATASOURCE_USERNAME: ${MYSQL_ROOT_USERNAME}
       SPRING_DATASOURCE_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     ports:
       - 8080:8080
     depends_on:
-      - database
+      database:
+        condition: service_healthy
+
+#  storage:
+#    container_name: minio
+#    networks:
+#      - container-network
+#    image: minio/minio
+#    command: server /data --console-address ":9001"
+#    environment:
+#      MINIO_ROOT_USER: ${STORAGE_ADMIN_USERNAME}    # 필요한 경우 수정
+#      MINIO_ROOT_PASSWORD: ${STORAGE_ADMIN_PASSWORD}    # 필요한 경우 수정
+#    restart: always
+#    shm_size: '1gb'  # default는 64MB
+#    ports:
+#      - "9000:9000"    # minio 서비스 포트
+#      - "9001:9001"    # minio 콘솔 포트
