@@ -219,3 +219,6 @@ application-test.yml
 
 # local HTTP Client Test
 *.http
+
+# environment env file ignore
+.env
