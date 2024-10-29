@@ -1,4 +1,4 @@
-package com.kakao.saramaracommunity.AwsS3;
+package com.kakao.saramaracommunity.infrastructure;
 
 
 import com.amazonaws.services.s3.AmazonS3Client;

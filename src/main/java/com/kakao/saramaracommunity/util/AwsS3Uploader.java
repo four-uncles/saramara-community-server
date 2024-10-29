@@ -5,9 +5,11 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.kakao.saramaracommunity.bucket.exception.BucketBusinessException;
+import com.kakao.saramaracommunity.bucket.service.port.ObjectStorageClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,12 +22,12 @@ import static com.kakao.saramaracommunity.bucket.exception.BucketErrorCode.BUCKE
 /**
  * AWS S3 버킷에 파일 업로드 로직을 수행할 클래스입니다.
  * 예외 발생시 BucketBusinessException을 발생시킵니다.
- * 추후 단위 테스트 코드를 작성할 예정입니다.
  */
 @Log4j2
+@Primary
 @Component
 @RequiredArgsConstructor
-public class AwsS3Uploader {
+public class AwsS3Uploader implements ObjectStorageClient {
 
     private final AmazonS3 amazonS3Client;
 

@@ -1,20 +1,16 @@
 package com.kakao.saramaracommunity.bucket.service;
 
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.amazonaws.services.s3.model.PutObjectResult;
+import com.kakao.saramaracommunity.bucket.controller.port.BucketService;
 import com.kakao.saramaracommunity.bucket.dto.business.response.BucketUploadResponse;
 import com.kakao.saramaracommunity.bucket.exception.BucketBusinessException;
-import com.kakao.saramaracommunity.support.IntegrationTestSupport;
+import com.kakao.saramaracommunity.bucket.service.support.FakeAwsS3Uploader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.net.URL;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -24,26 +20,20 @@ import static com.kakao.saramaracommunity.bucket.exception.BucketErrorCode.BUCKE
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
+import static org.springframework.test.util.ReflectionTestUtils.setField;
 
 /**
- * AWS S3 버킷 이미지 업로드 기능이 존재하는 BucketServiceImpl를 테스트할 클래스입니다.
- * 통합 테스트를 위해 @SpringBootTest를 설정했습니다.
- * 추후, 통합 테스트가 아닌 Mockking을 통한 단위 테스트로 수정할 예정입니다.
+ * 외부 오브젝트 스토리지와의 통신 여부를 검증할 소형 테스트 클래스입니다.
+ * 여기서는 AWS S3 의존성을 검증합니다.
  */
-class BucketServiceImplTest extends IntegrationTestSupport {
+class BucketServiceImplWithAwsS3Test {
 
-    @Autowired
     private BucketService bucketService;
 
-    @Autowired
-    private AmazonS3 amazonS3;
-
     @BeforeEach
-    void setUp() throws Exception {
-        given(amazonS3.putObject(any(PutObjectRequest.class))).willReturn(new PutObjectResult());
-        given(amazonS3.getUrl(any(), any())).willReturn(new URL("https://saramara-storage.s3.ap-northeast-2.amazonaws.com/test.png"));
+    void setUp() {
+        this.bucketService = new BucketServiceImpl(new FakeAwsS3Uploader());
+        setField(bucketService, "MAX_IMAGE_COUNT", 5);
     }
 
     @Nested
@@ -59,10 +49,9 @@ class BucketServiceImplTest extends IntegrationTestSupport {
             BucketUploadResponse response = bucketService.uploadImages(request);
 
             // then
-            assertThat(response.images()).hasSize(1)
-                    .isEqualTo(List.of(
-                            "https://saramara-storage.s3.ap-northeast-2.amazonaws.com/test.png"
-                    ));
+            assertThat(response.images())
+                    .hasSize(1)
+                    .allMatch(url -> url.contains("test.png"));
         }
         @Test
         @DisplayName("[Green] 여러 장을 업로드하면 복수의 이미지 URL 경로가 담긴 목록을 응답받는다.")

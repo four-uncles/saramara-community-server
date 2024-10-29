@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kakao.saramaracommunity.board.controller.BoardController;
 import com.kakao.saramaracommunity.board.service.BoardService;
 import com.kakao.saramaracommunity.bucket.controller.BucketController;
-import com.kakao.saramaracommunity.bucket.service.BucketService;
+import com.kakao.saramaracommunity.bucket.controller.port.BucketService;
 import com.kakao.saramaracommunity.comment.controller.CommentController;
 import com.kakao.saramaracommunity.comment.service.CommentService;
 import com.kakao.saramaracommunity.member.controller.MemberController;
