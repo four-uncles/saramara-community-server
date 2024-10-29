@@ -6,17 +6,17 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
-//@Configuration
+@Configuration
 @Profile("!test")
 public class MinioConfig {
 
-//    @Value("${minio.endpoint}")
+    @Value("${minio.endpoint}")
     private String endPoint;
 
-//    @Value("${minio.access_key}")
+    @Value("${minio.access_key}")
     private String accessKey;
 
-//    @Value("${minio.secret_key}")
+    @Value("${minio.secret_key}")
     private String secretKey;
 
     @Bean
