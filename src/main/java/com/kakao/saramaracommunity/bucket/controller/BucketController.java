@@ -1,7 +1,7 @@
 package com.kakao.saramaracommunity.bucket.controller;
 
 import com.kakao.saramaracommunity.bucket.dto.business.response.BucketUploadResponse;
-import com.kakao.saramaracommunity.bucket.service.BucketService;
+import com.kakao.saramaracommunity.bucket.controller.port.BucketService;
 import com.kakao.saramaracommunity.common.response.ApiResponse;
 import com.kakao.saramaracommunity.util.ValidFileList;
 import io.swagger.v3.oas.annotations.Operation;

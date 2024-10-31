@@ -1,4 +1,4 @@
-package com.kakao.saramaracommunity.bucket.service;
+package com.kakao.saramaracommunity.bucket.controller.port;
 
 import com.kakao.saramaracommunity.bucket.dto.business.response.BucketUploadResponse;
 import org.springframework.web.multipart.MultipartFile;
