@@ -1,13 +1,11 @@
-package com.kakao.saramaracommunity.util;
+package com.kakao.saramaracommunity.bucket.infrastructure;
 
 import com.kakao.saramaracommunity.bucket.exception.BucketBusinessException;
 import com.kakao.saramaracommunity.bucket.service.port.ObjectStorageClient;
 import io.minio.*;
 import io.minio.http.Method;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import static com.kakao.saramaracommunity.bucket.exception.BucketErrorCode.BUCKET_MINIO_BUCKET_NOT_FOUND;

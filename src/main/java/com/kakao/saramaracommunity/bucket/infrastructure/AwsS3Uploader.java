@@ -1,4 +1,4 @@
-package com.kakao.saramaracommunity.util;
+package com.kakao.saramaracommunity.bucket.infrastructure;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
@@ -6,6 +6,7 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.kakao.saramaracommunity.bucket.exception.BucketBusinessException;
 import com.kakao.saramaracommunity.bucket.service.port.ObjectStorageClient;
+import com.kakao.saramaracommunity.util.FileUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
