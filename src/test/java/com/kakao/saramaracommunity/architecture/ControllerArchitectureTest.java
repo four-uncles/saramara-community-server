@@ -28,7 +28,7 @@ public class ControllerArchitectureTest {
                 .that().resideInAPackage("..controller..")
                 .and().resideOutsideOfPackage("..controller.port..")
                 .should().haveSimpleNameEndingWith("Controller")
-                .allowEmptyShould(true);  // 빈 결과 허용
+                .allowEmptyShould(true);  
         rule.check(javaClasses);
     }
 
@@ -38,7 +38,7 @@ public class ControllerArchitectureTest {
         ArchRule rule = ArchRuleDefinition.classes()
                 .that().resideInAPackage("..controller.port..")
                 .should().haveSimpleNameEndingWith("Service")
-                .allowEmptyShould(true);  // 빈 결과 허용
+                .allowEmptyShould(true);  
         rule.check(javaClasses);
     }
 
