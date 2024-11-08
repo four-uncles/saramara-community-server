@@ -20,7 +20,6 @@ public class ControllerArchitectureTest {
     private static final String CONTROLLER_NAME = "Controller";
     private static final String SERVICE_INTERFACE_NAME = "Service";
 
-
     @ArchTest
     static final ArchRule 패키지종속성검사_Controller는_controller_port_패키지의_서비스_인터페이스를_의존해야_한다 =
             classes()
