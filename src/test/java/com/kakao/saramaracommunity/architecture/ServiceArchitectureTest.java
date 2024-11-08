@@ -21,20 +21,20 @@ public class ServiceArchitectureTest {
     private static final String SERVICE_IMPLEMENT_NAME = "ServiceImpl";
 
     @ArchTest
-    static final ArchRule 패키지종속성검사_Service는_service_port_패키지의_infrastructure_인터페이스를_의존해야_한다 =
+    static final ArchRule 패키지종속성검사_Service는_service_port_패키지의_infrastructure_인터페이스를_의존해야_한다 =
             classes()
                     .that().resideInAPackage(SERVICE_PACKAGE)
                     .should().dependOnClassesThat().resideInAPackage(SERVICE_PORT_PACKAGE);
 
     @ArchTest
-    static final ArchRule 패키지구조검사_service_패키지_내_구현_클래스_이름은_ServiceImpl로_명명되어야_한다 =
+    static final ArchRule 패키지구조검사1_service_패키지_내_구현_클래스_이름은_ServiceImpl로_명명되어야_한다 =
             classes()
                     .that().resideInAPackage(SERVICE_PACKAGE)
                     .should().haveSimpleNameEndingWith(SERVICE_IMPLEMENT_NAME);
 
 
     @ArchTest
-    static final ArchRule 패키지구조검사_service_port_패키지의_인프라스트럭처_인터페이스는_Interface_타입이어야_한다 =
+    static final ArchRule 패키지구조검사2_service_port_패키지의_인프라스트럭처_인터페이스는_Interface_타입이어야_한다 =
             classes()
                     .that().resideInAPackage(SERVICE_PORT_PACKAGE)
                     .should().beInterfaces();
