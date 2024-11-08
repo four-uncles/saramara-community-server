@@ -1,9 +1,8 @@
 package com.kakao.saramaracommunity.bucket.service;
 
 import com.kakao.saramaracommunity.bucket.controller.port.BucketService;
-import com.kakao.saramaracommunity.bucket.dto.business.response.BucketUploadResponse;
+import com.kakao.saramaracommunity.bucket.controller.response.BucketUploadResponse;
 import com.kakao.saramaracommunity.bucket.exception.BucketBusinessException;
-import com.kakao.saramaracommunity.bucket.service.support.FakeAwsS3Uploader;
 import com.kakao.saramaracommunity.bucket.service.support.FakeMinioUploader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
