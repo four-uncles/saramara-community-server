@@ -21,32 +21,32 @@ public class ServiceArchitectureTest {
     private static final String SERVICE_IMPLEMENT_NAME = "ServiceImpl";
 
     @ArchTest
-    static final ArchRule service_패키지의_의존성_검사를_검증한다 =
+    static final ArchRule 패키지종속성검사_Service는_service_port_패키지의_infrastructure_인터페이스를_의존해야_한다 =
             classes()
                     .that().resideInAPackage(SERVICE_PACKAGE)
                     .should().dependOnClassesThat().resideInAPackage(SERVICE_PORT_PACKAGE);
 
     @ArchTest
-    static final ArchRule service_패키지_내_구현_클래스_이름은_ServiceImpl로_끝나야_한다 =
+    static final ArchRule 패키지구조검사_service_패키지_내_구현_클래스_이름은_ServiceImpl로_명명되어야_한다 =
             classes()
                     .that().resideInAPackage(SERVICE_PACKAGE)
                     .should().haveSimpleNameEndingWith(SERVICE_IMPLEMENT_NAME);
 
+
     @ArchTest
-    static final ArchRule service_port_패키지의_서비스는_추상화된_Interface_타입이어야_한다 =
+    static final ArchRule 패키지구조검사_service_port_패키지의_인프라스트럭처_인터페이스는_Interface_타입이어야_한다 =
             classes()
                     .that().resideInAPackage(SERVICE_PORT_PACKAGE)
                     .should().beInterfaces();
 
-
     @ArchTest
-    static final ArchRule Service_클래스는_controller_port_패키지의_Service_인터페이스를_구현해야_한다 =
+    static final ArchRule 구현검사_Service_클래스는_controller_port_패키지의_Service_인터페이스를_구현해야_한다 =
             classes()
                     .that().resideInAPackage(SERVICE_PACKAGE)
                     .and().areNotInterfaces().should().implement(resideInAPackage(CONTROLLER_PORT_PACKAGE));
 
     @ArchTest
-    static final ArchRule service_패키지의_구현_클래스는_반드시_Service_어노테이션이_선언되어야_한다 =
+    static final ArchRule 어노테이션검사_service_패키지의_구현_클래스는_반드시_Service_어노테이션이_선언되어야_한다 =
             classes()
                     .that().resideInAPackage(SERVICE_PACKAGE)
                     .should().beAnnotatedWith(Service.class);
