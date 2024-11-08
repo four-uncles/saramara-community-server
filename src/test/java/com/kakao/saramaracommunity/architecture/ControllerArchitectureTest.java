@@ -1,76 +1,53 @@
 package com.kakao.saramaracommunity.architecture;
 
-import com.tngtech.archunit.core.domain.JavaClasses;
-import com.tngtech.archunit.core.importer.ClassFileImporter;
 import com.tngtech.archunit.core.importer.ImportOption;
+import com.tngtech.archunit.junit.AnalyzeClasses;
+import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ArchRule;
-import com.tngtech.archunit.lang.syntax.ArchRuleDefinition;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.springframework.web.bind.annotation.RestController;
 
+import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.*;
+
+@AnalyzeClasses(
+        packages = "com.kakao.saramaracommunity.bucket",
+        importOptions = ImportOption.DoNotIncludeTests.class
+)
 public class ControllerArchitectureTest {
 
-    private JavaClasses javaClasses;
+    private static final String CONTROLLER_PACKAGE = "..controller";
+    private static final String CONTROLLER_PORT_PACKAGE = "..controller.port";
+    private static final String CONTROLLER_NAME = "Controller";
+    private static final String SERVICE_INTERFACE_NAME = "Service";
 
-    @BeforeEach
-    public void beforeEacsh() {
-        javaClasses = new ClassFileImporter()
-                .withImportOption(ImportOption.Predefined.DO_NOT_INCLUDE_TESTS) // 테스트 패키지는 제외
-                .importPackages("com.kakao.saramaracommunity.bucket..");
-    }
+    @ArchTest
+    static final ArchRule controller_패키지의_의존성_검사를_검증한다 =
+            classes()
+                    .that().resideInAPackage(CONTROLLER_PACKAGE)
+                    .should().dependOnClassesThat().resideInAPackage(CONTROLLER_PORT_PACKAGE);
 
-    @Test
-    @DisplayName("controller 패키지 내 클래스 이름은 Controller로 끝나야 한다.")
-    void controllersShouldBeNamedCorrectly() {
-        ArchRule rule = ArchRuleDefinition.classes()
-                .that().resideInAPackage("..controller..")
-                .and().resideOutsideOfPackage("..controller.port..")
-                .should().haveSimpleNameEndingWith("Controller")
-                .allowEmptyShould(true);  
-        rule.check(javaClasses);
-    }
+    @ArchTest
+    static final ArchRule controller_패키지_내_클래스_이름은_Controller로_끝나야_한다 =
+            classes()
+                    .that().resideInAPackage(CONTROLLER_PACKAGE)
+                    .should().haveSimpleNameEndingWith(CONTROLLER_NAME);
 
-    @Test
-    @DisplayName("controller.port 패키지 내 서비스 인터페이스 이름은 Service로 끝나야 한다.")
-    void controllerInPortsShouldBeNamedCorrectly() {
-        ArchRule rule = ArchRuleDefinition.classes()
-                .that().resideInAPackage("..controller.port..")
-                .should().haveSimpleNameEndingWith("Service")
-                .allowEmptyShould(true);  
-        rule.check(javaClasses);
-    }
+    @ArchTest
+    static final ArchRule controller_port_패키지_내_서비스_인터페이스_이름은_Service로_끝나야_한다 =
+            classes()
+                    .that().resideInAPackage(CONTROLLER_PORT_PACKAGE)
+                    .should().haveSimpleNameEndingWith(SERVICE_INTERFACE_NAME);
 
-    @Test
-    @DisplayName("controller 패키지의 의존성 검사를 검증한다.")
-    void controllerDependenciesShouldBeValidated() {
-        ArchRule rule = ArchRuleDefinition.classes()
-                .that().resideInAPackage("..controller..")           // controller 패키지에 있는 클래스들에 대해
-                .should().onlyDependOnClassesThat()
-                .resideInAnyPackage(
-                        "..controller.port..",
-                        "..controller..",
-                        "..bucket.dto..",
-                        "..common..",
-                        "..util..",
-                        "io.swagger.v3..",
-                        "java..",
-                        "org.springframework.."
-                )
-                .allowEmptyShould(true);
-        rule.check(javaClasses);
-    }
+    @ArchTest
+    static final ArchRule controller_port_패키지의_서비스는_추상화된_Interface_타입이어야_한다 =
+            classes()
+                    .that().resideInAnyPackage(CONTROLLER_PORT_PACKAGE)
+                    .should().beInterfaces()
+                    .andShould().onlyBeAccessed().byClassesThat().resideInAPackage(CONTROLLER_PACKAGE);
 
-    @Test
-    @DisplayName("bucket.controller 패키지의 클래스는 반드시 @RestController 어노테이션이 선언되어야 한다.")
-    void controllersShouldBeAnnotatedWithRestController() {
-        ArchRule rule = ArchRuleDefinition.classes()
-                .that().resideInAPackage("..bucket.controller..")
-                .and().resideOutsideOfPackage("..controller.port..")
-                .should().beAnnotatedWith(RestController.class);
-        rule.check(javaClasses);
-    }
-
+    @ArchTest
+    static final ArchRule controller_패키지의_클래스는_반드시_RestController_어노테이션이_선언되어야_한다 =
+            classes()
+                    .that().resideInAPackage(CONTROLLER_PACKAGE)
+                    .should().beAnnotatedWith(RestController.class);
 
 }
