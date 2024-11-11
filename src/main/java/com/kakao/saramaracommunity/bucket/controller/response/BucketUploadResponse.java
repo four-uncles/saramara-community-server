@@ -1,4 +1,4 @@
-package com.kakao.saramaracommunity.bucket.dto.business.response;
+package com.kakao.saramaracommunity.bucket.controller.response;
 
 import lombok.Builder;
 

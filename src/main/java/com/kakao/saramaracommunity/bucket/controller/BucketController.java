@@ -1,6 +1,6 @@
 package com.kakao.saramaracommunity.bucket.controller;
 
-import com.kakao.saramaracommunity.bucket.dto.business.response.BucketUploadResponse;
+import com.kakao.saramaracommunity.bucket.controller.response.BucketUploadResponse;
 import com.kakao.saramaracommunity.bucket.controller.port.BucketService;
 import com.kakao.saramaracommunity.common.response.ApiResponse;
 import com.kakao.saramaracommunity.util.ValidFileList;
