@@ -1,8 +1,9 @@
-package com.kakao.saramaracommunity.board.dto.api.reqeust;
+package com.kakao.saramaracommunity.board.controller.dto.reqeust;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.kakao.saramaracommunity.board.entity.CategoryBoard;
-import com.kakao.saramaracommunity.board.dto.business.reqeust.BoardUpdateServiceRequest;
+import com.kakao.saramaracommunity.board.service.reqeust.BoardCreateServiceRequest;
+import com.kakao.saramaracommunity.common.dto.ConvertDtoByBusinessLayer;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -12,7 +13,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Builder
-public record BoardUpdateRequest(
+public record BoardCreateRequest(
         @NotBlank(message = "게시글의 제목을 입력해주세요.")
         String title,
         @NotBlank(message = "게시글의 내용을 입력해주세요.")
@@ -26,9 +27,11 @@ public record BoardUpdateRequest(
         LocalDateTime deadLine,
         @NotNull(message = "이미지는 최소 1장 이상 등록해야 합니다.")
         List<String> boardImages
-) {
-    public BoardUpdateServiceRequest toServiceRequest() {
-        return BoardUpdateServiceRequest.builder()
+) implements ConvertDtoByBusinessLayer<BoardCreateServiceRequest> {
+
+    @Override
+    public BoardCreateServiceRequest toServiceRequest() {
+        return BoardCreateServiceRequest.builder()
                 .title(title)
                 .content(content)
                 .categoryBoard(categoryBoard)
@@ -37,4 +40,5 @@ public record BoardUpdateRequest(
                 .boardImages(boardImages)
                 .build();
     }
+
 }

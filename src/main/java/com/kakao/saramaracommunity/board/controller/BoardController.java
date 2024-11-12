@@ -1,11 +1,11 @@
 package com.kakao.saramaracommunity.board.controller;
 
-import com.kakao.saramaracommunity.board.dto.api.reqeust.BoardCreateRequest;
-import com.kakao.saramaracommunity.board.dto.api.reqeust.BoardDeleteRequest;
-import com.kakao.saramaracommunity.board.dto.api.reqeust.BoardUpdateRequest;
-import com.kakao.saramaracommunity.board.dto.business.response.BoardCreateResponse;
-import com.kakao.saramaracommunity.board.dto.business.response.BoardGetResponse;
-import com.kakao.saramaracommunity.board.dto.business.response.BoardSearchResponse;
+import com.kakao.saramaracommunity.board.controller.dto.reqeust.BoardCreateRequest;
+import com.kakao.saramaracommunity.board.controller.dto.reqeust.BoardDeleteRequest;
+import com.kakao.saramaracommunity.board.controller.dto.reqeust.BoardUpdateRequest;
+import com.kakao.saramaracommunity.board.controller.dto.response.BoardCreateResponse;
+import com.kakao.saramaracommunity.board.controller.dto.response.BoardGetResponse;
+import com.kakao.saramaracommunity.board.controller.dto.response.BoardSearchResponse;
 import com.kakao.saramaracommunity.board.entity.SortType;
 import com.kakao.saramaracommunity.board.service.BoardService;
 import com.kakao.saramaracommunity.common.response.ApiResponse;
@@ -71,7 +71,7 @@ public class BoardController {
     public ResponseEntity<ApiResponse<BoardCreateResponse>> createBoard(
             @RequestBody @Valid BoardCreateRequest request
     ) {
-        BoardCreateResponse response = boardService.createBoard(request.toServiceReqeust());
+        BoardCreateResponse response = boardService.createBoard(request.toServiceRequest());
         return ResponseEntity.ok().body(
                 ApiResponse.successResponse(
                         OK,

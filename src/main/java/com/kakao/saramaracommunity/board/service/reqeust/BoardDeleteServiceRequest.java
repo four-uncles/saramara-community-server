@@ -1,4 +1,4 @@
-package com.kakao.saramaracommunity.board.dto.business.reqeust;
+package com.kakao.saramaracommunity.board.service.reqeust;
 
 import lombok.Builder;
 

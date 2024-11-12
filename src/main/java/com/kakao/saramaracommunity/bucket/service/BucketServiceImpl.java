@@ -3,6 +3,7 @@ package com.kakao.saramaracommunity.bucket.service;
 import com.kakao.saramaracommunity.bucket.controller.port.BucketService;
 import com.kakao.saramaracommunity.bucket.controller.response.BucketUploadResponse;
 import com.kakao.saramaracommunity.bucket.exception.BucketBusinessException;
+import com.kakao.saramaracommunity.bucket.service.dto.response.BucketUploadServiceResponse;
 import com.kakao.saramaracommunity.bucket.service.port.ObjectStorageClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -39,7 +40,7 @@ public class BucketServiceImpl implements BucketService {
         }
         List<String> imagePathList = uploadS3BucketWithGetUrls(requestImageFiles);
         log.info("[BucketServiceImpl] AWS S3 버킷에 이미지를 정상적으로 등록했습니다. S3 버킷 등록 이미지 목록: {}", imagePathList);
-        return BucketUploadResponse.of(imagePathList);
+        return BucketUploadServiceResponse.of(imagePathList).toApiResponse();
     }
 
     private boolean checkImageIsEmpty(List<MultipartFile> images) {

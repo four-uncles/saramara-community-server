@@ -1,4 +1,4 @@
-package com.kakao.saramaracommunity.board.dto.business.reqeust;
+package com.kakao.saramaracommunity.board.service.reqeust;
 
 import com.kakao.saramaracommunity.board.entity.Board;
 import com.kakao.saramaracommunity.board.entity.CategoryBoard;
@@ -17,6 +17,7 @@ public record BoardCreateServiceRequest(
         LocalDateTime deadLine,
         List<String> boardImages
 ) {
+
     public Board toEntity(Member member) {
         return Board.builder()
                 .title(title)
