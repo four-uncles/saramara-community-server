@@ -1,8 +1,8 @@
 package com.kakao.saramaracommunity.board.controller;
 
-import com.kakao.saramaracommunity.board.dto.api.reqeust.BoardCreateRequest;
-import com.kakao.saramaracommunity.board.dto.api.reqeust.BoardDeleteRequest;
-import com.kakao.saramaracommunity.board.dto.api.reqeust.BoardUpdateRequest;
+import com.kakao.saramaracommunity.board.controller.dto.reqeust.BoardCreateRequest;
+import com.kakao.saramaracommunity.board.controller.dto.reqeust.BoardDeleteRequest;
+import com.kakao.saramaracommunity.board.controller.dto.reqeust.BoardUpdateRequest;
 import com.kakao.saramaracommunity.support.ControllerTestSupport;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.DisplayNameGenerator.ReplaceUnderscores;

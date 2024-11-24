@@ -1,4 +1,4 @@
-package com.kakao.saramaracommunity.board.dto.business.response;
+package com.kakao.saramaracommunity.board.controller.dto.response;
 
 import com.kakao.saramaracommunity.board.entity.Board;
 import com.kakao.saramaracommunity.board.entity.BoardImage;
